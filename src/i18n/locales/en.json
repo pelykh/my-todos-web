@@ -34,5 +34,8 @@
   "area.personal": "Personal",
   "area.health": "Health",
   "area.learning": "Learning",
-  "cmdAddToInbox": "Add to inbox"
+  "cmdAddToInbox": "Add to inbox",
+  "focusModalComplete": "Mark as done",
+  "focusModalClose": "Close",
+  "focusModalNotesPlaceholder": "Add notes (Markdown supported)..."
 }

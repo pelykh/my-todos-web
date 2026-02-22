@@ -15,6 +15,7 @@ import { Toolbar } from '@/components/Toolbar'
 import { LangSelect } from '@/components/LangSelect'
 import { TaskListItem } from '@/components/TaskListItem'
 import { CommandPalette } from '@/components/CommandPalette'
+import { TaskFocusModal } from '@/components/TaskFocusModal'
 import { useTheme } from '@/theme'
 import type { Task } from '@/types'
 
@@ -144,6 +145,8 @@ function App() {
       <Toolbar />
 
       <CommandPalette open={cmdOpen} onClose={() => setCmdOpen(false)} />
+
+      <TaskFocusModal />
     </>
   )
 }

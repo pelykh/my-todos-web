@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { useTask } from "@/store";
+import { useTask, useFocusedTaskActions } from "@/store";
 import type { Task } from "@/types";
 
 interface TaskListItemProps {
@@ -10,9 +10,14 @@ interface TaskListItemProps {
 export function TaskListItem({ task, isToday }: TaskListItemProps) {
   const { t } = useTranslation();
   const project = useTask(task.projectId ?? "");
+  const setFocusedTaskId = useFocusedTaskActions();
 
   return (
     <div
+      role="button"
+      tabIndex={0}
+      onClick={() => setFocusedTaskId(task.id)}
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setFocusedTaskId(task.id) }}
       style={{
         padding: "6px 8px",
         cursor: "pointer",

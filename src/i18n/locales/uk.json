@@ -34,5 +34,8 @@
   "area.personal": "Особисте",
   "area.health": "Здоров'я",
   "area.learning": "Навчання",
-  "cmdAddToInbox": "Додати до вхідних"
+  "cmdAddToInbox": "Додати до вхідних",
+  "focusModalComplete": "Завершити",
+  "focusModalClose": "Закрити",
+  "focusModalNotesPlaceholder": "Нотатки"
 }

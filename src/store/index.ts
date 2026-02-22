@@ -6,6 +6,7 @@ import type { TaskFilters } from '@/services'
 import type { TaskActions } from './taskStore'
 import { filterStore } from './filterStore'
 import type { FilterActions, FilterState, DurationStep } from './filterStore'
+import { focusedTaskStore } from './focusedTaskStore'
 import { MOCK_TASKS } from '@/mockData'
 
 localStorage.setItem('tasks', JSON.stringify(MOCK_TASKS))
@@ -57,3 +58,13 @@ export function useFilterActions(): FilterActions {
 
 export type { FilterState, FilterActions, DurationStep }
 export { DURATION_STEPS } from './filterStore'
+
+// ── Focused task store hooks ──────────────────────────────────────────────────
+
+export function useFocusedTaskId() {
+  return useStore(focusedTaskStore, (s) => s.focusedTaskId)
+}
+
+export function useFocusedTaskActions() {
+  return useStore(focusedTaskStore, (s) => s.setFocusedTaskId)
+}

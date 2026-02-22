@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Command } from 'cmdk'
 import { useTranslation } from 'react-i18next'
-import { useTasks, useTaskActions } from '@/store'
+import { useTasks, useTaskActions, useFocusedTaskActions } from '@/store'
 import { useTheme } from '@/theme'
 import type { Task } from '@/types'
 
@@ -21,6 +21,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
   const { colorScheme } = useTheme()
   const allTasks = useTasks()
   const { addTask } = useTaskActions()
+  const setFocusedTaskId = useFocusedTaskActions()
   const [search, setSearch] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -118,7 +119,10 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
               <Command.Item
                 key={task.id}
                 value={task.title}
-                onSelect={onClose}
+                onSelect={() => {
+                  onClose()
+                  setFocusedTaskId(task.id)
+                }}
                 style={itemStyle}
                 data-selected-style=""
               >
