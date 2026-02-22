@@ -4,6 +4,8 @@ import { createTaskStore } from './taskStore'
 import { LocalStorageTaskService } from '@/services'
 import type { TaskFilters } from '@/services'
 import type { TaskActions } from './taskStore'
+import { filterStore } from './filterStore'
+import type { FilterActions, FilterState, DurationStep } from './filterStore'
 import { MOCK_TASKS } from '@/mockData'
 
 const SEEDED_KEY = 'tasks_seeded'
@@ -43,3 +45,23 @@ export function useTask(id: string) {
 export function useTaskActions(): TaskActions {
   return useStore(taskStore, (s) => s.actions)
 }
+
+// ── Filter store hooks ────────────────────────────────────────────────────────
+
+export function useFilters(): FilterState {
+  return useStore(
+    filterStore,
+    useShallow((s) => ({
+      context: s.context,
+      todayOnly: s.todayOnly,
+      maxMinutes: s.maxMinutes,
+    })),
+  )
+}
+
+export function useFilterActions(): FilterActions {
+  return useStore(filterStore, (s) => s.actions)
+}
+
+export type { FilterState, FilterActions, DurationStep }
+export { DURATION_STEPS } from './filterStore'

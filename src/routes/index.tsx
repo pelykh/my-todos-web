@@ -11,11 +11,11 @@ import {
   Badge,
   ActionIcon,
   Paper,
-  Select,
 } from '@mantine/core'
 import { Trash2 } from 'lucide-react'
-import { useTasks, useTaskActions } from '@/store'
-import type { TaskStatus } from '@/types'
+import { useTasks, useTaskActions, useFilters } from '@/store'
+import { Toolbar } from '@/components/Toolbar'
+import type { TaskStatus, Task } from '@/types'
 
 export const Route = createFileRoute('/')({ component: App })
 
@@ -36,11 +36,23 @@ const STATUS_COLORS: Record<TaskStatus, string> = {
   done: 'green',
 }
 
+const today = new Date().toISOString().slice(0, 10)
+
+function applyToolbarFilters(tasks: Task[], context: string | null, todayOnly: boolean, maxMinutes: number | null) {
+  return tasks.filter((t) => {
+    if (context && t.context !== context) return false
+    if (todayOnly && t.scheduledDate?.slice(0, 10) !== today && t.dueDate?.slice(0, 10) !== today) return false
+    if (maxMinutes !== null && t.estimatedMinutes !== undefined && t.estimatedMinutes > maxMinutes) return false
+    return true
+  })
+}
+
 function App() {
   const [title, setTitle] = useState('')
-  const [filterStatus, setFilterStatus] = useState<TaskStatus | null>(null)
 
-  const tasks = useTasks(filterStatus ? { status: filterStatus } : undefined)
+  const { context, todayOnly, maxMinutes } = useFilters()
+  const allTasks = useTasks()
+  const tasks = applyToolbarFilters(allTasks, context, todayOnly, maxMinutes)
   const { addTask, removeTask } = useTaskActions()
 
   function handleAdd() {
@@ -51,66 +63,64 @@ function App() {
   }
 
   return (
-    <Container size="sm" py="xl">
-      <Stack gap="lg">
-        <Title order={2}>My Todos</Title>
+    <>
+      <Container size="sm" py="xl" pb={120}>
+        <Stack gap="lg">
+          <Title order={2}>My Todos</Title>
 
-        {/* Quick-add form */}
-        <Group gap="sm" align="flex-end">
-          <TextInput
-            style={{ flex: 1 }}
-            placeholder="Add a new task..."
-            value={title}
-            onChange={(e) => setTitle(e.currentTarget.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
-          />
-          <Button onClick={handleAdd}>Add</Button>
-        </Group>
+          {/* Quick-add form */}
+          <Group gap="sm" align="flex-end">
+            <TextInput
+              style={{ flex: 1 }}
+              placeholder="Add a new task..."
+              value={title}
+              onChange={(e) => setTitle(e.currentTarget.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
+            />
+            <Button onClick={handleAdd}>Add</Button>
+          </Group>
 
-        {/* Filter */}
-        <Select
-          placeholder="Filter by status"
-          clearable
-          data={STATUS_OPTIONS}
-          value={filterStatus}
-          onChange={(v) => setFilterStatus(v as TaskStatus | null)}
-        />
-
-        {/* Task list */}
-        <Stack gap="xs">
-          {tasks.length === 0 && (
-            <Text c="dimmed" size="sm">No tasks found.</Text>
-          )}
-          {tasks.map((task) => (
-            <Paper key={task.id} withBorder p="sm" radius="md">
-              <Group justify="space-between" wrap="nowrap">
-                <Stack gap={2}>
-                  <Text size="sm" fw={500}>{task.title}</Text>
-                  <Group gap="xs">
-                    <Badge size="xs" color={STATUS_COLORS[task.status]}>
-                      {STATUS_OPTIONS.find((s) => s.value === task.status)?.label ?? task.status}
-                    </Badge>
-                    {task.area && (
-                      <Badge size="xs" variant="outline">{task.area}</Badge>
-                    )}
-                    {task.isProject && (
-                      <Badge size="xs" color="yellow">Project</Badge>
-                    )}
-                  </Group>
-                </Stack>
-                <ActionIcon
-                  color="red"
-                  variant="subtle"
-                  onClick={() => removeTask(task.id)}
-                  aria-label="Delete task"
-                >
-                  <Trash2 size={16} />
-                </ActionIcon>
-              </Group>
-            </Paper>
-          ))}
+          {/* Task list */}
+          <Stack gap="xs">
+            {tasks.length === 0 && (
+              <Text c="dimmed" size="sm">No tasks found.</Text>
+            )}
+            {tasks.map((task) => (
+              <Paper key={task.id} withBorder p="sm" radius="md">
+                <Group justify="space-between" wrap="nowrap">
+                  <Stack gap={2}>
+                    <Text size="sm" fw={500}>{task.title}</Text>
+                    <Group gap="xs">
+                      <Badge size="xs" color={STATUS_COLORS[task.status]}>
+                        {STATUS_OPTIONS.find((s) => s.value === task.status)?.label ?? task.status}
+                      </Badge>
+                      {task.area && (
+                        <Badge size="xs" variant="outline">{task.area}</Badge>
+                      )}
+                      {task.isProject && (
+                        <Badge size="xs" color="yellow">Project</Badge>
+                      )}
+                      {task.estimatedMinutes && (
+                        <Badge size="xs" variant="dot" color="gray">{task.estimatedMinutes}m</Badge>
+                      )}
+                    </Group>
+                  </Stack>
+                  <ActionIcon
+                    color="red"
+                    variant="subtle"
+                    onClick={() => removeTask(task.id)}
+                    aria-label="Delete task"
+                  >
+                    <Trash2 size={16} />
+                  </ActionIcon>
+                </Group>
+              </Paper>
+            ))}
+          </Stack>
         </Stack>
-      </Stack>
-    </Container>
+      </Container>
+
+      <Toolbar />
+    </>
   )
 }
