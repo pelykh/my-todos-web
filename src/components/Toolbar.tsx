@@ -1,6 +1,7 @@
 import { Box, Group, Button, Slider, Text, ActionIcon, Stack, ButtonGroup } from '@mantine/core'
 import { IconGripHorizontal } from '@tabler/icons-react'
 import { Star } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useFilters, useFilterActions, useTasks, DURATION_STEPS } from '@/store'
 import type { DurationStep } from '@/store'
 import type { Context } from '@/types'
@@ -8,19 +9,19 @@ import { useTheme } from '@/theme'
 
 const today = new Date().toISOString().slice(0, 10)
 
-const CONTEXTS: { value: Context; label: string }[] = [
-  { value: 'deep_work', label: 'Deep Work' },
-  { value: 'admin', label: 'Admin' },
-  { value: 'home', label: 'Home' },
-  { value: 'agenda', label: 'Agenda' },
+const CONTEXT_KEYS: { value: Context; key: string }[] = [
+  { value: 'deep_work', key: 'context.deep_work' },
+  { value: 'admin', key: 'context.admin' },
+  { value: 'home', key: 'context.home' },
+  { value: 'agenda', key: 'context.agenda' },
 ]
 
-const DURATION_LABELS: Record<number, string> = {
-  5: '<5m',
-  15: '<15m',
-  45: '<45m',
-  60: '<1h',
-  120: '<2h',
+const DURATION_KEYS: Record<number, string> = {
+  5: 'duration.lt5',
+  15: 'duration.lt15',
+  45: 'duration.lt45',
+  60: 'duration.lt1h',
+  120: 'duration.lt2h',
 }
 
 // slider index ↔ DurationStep value
@@ -38,6 +39,7 @@ function stepToSliderIndex(step: DurationStep): number {
 
 export function Toolbar() {
   const { colorScheme } = useTheme()
+  const { t } = useTranslation()
   const { context, todayOnly, maxMinutes } = useFilters()
   const { setContext, setMaxMinutes, activateToday, clearAll } = useFilterActions()
 
@@ -86,14 +88,14 @@ export function Toolbar() {
           {/* Row 1: context buttons + today star */}
           <Group gap="xs" justify="center">
             <ButtonGroup>
-              {CONTEXTS.map((ctx) => (
+              {CONTEXT_KEYS.map((ctx) => (
                 <Button
                   key={ctx.value}
                   size="xs"
                   variant={context === ctx.value ? 'filled' : 'default'}
                   onClick={() => setContext(context === ctx.value ? null : ctx.value)}
                 >
-                  {ctx.label}
+                  {t(ctx.key)}
                 </Button>
               ))}
             </ButtonGroup>
@@ -103,7 +105,7 @@ export function Toolbar() {
               color="yellow"
               disabled={!hasTodayTasks || allTodayDone}
               onClick={handleStarClick}
-              aria-label="Today only"
+              aria-label={t('ariaToday')}
               className={!todayOnly && hasTodayTasks && !allTodayDone ? 'today-pulse' : ''}
             >
               <Star size={14} fill={todayOnly ? 'currentColor' : 'none'} />
@@ -120,7 +122,7 @@ export function Toolbar() {
               value={sliderIndex}
               onChange={handleSlider}
               label={null}
-              thumbLabel="Duration filter"
+              thumbLabel={t('ariaDurationFilter')}
               thumbChildren={<IconGripHorizontal size={16} stroke={1.5} />}
               marks={[...SLIDER_STEPS.map((_, i) => ({ value: i })), { value: SLIDER_STEPS.length }]}
               classNames={{
@@ -128,7 +130,7 @@ export function Toolbar() {
               }}
             />
             <Text size="xs" w={36} ta="right" c={maxMinutes ? 'blue' : 'dimmed'}>
-              {maxMinutes ? DURATION_LABELS[maxMinutes] : 'Any'}
+              {maxMinutes ? t(DURATION_KEYS[maxMinutes]) : t('duration.any')}
             </Text>
           </Group>
         </Stack>

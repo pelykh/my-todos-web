@@ -13,19 +13,21 @@ import {
   Paper,
 } from '@mantine/core'
 import { Trash2, Sun, Moon } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useTasks, useTaskActions, useFilters } from '@/store'
 import { Toolbar } from '@/components/Toolbar'
+import { LangSelect } from '@/components/LangSelect'
 import { useTheme } from '@/theme'
 import type { TaskStatus, Task } from '@/types'
 
 export const Route = createFileRoute('/')({ component: App })
 
-const STATUS_OPTIONS: { value: TaskStatus; label: string }[] = [
-  { value: 'inbox', label: 'Inbox' },
-  { value: 'next_action', label: 'Next Action' },
-  { value: 'waiting_for', label: 'Waiting For' },
-  { value: 'someday', label: 'Someday' },
-  { value: 'done', label: 'Done' },
+const STATUS_KEYS: { value: TaskStatus; key: string }[] = [
+  { value: 'inbox', key: 'status.inbox' },
+  { value: 'next_action', key: 'status.next_action' },
+  { value: 'waiting_for', key: 'status.waiting_for' },
+  { value: 'someday', key: 'status.someday' },
+  { value: 'done', key: 'status.done' },
 ]
 
 const STATUS_COLORS: Record<TaskStatus, string> = {
@@ -51,6 +53,7 @@ function applyToolbarFilters(tasks: Task[], context: string | null, todayOnly: b
 function App() {
   const [title, setTitle] = useState('')
   const { colorScheme, toggleColorScheme } = useTheme()
+  const { t } = useTranslation()
 
   const { context, todayOnly, maxMinutes } = useFilters()
   const allTasks = useTasks()
@@ -66,37 +69,42 @@ function App() {
 
   return (
     <>
-      <ActionIcon
-        onClick={toggleColorScheme}
-        variant="default"
-        size="lg"
-        radius="md"
-        aria-label={colorScheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+      <Group
+        gap="xs"
         style={{ position: 'fixed', top: 16, right: 16, zIndex: 200 }}
       >
-        {colorScheme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
-      </ActionIcon>
+        <LangSelect />
+        <ActionIcon
+          onClick={toggleColorScheme}
+          variant="default"
+          size="lg"
+          radius="md"
+          aria-label={colorScheme === 'dark' ? t('ariaThemeLight') : t('ariaThemeDark')}
+        >
+          {colorScheme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+        </ActionIcon>
+      </Group>
 
       <Container size="sm" py="xl" pb={120}>
         <Stack gap="lg">
-          <Title order={2}>My Todos</Title>
+          <Title order={2}>{t('pageTitle')}</Title>
 
           {/* Quick-add form */}
           <Group gap="sm" align="flex-end">
             <TextInput
               style={{ flex: 1 }}
-              placeholder="Add a new task..."
+              placeholder={t('addPlaceholder')}
               value={title}
               onChange={(e) => setTitle(e.currentTarget.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
             />
-            <Button onClick={handleAdd}>Add</Button>
+            <Button onClick={handleAdd}>{t('addButton')}</Button>
           </Group>
 
           {/* Task list */}
           <Stack gap="xs">
             {tasks.length === 0 && (
-              <Text c="dimmed" size="sm">No tasks found.</Text>
+              <Text c="dimmed" size="sm">{t('noTasks')}</Text>
             )}
             {tasks.map((task) => (
               <Paper key={task.id} withBorder p="sm" radius="md">
@@ -105,16 +113,16 @@ function App() {
                     <Text size="sm" fw={500}>{task.title}</Text>
                     <Group gap="xs">
                       <Badge size="xs" color={STATUS_COLORS[task.status]}>
-                        {STATUS_OPTIONS.find((s) => s.value === task.status)?.label ?? task.status}
+                        {t(STATUS_KEYS.find((s) => s.value === task.status)?.key ?? task.status)}
                       </Badge>
                       {task.area && (
                         <Badge size="xs" variant="outline">{task.area}</Badge>
                       )}
                       {task.isProject && (
-                        <Badge size="xs" color="yellow">Project</Badge>
+                        <Badge size="xs" color="yellow">{t('project')}</Badge>
                       )}
                       {task.estimatedMinutes && (
-                        <Badge size="xs" variant="dot" color="gray">{task.estimatedMinutes}m</Badge>
+                        <Badge size="xs" variant="dot" color="gray">{task.estimatedMinutes}{t('minutesSuffix')}</Badge>
                       )}
                     </Group>
                   </Stack>
@@ -122,7 +130,7 @@ function App() {
                     color="red"
                     variant="subtle"
                     onClick={() => removeTask(task.id)}
-                    aria-label="Delete task"
+                    aria-label={t('ariaDeleteTask')}
                   >
                     <Trash2 size={16} />
                   </ActionIcon>
