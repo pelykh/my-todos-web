@@ -1,7 +1,6 @@
-import { ActionIcon, Badge, Button, Textarea } from "@mantine/core";
-import { CheckCircle2, X } from "lucide-react";
+import { ActionIcon, Badge, Button, Menu, Popover, Select, Textarea } from "@mantine/core";
+import { CheckCircle2, Ellipsis, FolderKanban, Trash2, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -12,6 +11,18 @@ import {
   useTaskActions,
 } from "@/store";
 import { useTheme } from "@/theme";
+import type { Context, Area } from "@/types";
+
+const CONTEXTS: Context[] = ["deep_work", "admin", "home", "agenda"];
+const AREAS: Area[] = ["work", "personal", "health", "learning"];
+const DURATION_OPTIONS = [
+  { value: "5", label: "5'" },
+  { value: "15", label: "15'" },
+  { value: "30", label: "30'" },
+  { value: "45", label: "45'" },
+  { value: "60", label: "1h" },
+  { value: "120", label: "2h" },
+];
 
 export function TaskFocusModal() {
   const { t } = useTranslation();
@@ -22,12 +33,15 @@ export function TaskFocusModal() {
   const setFocusedTaskId = useFocusedTaskActions();
   const task = useTask(focusedTaskId ?? "");
   const project = useTask(task?.projectId ?? "");
-  const { editTask } = useTaskActions();
+  const { editTask, removeTask, addTask } = useTaskActions();
 
   const [visible, setVisible] = useState(false);
   const [titleValue, setTitleValue] = useState("");
   const [notesValue, setNotesValue] = useState("");
   const [notesEditMode, setNotesEditMode] = useState(false);
+  const [contextOpen, setContextOpen] = useState(false);
+  const [areaOpen, setAreaOpen] = useState(false);
+  const [timeOpen, setTimeOpen] = useState(false);
   const titleRef = useRef<HTMLInputElement>(null);
   const checkboxIndexRef = useRef(0);
 
@@ -93,6 +107,37 @@ export function TaskFocusModal() {
     handleClose();
   }
 
+  function handleDelete() {
+    if (!task) return;
+    removeTask(task.id);
+    handleClose();
+  }
+
+  function handlePromoteToProject() {
+    if (!task) return;
+    editTask(task.id, { isProject: true, status: "next_action" });
+    handleClose();
+  }
+
+  function handleContextChange(value: string | null) {
+    if (!task) return;
+    editTask(task.id, { context: (value as Context) ?? undefined });
+    setContextOpen(false);
+  }
+
+  function handleAreaChange(value: string | null) {
+    if (!task) return;
+    editTask(task.id, { area: (value as Area) ?? undefined });
+    setAreaOpen(false);
+  }
+
+  function handleTimeChange(value: string | null) {
+    if (!task) return;
+    const mins = value ? parseInt(value, 10) : undefined;
+    editTask(task.id, { estimatedMinutes: mins });
+    setTimeOpen(false);
+  }
+
   function toggleCheckbox(index: number) {
     if (!task) return;
     let count = 0;
@@ -155,6 +200,9 @@ export function TaskFocusModal() {
       : `${task.estimatedMinutes}${t("minutesSuffix")}`
     : null;
 
+  const contextOptions = CONTEXTS.map((c) => ({ value: c, label: t(`context.${c}`) }));
+  const areaOptions = AREAS.map((a) => ({ value: a, label: t(`area.${a}`) }));
+
   return (
     <div style={overlay}>
       <div style={modal} onClick={(e) => e.stopPropagation()}>
@@ -198,6 +246,31 @@ export function TaskFocusModal() {
             >
               {t("focusModalComplete")}
             </Button>
+            <Menu withinPortal zIndex={600} position="bottom-end">
+              <Menu.Target>
+                <ActionIcon variant="subtle" color="gray" size="lg" radius="md">
+                  <Ellipsis size={18} />
+                </ActionIcon>
+              </Menu.Target>
+              <Menu.Dropdown>
+                {!task.isProject && (
+                  <Menu.Item
+                    leftSection={<FolderKanban size={14} />}
+                    onClick={handlePromoteToProject}
+                  >
+                    {t("focusModalPromoteToProject")}
+                  </Menu.Item>
+                )}
+                <Menu.Divider />
+                <Menu.Item
+                  leftSection={<Trash2 size={14} />}
+                  color="red"
+                  onClick={handleDelete}
+                >
+                  {t("focusModalDelete")}
+                </Menu.Item>
+              </Menu.Dropdown>
+            </Menu>
             <ActionIcon
               onClick={handleClose}
               variant="subtle"
@@ -211,25 +284,89 @@ export function TaskFocusModal() {
           </div>
 
           {/* Tags row */}
-          {(task.context || task.area || timeLabel) && (
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-              {task.context && (
-                <Badge variant="light" color="blue" size="sm" radius="sm">
-                  {t(`context.${task.context}`, { defaultValue: task.context })}
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+            {/* Context badge */}
+            <Popover opened={contextOpen} onChange={setContextOpen} width={160} position="bottom-start" withinPortal zIndex={600}>
+              <Popover.Target>
+                <Badge
+                  variant={task.context ? "light" : "outline"}
+                  color="blue"
+                  size="sm"
+                  radius="sm"
+                  style={{ cursor: "pointer" }}
+                  onClick={() => setContextOpen((o) => !o)}
+                >
+                  {task.context
+                    ? t(`context.${task.context}`, { defaultValue: task.context })
+                    : t("focusModalContext")}
                 </Badge>
-              )}
-              {task.area && (
-                <Badge variant="light" color="violet" size="sm" radius="sm">
-                  {t(`area.${task.area}`, { defaultValue: task.area })}
+              </Popover.Target>
+              <Popover.Dropdown p="xs">
+                <Select
+                  data={contextOptions}
+                  value={task.context ?? ""}
+                  onChange={handleContextChange}
+                  size="xs"
+                  comboboxProps={{ withinPortal: false }}
+                  allowDeselect={false}
+                />
+              </Popover.Dropdown>
+            </Popover>
+
+            {/* Area badge */}
+            <Popover opened={areaOpen} onChange={setAreaOpen} width={160} position="bottom-start" withinPortal zIndex={600}>
+              <Popover.Target>
+                <Badge
+                  variant={task.area ? "light" : "outline"}
+                  color="violet"
+                  size="sm"
+                  radius="sm"
+                  style={{ cursor: "pointer" }}
+                  onClick={() => setAreaOpen((o) => !o)}
+                >
+                  {task.area
+                    ? t(`area.${task.area}`, { defaultValue: task.area })
+                    : t("focusModalArea")}
                 </Badge>
-              )}
-              {timeLabel && (
-                <Badge variant="light" color="gray" size="sm" radius="sm">
-                  {timeLabel}
+              </Popover.Target>
+              <Popover.Dropdown p="xs">
+                <Select
+                  data={areaOptions}
+                  value={task.area ?? ""}
+                  onChange={handleAreaChange}
+                  size="xs"
+                  comboboxProps={{ withinPortal: false }}
+                  allowDeselect={false}
+                />
+              </Popover.Dropdown>
+            </Popover>
+
+            {/* Time badge */}
+            <Popover opened={timeOpen} onChange={setTimeOpen} width={140} position="bottom-start" withinPortal zIndex={600}>
+              <Popover.Target>
+                <Badge
+                  variant={timeLabel ? "light" : "outline"}
+                  color="gray"
+                  size="sm"
+                  radius="sm"
+                  style={{ cursor: "pointer" }}
+                  onClick={() => setTimeOpen((o) => !o)}
+                >
+                  {timeLabel ?? t("focusModalTime")}
                 </Badge>
-              )}
-            </div>
-          )}
+              </Popover.Target>
+              <Popover.Dropdown p="xs">
+                <Select
+                  data={DURATION_OPTIONS}
+                  value={task.estimatedMinutes ? String(task.estimatedMinutes) : ""}
+                  onChange={handleTimeChange}
+                  size="xs"
+                  comboboxProps={{ withinPortal: false }}
+                  allowDeselect={false}
+                />
+              </Popover.Dropdown>
+            </Popover>
+          </div>
         </div>
 
         {/* Notes */}

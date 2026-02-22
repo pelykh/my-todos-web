@@ -19,6 +19,7 @@ const CONTEXT_KEYS: { value: Context; key: string }[] = [
 const DURATION_KEYS: Record<number, string> = {
   5: 'duration.lt5',
   15: 'duration.lt15',
+  30: 'duration.lt30',
   45: 'duration.lt45',
   60: 'duration.lt1h',
   120: 'duration.lt2h',

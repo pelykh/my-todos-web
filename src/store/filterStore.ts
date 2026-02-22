@@ -4,7 +4,7 @@ import type { Context } from '@/types'
 
 // Duration steps: null means "no filter"
 // Values represent upper-bound minutes
-export const DURATION_STEPS = [null, 5, 15, 45, 60, 120] as const
+export const DURATION_STEPS = [null, 5, 15, 30, 45, 60, 120] as const
 export type DurationStep = (typeof DURATION_STEPS)[number]
 
 export type FilterState = {

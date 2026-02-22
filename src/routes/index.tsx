@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import {
   Stack,
   Title,
@@ -7,6 +7,7 @@ import {
   Group,
   Text,
   ActionIcon,
+  Button,
 } from '@mantine/core'
 import { Sun, Moon, Search } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
@@ -30,6 +31,7 @@ function isToday(task: Task) {
 function applyToolbarFilters(tasks: Task[], context: string | null, todayOnly: boolean, maxMinutes: number | null) {
   return tasks.filter((t) => {
     if (t.isProject) return false
+    if (t.status === 'done') return false
     const isNextAction = t.status === 'next_action'
     if (!isNextAction && !isToday(t)) return false
     if (context && t.context !== context) return false
@@ -69,6 +71,7 @@ function App() {
 
   const { context, todayOnly, maxMinutes } = useFilters()
   const allTasks = useTasks()
+  const inboxTasks = useTasks({ status: 'inbox' })
   const tasks = applyToolbarFilters(allTasks, context, todayOnly, maxMinutes)
   const groups = buildGroups(tasks)
 
@@ -90,6 +93,18 @@ function App() {
         gap="xs"
         style={{ position: 'fixed', top: 16, right: 16, zIndex: 200 }}
       >
+        {inboxTasks.length > 1 && (
+          <Button
+            component={Link}
+            to="/process-inbox"
+            variant="light"
+            color="orange"
+            size="sm"
+            radius="md"
+          >
+            {t('processInbox')} ({inboxTasks.length})
+          </Button>
+        )}
         <ActionIcon
           onClick={() => setCmdOpen(true)}
           variant="default"
