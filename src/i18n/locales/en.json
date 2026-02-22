@@ -5,6 +5,7 @@
   "noTasks": "No tasks found.",
   "project": "Project",
   "minutesSuffix": "m",
+  "hourSuffix": "h",
   "ariaDeleteTask": "Delete task",
   "ariaThemeLight": "Switch to light mode",
   "ariaThemeDark": "Switch to dark mode",
@@ -25,5 +26,11 @@
   "duration.lt1h": "<1h",
   "duration.lt2h": "<2h",
   "ariaToday": "Today only",
-  "ariaDurationFilter": "Duration filter"
+  "ariaDurationFilter": "Duration filter",
+  "groupImportant": "Important",
+  "projectNamePlaceholder": "Project name",
+  "area.work": "Work",
+  "area.personal": "Personal",
+  "area.health": "Health",
+  "area.learning": "Learning"
 }

@@ -1,71 +1,72 @@
-import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import {
-  Button,
-  TextInput,
   Stack,
   Title,
   Container,
   Group,
   Text,
-  Badge,
   ActionIcon,
-  Paper,
 } from '@mantine/core'
-import { Trash2, Sun, Moon } from 'lucide-react'
+import { Sun, Moon } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { useTasks, useTaskActions, useFilters } from '@/store'
+import { useTasks, useFilters } from '@/store'
 import { Toolbar } from '@/components/Toolbar'
 import { LangSelect } from '@/components/LangSelect'
+import { TaskListItem } from '@/components/TaskListItem'
 import { useTheme } from '@/theme'
-import type { TaskStatus, Task } from '@/types'
+import type { Task } from '@/types'
 
 export const Route = createFileRoute('/')({ component: App })
 
-const STATUS_KEYS: { value: TaskStatus; key: string }[] = [
-  { value: 'inbox', key: 'status.inbox' },
-  { value: 'next_action', key: 'status.next_action' },
-  { value: 'waiting_for', key: 'status.waiting_for' },
-  { value: 'someday', key: 'status.someday' },
-  { value: 'done', key: 'status.done' },
-]
-
-const STATUS_COLORS: Record<TaskStatus, string> = {
-  inbox: 'gray',
-  next_action: 'blue',
-  waiting_for: 'orange',
-  someday: 'violet',
-  reference: 'teal',
-  done: 'green',
-}
-
 const today = new Date().toISOString().slice(0, 10)
+
+function isToday(task: Task) {
+  return task.scheduledDate?.slice(0, 10) === today || task.dueDate?.slice(0, 10) === today
+}
 
 function applyToolbarFilters(tasks: Task[], context: string | null, todayOnly: boolean, maxMinutes: number | null) {
   return tasks.filter((t) => {
+    if (t.isProject) return false
+    const isNextAction = t.status === 'next_action'
+    if (!isNextAction && !isToday(t)) return false
     if (context && t.context !== context) return false
-    if (todayOnly && t.scheduledDate?.slice(0, 10) !== today && t.dueDate?.slice(0, 10) !== today) return false
+    if (todayOnly && !isToday(t)) return false
     if (maxMinutes !== null && t.estimatedMinutes !== undefined && t.estimatedMinutes > maxMinutes) return false
     return true
   })
 }
 
+function groupByArea(tasks: Task[]): { area: string; tasks: Task[] }[] {
+  const map = new Map<string, Task[]>()
+  for (const task of tasks) {
+    const key = task.area ?? ''
+    if (!map.has(key)) map.set(key, [])
+    map.get(key)!.push(task)
+  }
+  return Array.from(map.entries()).map(([area, tasks]) => ({ area, tasks }))
+}
+
+type DisplayGroup = { area: string; tasks: Task[]; important?: boolean }
+
+function buildGroups(tasks: Task[]): DisplayGroup[] {
+  const todayTasks = tasks.filter(isToday)
+  const todayIds = new Set(todayTasks.map((t) => t.id))
+  const rest = tasks.filter((t) => !todayIds.has(t.id))
+
+  const areaGroups: DisplayGroup[] = groupByArea(rest).map((g) => ({ ...g, important: false }))
+
+  if (todayTasks.length === 0) return areaGroups
+  return [{ area: 'important', tasks: todayTasks, important: true }, ...areaGroups]
+}
+
 function App() {
-  const [title, setTitle] = useState('')
   const { colorScheme, toggleColorScheme } = useTheme()
   const { t } = useTranslation()
 
   const { context, todayOnly, maxMinutes } = useFilters()
   const allTasks = useTasks()
   const tasks = applyToolbarFilters(allTasks, context, todayOnly, maxMinutes)
-  const { addTask, removeTask } = useTaskActions()
-
-  function handleAdd() {
-    const trimmed = title.trim()
-    if (!trimmed) return
-    addTask({ title: trimmed, status: 'inbox' })
-    setTitle('')
-  }
+  const groups = buildGroups(tasks)
 
   return (
     <>
@@ -87,57 +88,32 @@ function App() {
 
       <Container size="sm" py="xl" pb={120}>
         <Stack gap="lg">
-          <Title order={2}>{t('pageTitle')}</Title>
+          <Title order={2} ta="center">{t('pageTitle')}</Title>
 
-          {/* Quick-add form */}
-          <Group gap="sm" align="flex-end">
-            <TextInput
-              style={{ flex: 1 }}
-              placeholder={t('addPlaceholder')}
-              value={title}
-              onChange={(e) => setTitle(e.currentTarget.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
-            />
-            <Button onClick={handleAdd}>{t('addButton')}</Button>
-          </Group>
+          {tasks.length === 0 && (
+            <Text c="dimmed" size="sm">{t('noTasks')}</Text>
+          )}
 
-          {/* Task list */}
-          <Stack gap="xs">
-            {tasks.length === 0 && (
-              <Text c="dimmed" size="sm">{t('noTasks')}</Text>
-            )}
-            {tasks.map((task) => (
-              <Paper key={task.id} withBorder p="sm" radius="md">
-                <Group justify="space-between" wrap="nowrap">
-                  <Stack gap={2}>
-                    <Text size="sm" fw={500}>{task.title}</Text>
-                    <Group gap="xs">
-                      <Badge size="xs" color={STATUS_COLORS[task.status]}>
-                        {t(STATUS_KEYS.find((s) => s.value === task.status)?.key ?? task.status)}
-                      </Badge>
-                      {task.area && (
-                        <Badge size="xs" variant="outline">{task.area}</Badge>
-                      )}
-                      {task.isProject && (
-                        <Badge size="xs" color="yellow">{t('project')}</Badge>
-                      )}
-                      {task.estimatedMinutes && (
-                        <Badge size="xs" variant="dot" color="gray">{task.estimatedMinutes}{t('minutesSuffix')}</Badge>
-                      )}
-                    </Group>
-                  </Stack>
-                  <ActionIcon
-                    color="red"
-                    variant="subtle"
-                    onClick={() => removeTask(task.id)}
-                    aria-label={t('ariaDeleteTask')}
-                  >
-                    <Trash2 size={16} />
-                  </ActionIcon>
-                </Group>
-              </Paper>
-            ))}
-          </Stack>
+          {groups.map(({ area, tasks: groupTasks, important }) => (
+            <Stack key={area} gap={0}>
+              <Text
+                size="xs"
+                fw={600}
+                tt="uppercase"
+                style={{
+                  letterSpacing: '0.05em',
+                  padding: '0 8px',
+                  marginBottom: 2,
+                  color: important ? 'var(--mantine-color-orange-6)' : 'var(--mantine-color-dimmed)',
+                }}
+              >
+                {important ? t('groupImportant') : t(`area.${area}`, { defaultValue: area })}
+              </Text>
+              {groupTasks.map((task) => (
+                <TaskListItem key={task.id} task={task} isToday={important} />
+              ))}
+            </Stack>
+          ))}
         </Stack>
       </Container>
 

@@ -1,10 +1,11 @@
 {
-  "pageTitle": "Мої завдання",
+  "pageTitle": "Наступні дії",
   "addPlaceholder": "Додати нове завдання...",
   "addButton": "Додати",
   "noTasks": "Завдань не знайдено.",
   "project": "Проєкт",
   "minutesSuffix": "хв",
+  "hourSuffix": "год",
   "ariaDeleteTask": "Видалити завдання",
   "ariaThemeLight": "Перейти до світлої теми",
   "ariaThemeDark": "Перейти до темної теми",
@@ -25,5 +26,11 @@
   "duration.lt1h": "<1год",
   "duration.lt2h": "<2год",
   "ariaToday": "Тільки сьогодні",
-  "ariaDurationFilter": "Фільтр тривалості"
+  "ariaDurationFilter": "Фільтр тривалості",
+  "groupImportant": "Обовʼязково",
+  "projectNamePlaceholder": "Назва проєкту",
+  "area.work": "Робота",
+  "area.personal": "Особисте",
+  "area.health": "Здоров'я",
+  "area.learning": "Навчання"
 }

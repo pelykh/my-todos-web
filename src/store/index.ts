@@ -8,15 +8,7 @@ import { filterStore } from './filterStore'
 import type { FilterActions, FilterState, DurationStep } from './filterStore'
 import { MOCK_TASKS } from '@/mockData'
 
-const SEEDED_KEY = 'tasks_seeded'
-
-function seedIfEmpty() {
-  if (localStorage.getItem(SEEDED_KEY)) return
-  localStorage.setItem('tasks', JSON.stringify(MOCK_TASKS))
-  localStorage.setItem(SEEDED_KEY, '1')
-}
-
-seedIfEmpty()
+localStorage.setItem('tasks', JSON.stringify(MOCK_TASKS))
 const taskStore = createTaskStore(new LocalStorageTaskService())
 
 function applyFilters(
