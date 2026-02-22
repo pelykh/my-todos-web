@@ -1,124 +1,86 @@
 import { useTranslation } from "react-i18next";
-import { useTask, useFocusedTaskActions } from "@/store";
 import type { Task } from "@/types";
+import { cn } from "@/utils/cn";
+import { formatDuration } from "@/utils/duration";
 
-interface TaskListItemProps {
+type DisplayMeta = "area" | "duration" | "project" | "context";
+
+type TaskListItemProps = {
   task: Task;
-  isToday?: boolean;
-}
+  status?: "important";
+  displayMeta?: DisplayMeta[];
+  onClick?: () => void;
+};
 
-export function TaskListItem({ task, isToday }: TaskListItemProps) {
+export function TaskListItem({
+  task,
+  status,
+  displayMeta = ["project", "duration"],
+  onClick,
+}: TaskListItemProps) {
   const { t } = useTranslation();
-  const project = useTask(task.projectId ?? "");
-  const setFocusedTaskId = useFocusedTaskActions();
+  const isImportant = status === "important";
+
+  const getMetaLabel = (metaKey: DisplayMeta) => {
+    if (metaKey === "area") {
+      return task[metaKey];
+    }
+
+    if (metaKey === "duration") {
+      return task.estimatedMinutes
+        ? formatDuration(
+            task.estimatedMinutes,
+            t("hourSuffix"),
+            t("minutesSuffix"),
+          )
+        : null;
+    }
+  };
 
   return (
+    // biome-ignore lint/a11y/useSemanticElements: TODO
     <div
       role="button"
       tabIndex={0}
-      onClick={() => setFocusedTaskId(task.id)}
-      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setFocusedTaskId(task.id) }}
-      style={{
-        padding: "6px 8px",
-        cursor: "pointer",
-        display: "flex",
-        alignItems: "center",
-        gap: 10,
-        background: "transparent",
-        borderRadius: 6,
-        transition: "background 0.1s",
-        margin: "1px 0",
-        userSelect: "none",
+      onClick={onClick}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") onClick?.();
       }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.background = "var(--mantine-color-default-hover)";
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.background = "transparent";
-      }}
+      className="flex items-center gap-2.5 px-2 py-1.5 rounded-md cursor-pointer select-none transition-[background] duration-100 my-px hover:bg-(--mantine-color-default-hover)"
     >
-      {/* Square icon container */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          width: 20,
-          flexShrink: 0,
-        }}
-      >
+      {/* Status dot */}
+      <div className="flex items-center justify-center w-5 shrink-0">
         <div
-          style={{
-            width: 6,
-            height: 6,
-            borderRadius: 1.5,
-            flexShrink: 0,
-            background: isToday
-              ? "var(--mantine-color-orange-6)"
-              : "rgb(216, 216, 212)",
-          }}
+          className={cn(
+            "w-1.5 h-1.5 rounded-[1.5px] shrink-0",
+            isImportant
+              ? "bg-(--mantine-color-orange-6)"
+              : "bg-[rgb(216,216,212)]",
+          )}
         />
       </div>
 
       {/* Content */}
-      <div
-        style={{
-          flex: "1 1 0%",
-          minWidth: 0,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          gap: 12,
-        }}
-      >
-        <span
-          style={{
-            fontSize: 13.5,
-            fontWeight: 400,
-            color: "var(--mantine-color-text)",
-            textDecoration: "none",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            whiteSpace: "nowrap",
-          }}
-        >
+      <div className="flex-1 min-w-0 flex items-center justify-between gap-3">
+        <span className="text-[13.5px] font-normal truncate text-(--mantine-color-text)">
           {task.title}
         </span>
 
-        {(task.projectId || task.estimatedMinutes) && (
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 6,
-              flexShrink: 0,
-            }}
-          >
-            {task.projectId && (
+        <div className="flex items-center gap-1.5 shrink-0">
+          {displayMeta?.map((metaKey) => {
+            const label = getMetaLabel(metaKey);
+            if (!label) return null;
+
+            return (
               <span
-                style={{
-                  fontSize: 11,
-                  color: "rgb(200, 200, 196)",
-                  fontStyle: "italic",
-                }}
+                key={metaKey}
+                className="text-[11px] text-(rgb(200, 200, 196))"
               >
-                {project?.title ?? t("projectNamePlaceholder")}
+                {label}
               </span>
-            )}
-            {task.projectId && task.estimatedMinutes && (
-              <span style={{ fontSize: 9, color: "rgb(221, 221, 221)" }}>
-                ·
-              </span>
-            )}
-            {task.estimatedMinutes && (
-              <span style={{ fontSize: 11, color: "rgb(208, 208, 204)" }}>
-                {task.estimatedMinutes >= 60
-                  ? `${(task.estimatedMinutes / 60).toFixed(task.estimatedMinutes % 60 === 0 ? 0 : 1)}${t("hourSuffix")}`
-                  : `${task.estimatedMinutes}${t("minutesSuffix")}`}
-              </span>
-            )}
-          </div>
-        )}
+            );
+          })}
+        </div>
       </div>
     </div>
   );

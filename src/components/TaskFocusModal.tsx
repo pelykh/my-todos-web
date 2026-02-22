@@ -1,6 +1,7 @@
 import { ActionIcon, Badge, Button, Menu, Popover, Select, Textarea } from "@mantine/core";
 import { CheckCircle2, Ellipsis, FolderKanban, Trash2, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -29,6 +30,7 @@ export function TaskFocusModal() {
   const { colorScheme } = useTheme();
   const isDark = colorScheme === "dark";
 
+  const navigate = useNavigate();
   const focusedTaskId = useFocusedTaskId();
   const setFocusedTaskId = useFocusedTaskActions();
   const task = useTask(focusedTaskId ?? "");
@@ -454,7 +456,10 @@ export function TaskFocusModal() {
                   {t("project")}
                 </span>
                 <Button
-                  onClick={() => console.log(project)}
+                  onClick={() => {
+                    handleClose();
+                    navigate({ to: "/project/$projectId", params: { projectId: project.id } });
+                  }}
                   variant="subtle"
                   color="gray"
                   size="xs"

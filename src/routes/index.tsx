@@ -11,7 +11,7 @@ import {
 } from '@mantine/core'
 import { Sun, Moon, Search } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { useTasks, useFilters } from '@/store'
+import { useTasks, useFilters, useFocusedTaskActions } from '@/store'
 import { Toolbar } from '@/components/Toolbar'
 import { LangSelect } from '@/components/LangSelect'
 import { TaskListItem } from '@/components/TaskListItem'
@@ -70,6 +70,7 @@ function App() {
   const [cmdOpen, setCmdOpen] = useState(false)
 
   const { context, todayOnly, maxMinutes } = useFilters()
+  const setFocusedTaskId = useFocusedTaskActions()
   const allTasks = useTasks()
   const inboxTasks = useTasks({ status: 'inbox' })
   const tasks = applyToolbarFilters(allTasks, context, todayOnly, maxMinutes)
@@ -150,7 +151,13 @@ function App() {
                 {important ? t('groupImportant') : t(`area.${area}`, { defaultValue: area })}
               </Text>
               {groupTasks.map((task) => (
-                <TaskListItem key={task.id} task={task} isToday={important} />
+                <TaskListItem
+                  key={task.id}
+                  task={task}
+                  status={important ? "important" : undefined}
+                  displayMeta={["project", "duration"]}
+                  onClick={() => setFocusedTaskId(task.id)}
+                />
               ))}
             </Stack>
           ))}
