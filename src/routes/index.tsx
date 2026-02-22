@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import {
   Stack,
@@ -7,12 +8,13 @@ import {
   Text,
   ActionIcon,
 } from '@mantine/core'
-import { Sun, Moon } from 'lucide-react'
+import { Sun, Moon, Search } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useTasks, useFilters } from '@/store'
 import { Toolbar } from '@/components/Toolbar'
 import { LangSelect } from '@/components/LangSelect'
 import { TaskListItem } from '@/components/TaskListItem'
+import { CommandPalette } from '@/components/CommandPalette'
 import { useTheme } from '@/theme'
 import type { Task } from '@/types'
 
@@ -62,11 +64,24 @@ function buildGroups(tasks: Task[]): DisplayGroup[] {
 function App() {
   const { colorScheme, toggleColorScheme } = useTheme()
   const { t } = useTranslation()
+  const [cmdOpen, setCmdOpen] = useState(false)
 
   const { context, todayOnly, maxMinutes } = useFilters()
   const allTasks = useTasks()
   const tasks = applyToolbarFilters(allTasks, context, todayOnly, maxMinutes)
   const groups = buildGroups(tasks)
+
+  useEffect(() => {
+    function handleKey(e: KeyboardEvent) {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault()
+        setCmdOpen((o) => !o)
+      }
+      if (e.key === 'Escape') setCmdOpen(false)
+    }
+    window.addEventListener('keydown', handleKey)
+    return () => window.removeEventListener('keydown', handleKey)
+  }, [])
 
   return (
     <>
@@ -74,6 +89,15 @@ function App() {
         gap="xs"
         style={{ position: 'fixed', top: 16, right: 16, zIndex: 200 }}
       >
+        <ActionIcon
+          onClick={() => setCmdOpen(true)}
+          variant="default"
+          size="lg"
+          radius="md"
+          aria-label={t('cmdPlaceholder')}
+        >
+          <Search size={18} />
+        </ActionIcon>
         <LangSelect />
         <ActionIcon
           onClick={toggleColorScheme}
@@ -118,6 +142,8 @@ function App() {
       </Container>
 
       <Toolbar />
+
+      <CommandPalette open={cmdOpen} onClose={() => setCmdOpen(false)} />
     </>
   )
 }

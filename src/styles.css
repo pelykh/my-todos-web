@@ -33,3 +33,8 @@ code {
 .today-pulse {
   animation: today-pulse 3s ease-in-out infinite;
 }
+
+/* cmdk item highlight */
+[cmdk-item][data-selected='true'] {
+  background: var(--mantine-color-default-hover);
+}

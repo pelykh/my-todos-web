@@ -27,10 +27,12 @@
   "duration.lt2h": "<2h",
   "ariaToday": "Today only",
   "ariaDurationFilter": "Duration filter",
+  "cmdPlaceholder": "Search tasks...",
   "groupImportant": "Important",
   "projectNamePlaceholder": "Project name",
   "area.work": "Work",
   "area.personal": "Personal",
   "area.health": "Health",
-  "area.learning": "Learning"
+  "area.learning": "Learning",
+  "cmdAddToInbox": "Add to inbox"
 }
