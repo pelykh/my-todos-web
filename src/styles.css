@@ -8,6 +8,16 @@ body {
     "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: var(--mantine-color-body);
+  color: var(--mantine-color-text);
+}
+
+:root[data-mantine-color-scheme='dark'] {
+  color-scheme: dark;
+}
+
+:root[data-mantine-color-scheme='light'] {
+  color-scheme: light;
 }
 
 code {

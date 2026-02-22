@@ -12,9 +12,10 @@ import {
   ActionIcon,
   Paper,
 } from '@mantine/core'
-import { Trash2 } from 'lucide-react'
+import { Trash2, Sun, Moon } from 'lucide-react'
 import { useTasks, useTaskActions, useFilters } from '@/store'
 import { Toolbar } from '@/components/Toolbar'
+import { useTheme } from '@/theme'
 import type { TaskStatus, Task } from '@/types'
 
 export const Route = createFileRoute('/')({ component: App })
@@ -49,6 +50,7 @@ function applyToolbarFilters(tasks: Task[], context: string | null, todayOnly: b
 
 function App() {
   const [title, setTitle] = useState('')
+  const { colorScheme, toggleColorScheme } = useTheme()
 
   const { context, todayOnly, maxMinutes } = useFilters()
   const allTasks = useTasks()
@@ -64,6 +66,17 @@ function App() {
 
   return (
     <>
+      <ActionIcon
+        onClick={toggleColorScheme}
+        variant="default"
+        size="lg"
+        radius="md"
+        aria-label={colorScheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+        style={{ position: 'fixed', top: 16, right: 16, zIndex: 200 }}
+      >
+        {colorScheme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+      </ActionIcon>
+
       <Container size="sm" py="xl" pb={120}>
         <Stack gap="lg">
           <Title order={2}>My Todos</Title>

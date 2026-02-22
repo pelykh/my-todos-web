@@ -4,6 +4,7 @@ import { Star } from 'lucide-react'
 import { useFilters, useFilterActions, useTasks, DURATION_STEPS } from '@/store'
 import type { DurationStep } from '@/store'
 import type { Context } from '@/types'
+import { useTheme } from '@/theme'
 
 const today = new Date().toISOString().slice(0, 10)
 
@@ -36,6 +37,7 @@ function stepToSliderIndex(step: DurationStep): number {
 }
 
 export function Toolbar() {
+  const { colorScheme } = useTheme()
   const { context, todayOnly, maxMinutes } = useFilters()
   const { setContext, setMaxMinutes, activateToday, clearAll } = useFilterActions()
 
@@ -74,8 +76,8 @@ export function Toolbar() {
       <Box
         p="md"
         style={(theme) => ({
-          background: theme.white,
-          border: `1px solid ${theme.colors.gray[2]}`,
+          background: 'var(--mantine-color-body)',
+          border: `1px solid ${theme.colors.gray[colorScheme === 'dark' ? 7 : 2]}`,
           borderRadius: theme.radius.lg,
           boxShadow: theme.shadows.lg,
         })}
@@ -122,7 +124,7 @@ export function Toolbar() {
               thumbChildren={<IconGripHorizontal size={16} stroke={1.5} />}
               marks={[...SLIDER_STEPS.map((_, i) => ({ value: i })), { value: SLIDER_STEPS.length }]}
               classNames={{
-                thumb: '!w-7 !h-[22px] !rounded-sm !border !border-[var(--mantine-color-dark-2)] !bg-white !text-[var(--mantine-color-gray-5)]',
+                thumb: '!w-7 !h-[22px] !rounded-sm !border !border-[var(--mantine-color-dark-2)] !bg-[var(--mantine-color-body)] !text-[var(--mantine-color-gray-5)]',
               }}
             />
             <Text size="xs" w={36} ta="right" c={maxMinutes ? 'blue' : 'dimmed'}>

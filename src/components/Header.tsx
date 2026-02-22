@@ -1,14 +1,15 @@
 import { Link } from '@tanstack/react-router'
-
 import { useState } from 'react'
-import { Home, Menu, X } from 'lucide-react'
+import { Home, Menu, X, Sun, Moon } from 'lucide-react'
+import { useTheme } from '@/theme'
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false)
+  const { colorScheme, toggleColorScheme } = useTheme()
 
   return (
     <>
-      <header className="p-4 flex items-center bg-gray-800 text-white shadow-lg">
+      <header className="p-4 flex items-center bg-gray-800 text-white shadow-lg dark:bg-gray-950">
         <button
           onClick={() => setIsOpen(true)}
           className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
@@ -25,6 +26,13 @@ export default function Header() {
             />
           </Link>
         </h1>
+        <button
+          onClick={toggleColorScheme}
+          className="ml-auto p-2 hover:bg-gray-700 rounded-lg transition-colors"
+          aria-label={colorScheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+        >
+          {colorScheme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+        </button>
       </header>
 
       <aside
