@@ -1,23 +1,29 @@
 {
-  "project_name": "My Todos Web",
+  "lsp": {
+    "biome": {
+      "settings": {
+        "require_config_file": true,
+      },
+    },
+  },
   "languages": {
-    "TypeScript": {
+    "JavaScript": {
+      "formatter": { "language_server": { "name": "biome" } },
       "code_actions_on_format": {
-        "source.fixAll.eslint": false,
+        "source.fixAll.biome": true,
+        "source.organizeImports.biome": true,
+      },
+    },
+    "TypeScript": {
+      "formatter": { "language_server": { "name": "biome" } },
+      "code_actions_on_format": {
         "source.fixAll.biome": true,
         "source.organizeImports.biome": true,
       },
     },
     "TSX": {
+      "formatter": { "language_server": { "name": "biome" } },
       "code_actions_on_format": {
-        "source.fixAll.eslint": false,
-        "source.fixAll.biome": true,
-        "source.organizeImports.biome": true,
-      },
-    },
-    "JavaScript": {
-      "code_actions_on_format": {
-        "source.fixAll.eslint": false,
         "source.fixAll.biome": true,
         "source.organizeImports.biome": true,
       },

@@ -1,4 +1,5 @@
-@import '@mantine/core/styles.css';
+@import "@mantine/core/styles.css";
+@import "@mantine/dates/styles.css";
 @import "tailwindcss";
 
 body {
@@ -12,11 +13,11 @@ body {
   color: var(--mantine-color-text);
 }
 
-:root[data-mantine-color-scheme='dark'] {
+:root[data-mantine-color-scheme="dark"] {
   color-scheme: dark;
 }
 
-:root[data-mantine-color-scheme='light'] {
+:root[data-mantine-color-scheme="light"] {
   color-scheme: light;
 }
 
@@ -26,8 +27,13 @@ code {
 }
 
 @keyframes today-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(234, 179, 8, 0.5); }
-  50% { box-shadow: 0 0 0 6px rgba(234, 179, 8, 0); }
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(234, 179, 8, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(234, 179, 8, 0);
+  }
 }
 
 .today-pulse {
@@ -35,19 +41,61 @@ code {
 }
 
 /* cmdk item highlight */
-[cmdk-item][data-selected='true'] {
+[cmdk-item][data-selected="true"] {
   background: var(--mantine-color-default-hover);
 }
 
 /* Markdown preview */
-.markdown-preview p { margin: 0 0 0.6em; }
-.markdown-preview p:last-child { margin-bottom: 0; }
-.markdown-preview h1, .markdown-preview h2, .markdown-preview h3 { font-weight: 600; margin: 0.8em 0 0.3em; }
-.markdown-preview ul, .markdown-preview ol { padding-left: 1.4em; margin: 0 0 0.6em; }
-.markdown-preview li { margin-bottom: 0.2em; }
-.markdown-preview code { background: var(--mantine-color-default-hover); padding: 1px 4px; border-radius: 3px; font-size: 0.9em; font-family: monospace; }
-.markdown-preview pre { background: var(--mantine-color-default-hover); padding: 10px 12px; border-radius: 6px; overflow-x: auto; margin: 0.6em 0; }
-.markdown-preview pre code { background: none; padding: 0; }
-.markdown-preview blockquote { border-left: 3px solid var(--mantine-color-dimmed); margin: 0; padding-left: 12px; color: var(--mantine-color-dimmed); }
-.markdown-preview ul.contains-task-list { list-style: none; padding-left: 0.2em; }
-.markdown-preview li.task-list-item { display: flex; align-items: baseline; gap: 6px; }
+.markdown-preview p {
+  margin: 0 0 0.6em;
+}
+.markdown-preview p:last-child {
+  margin-bottom: 0;
+}
+.markdown-preview h1,
+.markdown-preview h2,
+.markdown-preview h3 {
+  font-weight: 600;
+  margin: 0.8em 0 0.3em;
+}
+.markdown-preview ul,
+.markdown-preview ol {
+  padding-left: 1.4em;
+  margin: 0 0 0.6em;
+}
+.markdown-preview li {
+  margin-bottom: 0.2em;
+}
+.markdown-preview code {
+  background: var(--mantine-color-default-hover);
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-size: 0.9em;
+  font-family: monospace;
+}
+.markdown-preview pre {
+  background: var(--mantine-color-default-hover);
+  padding: 10px 12px;
+  border-radius: 6px;
+  overflow-x: auto;
+  margin: 0.6em 0;
+}
+.markdown-preview pre code {
+  background: none;
+  padding: 0;
+}
+.markdown-preview blockquote {
+  border-left: 3px solid var(--mantine-color-dimmed);
+  margin: 0;
+  padding-left: 12px;
+  color: var(--mantine-color-dimmed);
+}
+.markdown-preview ul.contains-task-list {
+  list-style: none;
+  padding-left: 0.2em;
+}
+.markdown-preview li.task-list-item {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}

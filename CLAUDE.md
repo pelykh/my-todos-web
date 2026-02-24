@@ -96,8 +96,9 @@ src/
 
 ### Styling
 
-- Prefer Mantine components and CSS variables over Tailwind for anything that needs dark mode support
-- Inline styles are acceptable for fine-grained layout control (see `TaskListItem`)
+- **Prefer Tailwind CSS utility classes** for layout and spacing (`flex`, `gap-*`, `p-*`, `mb-*`, etc.)
+- Use Mantine components and CSS variables (`var(--mantine-color-*)`) for anything that needs dark mode support — colours, backgrounds, borders
+- Inline styles are acceptable for fine-grained or dynamic values that Tailwind cannot express (e.g. computed colours, conditional `border` strings)
 - The `Header.tsx` component exists but is **not rendered** — do not use it
 
 ### Filters (Toolbar)

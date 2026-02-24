@@ -77,5 +77,7 @@
   "processClarifyArea": "Область",
   "processClarifyContext": "Контекст",
   "processClarifyDuration": "Орієнтовна тривалість",
-  "processClarifyConfirm": "Зберегти як наступну дію"
+  "processClarifyConfirm": "Зберегти як наступну дію",
+  "scheduledDate": "Запланувати дату",
+  "dueDate": "Дедлайн"
 }
