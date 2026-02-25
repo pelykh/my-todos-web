@@ -82,5 +82,6 @@
   "scheduledDate": "Schedule date",
   "dueDate": "Due date",
   "simpleTaskModalTitle": "Add task",
-  "simpleTaskModalPlaceholder": "Task title..."
+  "simpleTaskModalPlaceholder": "Task title...",
+  "ariaPromoteToNextAction": "Promote to next action"
 }

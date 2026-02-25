@@ -82,5 +82,6 @@
   "scheduledDate": "Запланувати дату",
   "dueDate": "Дедлайн",
   "simpleTaskModalTitle": "Додати завдання",
-  "simpleTaskModalPlaceholder": "Назва завдання..."
+  "simpleTaskModalPlaceholder": "Назва завдання...",
+  "ariaPromoteToNextAction": "Перемістити до наступних дій"
 }

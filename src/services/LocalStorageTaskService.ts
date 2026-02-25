@@ -1,4 +1,3 @@
-import { MOCK_TASKS } from '@/mockData'
 import type { Task } from '@/types'
 import type {
 	CreateTaskInput,
@@ -16,8 +15,6 @@ function generateId(): string {
 function now(): string {
 	return new Date().toISOString()
 }
-
-saveTasks(MOCK_TASKS)
 
 function loadTasks(): Task[] {
 	const raw = localStorage.getItem(STORAGE_KEY)

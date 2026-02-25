@@ -9,7 +9,7 @@ import {
 	Textarea,
 } from '@mantine/core'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { ArrowLeft, Ellipsis, Plus, Trash2 } from 'lucide-react'
+import { ArrowLeft, ChevronsUp, Ellipsis, Plus, Trash2 } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import ReactMarkdown from 'react-markdown'
@@ -48,12 +48,15 @@ function DraggableTaskRow({
 	task,
 	onDragStart,
 	onDragEnd,
+	onPromote,
 }: {
 	task: Task
 	onDragStart: (id: string) => void
 	onDragEnd: () => void
+	onPromote: (id: string) => void
 }) {
 	const setFocusedTaskId = useFocusedTaskActions()
+	const { t } = useTranslation()
 	return (
 		<div
 			draggable
@@ -62,13 +65,32 @@ function DraggableTaskRow({
 				onDragStart(task.id)
 			}}
 			onDragEnd={onDragEnd}
+			className="group/row"
 			style={{ cursor: 'grab' }}
 		>
-			<TaskListItem
-				taskId={task.id}
-				displayMeta={['duration']}
-				onClick={() => setFocusedTaskId(task.id)}
-			/>
+			<div className="flex items-center">
+				<div className="flex-1 min-w-0">
+					<TaskListItem
+						taskId={task.id}
+						displayMeta={['duration']}
+						onClick={() => setFocusedTaskId(task.id)}
+					/>
+				</div>
+				<ActionIcon
+					variant="subtle"
+					color="gray"
+					size="xs"
+					radius="sm"
+					className="opacity-0 group-hover/row:opacity-100 transition-opacity shrink-0 mr-1"
+					aria-label={t('ariaPromoteToNextAction')}
+					onClick={(e) => {
+						e.stopPropagation()
+						onPromote(task.id)
+					}}
+				>
+					<ChevronsUp size={14} />
+				</ActionIcon>
+			</div>
 		</div>
 	)
 }
@@ -570,6 +592,7 @@ function ProjectPage() {
 								task={task}
 								onDragStart={handleDragStart}
 								onDragEnd={handleDragEnd}
+								onPromote={(id) => editTask(id, { status: "next_action" })}
 							/>
 						))
 					)}
