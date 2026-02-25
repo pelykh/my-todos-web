@@ -2,10 +2,11 @@ import { Box, Group, Button, Slider, Text, ActionIcon, Stack, ButtonGroup } from
 import { IconGripHorizontal } from '@tabler/icons-react'
 import { Star } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { useFilters, useFilterActions, useTasks, DURATION_STEPS } from '@/store'
+import { useFilters, useFilterActions, DURATION_STEPS } from '@/store'
 import type { DurationStep } from '@/store'
 import type { Context } from '@/types'
 import { useTheme } from '@/theme'
+import { useFilteredTasks } from '@/store/taskStore'
 
 const today = new Date().toISOString().slice(0, 10)
 
@@ -27,24 +28,25 @@ const DURATION_KEYS: Record<number, string> = {
 
 // slider index ↔ DurationStep value
 // 0..<5m>, 1=<15m>, ..., 4=<2h>, 5=Any (null)
-const SLIDER_STEPS = DURATION_STEPS.filter((s) => s !== null) as number[]
+const SLIDER_STEPS = DURATION_STEPS.filter((s) => s !== undefined) as number[]
 
 function sliderIndexToStep(index: number): DurationStep {
-  return (SLIDER_STEPS[index] ?? null) as DurationStep
+  return (SLIDER_STEPS[index]) as DurationStep
 }
 
 function stepToSliderIndex(step: DurationStep): number {
-  if (step === null) return SLIDER_STEPS.length
+  if (step === undefined) return SLIDER_STEPS.length
   return SLIDER_STEPS.indexOf(step)
 }
 
 export function Toolbar() {
   const { colorScheme } = useTheme()
   const { t } = useTranslation()
-  const { context, todayOnly, maxMinutes } = useFilters()
+  const { context, isImportant: todayOnly, maxEstimatedMinutes } = useFilters()
+  const maxMinutes = (maxEstimatedMinutes) as DurationStep
   const { setContext, setMaxMinutes, activateToday, clearAll } = useFilterActions()
 
-  const allTasks = useTasks()
+  const allTasks = useFilteredTasks()
   const todayTasks = allTasks.filter(
     (t) => t.scheduledDate?.slice(0, 10) === today || t.dueDate?.slice(0, 10) === today,
   )

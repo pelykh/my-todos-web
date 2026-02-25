@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
 import {
   Stack,
   Title,
@@ -7,11 +7,10 @@ import {
   Group,
   Text,
   ActionIcon,
-  Button,
 } from '@mantine/core'
 import { Sun, Moon, Search } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { useTasks, useFilters, useFocusedTaskActions } from '@/store'
+import {  useFilters, useFocusedTaskActions } from '@/store'
 import { Toolbar } from '@/components/Toolbar'
 import { LangSelect } from '@/components/LangSelect'
 import { TaskListItem } from '@/components/TaskListItem'
@@ -19,6 +18,9 @@ import { CommandPalette } from '@/components/CommandPalette'
 import { TaskFocusModal } from '@/components/TaskFocusModal'
 import { useTheme } from '@/theme'
 import type { Task } from '@/types'
+import { isTaskImportant } from '@/utils/tasks'
+import { useGroupedFilteredTasks } from '@/store/taskStore'
+import { ProcessInboxButton } from '@/components/ProcessInboxButton'
 
 export const Route = createFileRoute('/')({ component: App })
 
@@ -54,7 +56,8 @@ function groupByArea(tasks: Task[]): { area: string; tasks: Task[] }[] {
 type DisplayGroup = { area: string; tasks: Task[]; important?: boolean }
 
 function buildGroups(tasks: Task[]): DisplayGroup[] {
-  const todayTasks = tasks.filter(isToday)
+  // Filter important by project to
+  const todayTasks = tasks.filter((t) => isTaskImportant(t, undefined))
   const todayIds = new Set(todayTasks.map((t) => t.id))
   const rest = tasks.filter((t) => !todayIds.has(t.id))
 
@@ -69,12 +72,14 @@ function App() {
   const { t } = useTranslation()
   const [cmdOpen, setCmdOpen] = useState(false)
 
-  const { context, todayOnly, maxMinutes } = useFilters()
+  const filters = useFilters()
   const setFocusedTaskId = useFocusedTaskActions()
-  const allTasks = useTasks()
-  const inboxTasks = useTasks({ status: 'inbox' })
-  const tasks = applyToolbarFilters(allTasks, context, todayOnly, maxMinutes)
-  const groups = buildGroups(tasks)
+  const groups = useGroupedFilteredTasks({
+    filters: {
+      ...filters,
+      status: 'next_action'
+    }, groupBy: 'area', useImportant: true
+  })
 
   useEffect(() => {
     function handleKey(e: KeyboardEvent) {
@@ -94,18 +99,7 @@ function App() {
         gap="xs"
         style={{ position: 'fixed', top: 16, right: 16, zIndex: 200 }}
       >
-        {inboxTasks.length > 1 && (
-          <Button
-            component={Link}
-            to="/process-inbox"
-            variant="light"
-            color="orange"
-            size="sm"
-            radius="md"
-          >
-            {t('processInbox')} ({inboxTasks.length})
-          </Button>
-        )}
+        <ProcessInboxButton />
         <ActionIcon
           onClick={() => setCmdOpen(true)}
           variant="default"
@@ -130,37 +124,34 @@ function App() {
       <Container size="sm" py="xl" pb={120}>
         <Stack gap="lg">
           <Title order={2} ta="center">{t('pageTitle')}</Title>
-
-          {tasks.length === 0 && (
-            <Text c="dimmed" size="sm">{t('noTasks')}</Text>
-          )}
-
-          {groups.map(({ area, tasks: groupTasks, important }) => (
-            <Stack key={area} gap={0}>
-              <Text
-                size="xs"
-                fw={600}
-                tt="uppercase"
-                style={{
-                  letterSpacing: '0.05em',
-                  padding: '0 8px',
-                  marginBottom: 2,
-                  color: important ? 'var(--mantine-color-orange-6)' : 'var(--mantine-color-dimmed)',
-                }}
-              >
-                {important ? t('groupImportant') : t(`area.${area}`, { defaultValue: area })}
-              </Text>
-              {groupTasks.map((task) => (
-                <TaskListItem
-                  key={task.id}
-                  task={task}
-                  status={important ? "important" : undefined}
-                  displayMeta={["project", "duration"]}
-                  onClick={() => setFocusedTaskId(task.id)}
-                />
-              ))}
-            </Stack>
-          ))}
+          {Object.entries(groups).map(([area, tasks]) => {
+            if(tasks.length === 0) return null
+            return (
+              <Stack key={area} gap={0}>
+                <Text
+                  size="xs"
+                  fw={600}
+                  tt="uppercase"
+                  style={{
+                    letterSpacing: '0.05em',
+                    padding: '0 8px',
+                    marginBottom: 2,
+                    color: area === 'important' ? 'var(--mantine-color-orange-6)' : 'var(--mantine-color-dimmed)',
+                  }}
+                >
+                  {area === 'important' ? t('groupImportant') : t(`area.${area}`, { defaultValue: area })}
+                </Text>
+                {tasks.map((task) => (
+                  <TaskListItem
+                    key={task.id}
+                    taskId={task.id}
+                    status={area === 'important' ? "important" : undefined}
+                    displayMeta={["project", "duration"]}
+                    onClick={() => setFocusedTaskId(task.id)} />
+                ))}
+              </Stack>
+            )
+          })}
         </Stack>
       </Container>
 

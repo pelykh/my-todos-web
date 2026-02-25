@@ -1,25 +1,29 @@
 import { useTranslation } from "react-i18next";
-import type { Task } from "@/types";
+import { useTaskWithProject } from "@/store/taskStore";
 import { cn } from "@/utils/cn";
 import { formatDuration } from "@/utils/duration";
+import { isTaskImportant } from "@/utils/tasks";
 
-type DisplayMeta = "area" | "duration" | "project" | "context";
+type DisplayMeta = "area" | "duration" | "project" | "context" | 'due_date';
 
 type TaskListItemProps = {
-  task: Task;
+  taskId: string;
   status?: "important";
   displayMeta?: DisplayMeta[];
   onClick?: () => void;
 };
 
 export function TaskListItem({
-  task,
+  taskId,
   status,
   displayMeta = ["project", "duration"],
   onClick,
 }: TaskListItemProps) {
   const { t } = useTranslation();
-  const isImportant = status === "important";
+  const [task, project] = useTaskWithProject(taskId);
+  if (!task) return null;
+
+  const isImportant = status === "important" || isTaskImportant(task, project);
 
   const getMetaLabel = (metaKey: DisplayMeta) => {
     if (metaKey === "area") {
@@ -34,6 +38,14 @@ export function TaskListItem({
             t("minutesSuffix"),
           )
         : null;
+    }
+
+    if (metaKey === 'project') {
+      return project?.title
+    }
+
+    if (metaKey === 'context') {
+      return project?.context
     }
   };
 
@@ -74,7 +86,7 @@ export function TaskListItem({
             return (
               <span
                 key={metaKey}
-                className="text-[11px] text-(rgb(200, 200, 196))"
+                className="text-xs text-gray-400"
               >
                 {label}
               </span>

@@ -14,8 +14,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft, CheckCircle2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useTaskActions, useTasks } from "@/store";
 import type { Area, Context } from "@/types";
+import { useFilteredTasks, useTaskActions } from "@/store/taskStore";
 
 export const Route = createFileRoute("/process-inbox")({
   component: ProcessInbox,
@@ -104,7 +104,7 @@ function Countdown({ onDone }: { onDone: () => void }) {
 
 function ProcessInbox() {
   const { t } = useTranslation();
-  const inboxTasks = useTasks({ status: "inbox" });
+  const inboxTasks = useFilteredTasks({ status: "inbox" });
   const { editTask, removeTask } = useTaskActions();
 
   const [processedCount, setProcessedCount] = useState(0);

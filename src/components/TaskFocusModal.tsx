@@ -11,11 +11,10 @@ import { ScheduledDatePicker } from '@/components/ScheduledDatePicker'
 import {
 	useFocusedTaskActions,
 	useFocusedTaskId,
-	useTask,
-	useTaskActions,
 } from '@/store'
 import { useTheme } from '@/theme'
 import type { Area, Context } from '@/types'
+import { useTaskWithProject, useTaskActions } from '@/store/taskStore'
 
 const CONTEXTS: Context[] = ['deep_work', 'admin', 'home', 'agenda']
 const AREAS: Area[] = ['work', 'personal', 'health', 'learning']
@@ -36,9 +35,8 @@ export function TaskFocusModal() {
 	const navigate = useNavigate()
 	const focusedTaskId = useFocusedTaskId()
 	const setFocusedTaskId = useFocusedTaskActions()
-	const task = useTask(focusedTaskId ?? '')
-	const project = useTask(task?.projectId ?? '')
-	const { editTask, removeTask, addTask } = useTaskActions()
+	const [task, project] = useTaskWithProject(focusedTaskId!)
+	const { editTask, removeTask } = useTaskActions()
 
 	const [visible, setVisible] = useState(false)
 	const [titleValue, setTitleValue] = useState('')
@@ -119,6 +117,7 @@ export function TaskFocusModal() {
 		if (!task) return
 		editTask(task.id, { isProject: true, status: 'next_action' })
 		handleClose()
+		navigate({ to: '/project/$projectId', params: { projectId: task.id } })
 	}
 
 	function handleContextChange(value: string) {
@@ -295,13 +294,13 @@ export function TaskFocusModal() {
 							placeholder={t('focusModalContext')}
 							color="blue"
 						/>
-						<BadgeSelect
+            {!project && <BadgeSelect
 							options={areaOptions}
 							value={task.area ?? null}
 							onSelect={handleAreaChange}
 							placeholder={t('focusModalArea')}
 							color="violet"
-						/>
+						/>}
 						<BadgeSelect
 							options={DURATION_OPTIONS}
 							value={

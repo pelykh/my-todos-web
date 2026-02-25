@@ -14,6 +14,7 @@
   "status.next_action": "Наступна дія",
   "status.waiting_for": "Очікування",
   "status.someday": "Колись",
+  "status.backlog": "Беклог",
   "status.done": "Виконано",
   "context.deep_work": "Глибока робота",
   "context.admin": "Адмін",
@@ -79,5 +80,7 @@
   "processClarifyDuration": "Орієнтовна тривалість",
   "processClarifyConfirm": "Зберегти як наступну дію",
   "scheduledDate": "Запланувати дату",
-  "dueDate": "Дедлайн"
+  "dueDate": "Дедлайн",
+  "simpleTaskModalTitle": "Додати завдання",
+  "simpleTaskModalPlaceholder": "Назва завдання..."
 }

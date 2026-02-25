@@ -1,6 +1,9 @@
+import type { isTaskImportant } from "@/utils/tasks";
+
 export type TaskStatus =
   | "inbox"
   | "next_action"
+  | "backlog"
   | "waiting_for"
   | "someday"
   | "reference"
@@ -33,3 +36,8 @@ export type Task = {
   updatedAt: string;
   completedAt?: string;
 };
+
+export type TaskFilters = Partial<Pick<Task, 'status' |'context' | 'area' | 'projectId'>> & {
+  maxEstimatedMinutes?: number
+  isImportant?: boolean
+}

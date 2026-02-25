@@ -1,4 +1,4 @@
-import type { Task, TaskStatus, Context, Area } from '@/types'
+import type { Area, Context, Task, TaskStatus } from '@/types'
 
 export type TaskFilters = {
   status?: TaskStatus
@@ -6,6 +6,7 @@ export type TaskFilters = {
   area?: Area
   projectId?: string
   isProject?: boolean
+  maxDuration?: number
 }
 
 export type CreateTaskInput = {

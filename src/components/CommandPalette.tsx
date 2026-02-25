@@ -2,28 +2,19 @@ import { Command } from "cmdk";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { TaskListItem } from "@/components/TaskListItem";
-import { useFocusedTaskActions, useTaskActions, useTasks } from "@/store";
+import {  useTaskActions, useFilteredTasks } from "@/store/taskStore";
 import { useTheme } from "@/theme";
-import type { Task } from "@/types";
+import { useFocusedTaskActions } from "@/store";
 
 interface CommandPaletteProps {
   open: boolean;
   onClose: () => void;
 }
 
-const today = new Date().toISOString().slice(0, 10);
-
-function isToday(task: Task) {
-  return (
-    task.scheduledDate?.slice(0, 10) === today ||
-    task.dueDate?.slice(0, 10) === today
-  );
-}
-
 export function CommandPalette({ open, onClose }: CommandPaletteProps) {
   const { t } = useTranslation();
   const { colorScheme } = useTheme();
-  const allTasks = useTasks();
+  const allTasks = useFilteredTasks();
   const { addTask } = useTaskActions();
   const setFocusedTaskId = useFocusedTaskActions();
   const [search, setSearch] = useState("");
@@ -106,10 +97,11 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
                   setFocusedTaskId(task.id);
                 }}
                 style={itemStyle}
+                keywords={task.isProject ? ['project',
+                  'проєкт'] :[]}
               >
                 <TaskListItem
-                  task={task}
-                  status={isToday(task) ? "important" : undefined}
+                  taskId={task.id}
                   displayMeta={["area", "duration"]}
                 />
               </Command.Item>

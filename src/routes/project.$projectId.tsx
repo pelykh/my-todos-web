@@ -2,28 +2,30 @@ import {
 	ActionIcon,
 	Button,
 	Container,
+	Group,
 	Menu,
 	Stack,
 	Text,
 	Textarea,
 } from '@mantine/core'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { ArrowLeft, Ellipsis, Trash2 } from 'lucide-react'
+import { ArrowLeft, Ellipsis, Plus, Trash2 } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { BadgeSelect } from '@/components/BadgeSelect'
+import { DueDatePicker } from '@/components/DueDatePicker'
+import { ScheduledDatePicker } from '@/components/ScheduledDatePicker'
+import { SimpleTaskModal } from '@/components/SimpleTaskModal'
 import { TaskFocusModal } from '@/components/TaskFocusModal'
 import { TaskListItem } from '@/components/TaskListItem'
 import {
 	useFocusedTaskActions,
-	useTask,
-	useTaskActions,
-	useTasks,
 } from '@/store'
 import { useTheme } from '@/theme'
 import type { Area, Context, Task } from '@/types'
+import { useFilteredTasks, useTaskActions, useTaskWithProject } from '@/store/taskStore'
 
 export const Route = createFileRoute('/project/$projectId')({
 	component: ProjectPage,
@@ -63,7 +65,7 @@ function DraggableTaskRow({
 			style={{ cursor: 'grab' }}
 		>
 			<TaskListItem
-				task={task}
+				taskId={task.id}
 				displayMeta={['duration']}
 				onClick={() => setFocusedTaskId(task.id)}
 			/>
@@ -78,8 +80,8 @@ function ProjectPage() {
 	const { colorScheme } = useTheme()
 	const isDark = colorScheme === 'dark'
 
-	const project = useTask(projectId)
-	const childTasks = useTasks({ projectId })
+	const [project] = useTaskWithProject(projectId)
+	const childTasks = useFilteredTasks({ projectId })
 	const { editTask, removeTask } = useTaskActions()
 	const setFocusedTaskId = useFocusedTaskActions()
 
@@ -87,6 +89,7 @@ function ProjectPage() {
 	const [notesValue, setNotesValue] = useState('')
 	const [notesEditMode, setNotesEditMode] = useState(false)
 	const [isDragging, setIsDragging] = useState(false)
+	const [addTaskOpen, setAddTaskOpen] = useState(false)
 	const [isOverNextActions, setIsOverNextActions] = useState(false)
 	const draggingIdRef = useRef<string | null>(null)
 	const titleRef = useRef<HTMLInputElement>(null)
@@ -139,6 +142,16 @@ function ProjectPage() {
 	function handleDurationChange(value: string) {
 		if (!project) return
 		editTask(project.id, { estimatedMinutes: Number(value) })
+	}
+
+	function handleScheduledDateChange(value: string | null) {
+		if (!project) return
+		editTask(project.id, { scheduledDate: value ?? undefined })
+	}
+
+	function handleDueDateChange(value: string | null) {
+		if (!project) return
+		editTask(project.id, { dueDate: value ?? undefined })
 	}
 
 	function handleDelete() {
@@ -344,13 +357,24 @@ function ProjectPage() {
 						</Menu>
 					</div>
 
-					{/* Badges: area, context, duration */}
+					{/* Badges: context, area, duration */}
 					<div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
 						<BadgeSelect
 							options={areaOptions}
 							value={project.area ?? null}
 							onSelect={handleAreaChange}
 							color="violet"
+						/>
+					</div>
+					{/* Date row */}
+					<div className="flex gap-2 items-center">
+						<ScheduledDatePicker
+							value={project.scheduledDate ?? null}
+							onChange={handleScheduledDateChange}
+						/>
+						<DueDatePicker
+							value={project.dueDate ?? null}
+							onChange={handleDueDateChange}
 						/>
 					</div>
 				</div>
@@ -395,7 +419,7 @@ function ProjectPage() {
 										style={{ cursor: 'grab' }}
 									>
 										<TaskListItem
-											task={task}
+											taskId={task.id}
 											displayMeta={['duration']}
 											onClick={() => setFocusedTaskId(task.id)}
 										/>
@@ -509,7 +533,26 @@ function ProjectPage() {
 					onDragOver={(e) => e.preventDefault()}
 					onDrop={handleBacklogDrop}
 				>
-					{sectionLabel(t('projectTasks'))}
+					<Group justify="space-between" align="center" mb={6} px="xs">
+						<Text
+							size="xs"
+							fw={600}
+							tt="uppercase"
+							style={{ letterSpacing: '0.05em', color: 'var(--mantine-color-dimmed)' }}
+						>
+							{t('projectTasks')}
+						</Text>
+						<ActionIcon
+							variant="subtle"
+							color="gray"
+							size="xs"
+							radius="sm"
+							onClick={() => setAddTaskOpen(true)}
+							aria-label={t('simpleTaskModalTitle')}
+						>
+							<Plus size={14} />
+						</ActionIcon>
+					</Group>
 					{backlog.length === 0 ? (
 						<Text
 							size="sm"
@@ -541,7 +584,7 @@ function ProjectPage() {
 							{done.map((task) => (
 								<div key={task.id} style={{ opacity: 0.45 }}>
 									<TaskListItem
-										task={task}
+										taskId={task.id}
 										displayMeta={['duration']}
 										onClick={() => setFocusedTaskId(task.id)}
 									/>
@@ -552,6 +595,11 @@ function ProjectPage() {
 				)}
 			</Container>
 
+			<SimpleTaskModal
+				open={addTaskOpen}
+				onClose={() => setAddTaskOpen(false)}
+				projectId={projectId}
+			/>
 			<TaskFocusModal />
 		</>
 	)
