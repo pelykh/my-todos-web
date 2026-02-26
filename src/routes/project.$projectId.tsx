@@ -53,7 +53,6 @@ function BacklogRow({
 	task: Task
 	onPromote: (id: string) => void
 }) {
-	const navigate = useNavigate()
 	const { t } = useTranslation()
 	return (
 		<div className="group/row">
@@ -62,7 +61,7 @@ function BacklogRow({
 					<TaskListItem
 						taskId={task.id}
 						displayMeta={['duration']}
-						onClick={() => navigate({ to: '/task/$taskId', params: { taskId: task.id } })}
+						href={`/task/${task.id}`}
 					/>
 				</div>
 				<ActionIcon
@@ -89,7 +88,6 @@ function NextActionRow({
 	task,
 	onDemote,
 }: { task: Task; onDemote: (id: string) => void }) {
-	const navigate = useNavigate()
 	const { t } = useTranslation()
 	return (
 		<div className="group/row">
@@ -98,7 +96,7 @@ function NextActionRow({
 					<TaskListItem
 						taskId={task.id}
 						displayMeta={['duration']}
-						onClick={() => navigate({ to: '/task/$taskId', params: { taskId: task.id } })}
+						href={`/task/${task.id}`}
 					/>
 				</div>
 				<ActionIcon
@@ -161,7 +159,11 @@ function ProjectPage() {
 	}, [])
 
 	function handleBack() {
-		router.history.back()
+		if (window.history.length > 1) {
+			router.history.back()
+		} else {
+			navigate({ to: '/' })
+		}
 	}
 
 	function handleTitleBlur() {
@@ -463,7 +465,7 @@ function ProjectPage() {
 									<TaskListItem
 										taskId={task.id}
 										displayMeta={['duration']}
-										onClick={() => navigate({ to: '/task/$taskId', params: { taskId: task.id } })}
+										href={`/task/${task.id}`}
 									/>
 								</div>
 							))}

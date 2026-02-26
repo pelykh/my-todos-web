@@ -107,6 +107,8 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
 								<TaskListItem
 									taskId={task.id}
 									displayMeta={['area', 'duration']}
+									href={task.isProject ? `/project/${task.id}` : `/task/${task.id}`}
+									onClick={onClose}
 								/>
 							</Command.Item>
 						))}

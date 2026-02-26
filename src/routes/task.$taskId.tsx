@@ -1,5 +1,5 @@
 import { ActionIcon, Button, Menu } from '@mantine/core'
-import { createFileRoute, useNavigate, useRouter } from '@tanstack/react-router'
+import { Link, createFileRoute, useNavigate, useRouter } from '@tanstack/react-router'
 import { CheckCircle2, Ellipsis, FolderKanban, Trash2, X } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -56,7 +56,11 @@ function TaskPage() {
 	}, [])
 
 	function handleBack() {
-		router.history.back()
+		if (window.history.length > 1) {
+			router.history.back()
+		} else {
+			navigate({ to: '/' })
+		}
 	}
 
 	function handleTitleBlur() {

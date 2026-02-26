@@ -1,3 +1,4 @@
+import { Link } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 
 import { useTaskWithProject } from '@/store/taskStore'
@@ -11,6 +12,7 @@ type TaskListItemProps = {
 	taskId: string
 	status?: 'important'
 	displayMeta?: DisplayMeta[]
+	href?: string
 	onClick?: () => void
 }
 
@@ -18,6 +20,7 @@ export function TaskListItem({
 	taskId,
 	status,
 	displayMeta = ['project', 'duration'],
+	href,
 	onClick,
 }: TaskListItemProps) {
 	const { t } = useTranslation()
@@ -50,16 +53,12 @@ export function TaskListItem({
 		}
 	}
 
-	return (
-		<div
-			role="button"
-			tabIndex={0}
-			onClick={onClick}
-			onKeyDown={(e) => {
-				if (e.key === 'Enter' || e.key === ' ') onClick?.()
-			}}
-			className="flex items-center gap-2.5 px-2 py-1.5 rounded-md cursor-pointer select-none transition-[background] duration-100 my-px hover:bg-(--mantine-color-default-hover)"
-		>
+	const className = cn(
+		'flex items-center gap-2.5 px-2 py-1.5 rounded-md cursor-pointer select-none transition-[background] duration-100 my-px hover:bg-(--mantine-color-default-hover)',
+	)
+
+	const content = (
+		<>
 			{/* Status dot */}
 			<div className="flex items-center justify-center w-5 shrink-0">
 				<div
@@ -91,6 +90,32 @@ export function TaskListItem({
 					})}
 				</div>
 			</div>
+		</>
+	)
+
+	if (href) {
+		return (
+			<Link
+				to={href}
+				className={className}
+				onClick={onClick}
+			>
+				{content}
+			</Link>
+		)
+	}
+
+	return (
+		<div
+			role="button"
+			tabIndex={0}
+			onClick={onClick}
+			onKeyDown={(e) => {
+				if (e.key === 'Enter' || e.key === ' ') onClick?.()
+			}}
+			className={className}
+		>
+			{content}
 		</div>
 	)
 }

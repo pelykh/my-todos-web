@@ -1,5 +1,5 @@
 import { ActionIcon, Container, Group, Stack, Text, Title } from '@mantine/core'
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
 import { Moon, Search, Sun } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -84,7 +84,6 @@ function App() {
 	const { t } = useTranslation()
 	const [cmdOpen, setCmdOpen] = useState(false)
 
-	const navigate = useNavigate()
 	const filters = useFilters()
 	const groups = useGroupedFilteredTasks({
 		filters: {
@@ -170,7 +169,7 @@ function App() {
 										taskId={task.id}
 										status={area === 'important' ? 'important' : undefined}
 										displayMeta={['project', 'duration']}
-										onClick={() => navigate({ to: '/task/$taskId', params: { taskId: task.id } })}
+										href={`/task/${task.id}`}
 									/>
 								))}
 							</Stack>
