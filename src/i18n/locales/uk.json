@@ -92,5 +92,14 @@
 	"ariaDemoteToBacklog": "Перемістити до беклогу",
 	"projectDemoteToTask": "Зробити завданням",
 	"projectNoNextAction": "Проєкт завжди повинен мати хоча б одну наступну дію для просування вперед.",
-	"taskNotFound": "Завдання не знайдено."
+	"taskNotFound": "Завдання не знайдено.",
+	"processYesUk": "Так",
+	"processNoUk": "Ні",
+	"processBackUk": "Назад",
+	"processDoneUk": "Готово",
+	"processReferenceUk": "Довідка",
+	"processSomedayUk": "Колись",
+	"processDeleteUk": "Видалити",
+	"processReferenceSavedUk": "Так, зберіг",
+	"processNewProjectUk": "Новий проєкт"
 }

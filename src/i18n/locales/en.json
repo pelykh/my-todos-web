@@ -92,5 +92,14 @@
   "ariaDemoteToBacklog": "Demote to backlog",
   "projectDemoteToTask": "Demote to task",
   "projectNoNextAction": "A project should always have at least one next action to make progress.",
-  "taskNotFound": "Task not found."
+  "taskNotFound": "Task not found.",
+  "processYesUk": "Yes",
+  "processNoUk": "No",
+  "processBackUk": "Back",
+  "processDoneUk": "Done",
+  "processReferenceUk": "Reference",
+  "processSomedayUk": "Someday",
+  "processDeleteUk": "Delete",
+  "processReferenceSavedUk": "Yes, saved",
+  "processNewProjectUk": "New project"
 }

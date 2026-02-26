@@ -1,76 +1,79 @@
-//
-//
-// Stepper store
+import type React from 'react'
+import { createStore } from 'zustand'
 
-import type { Task } from '@/types'
-
-const step = {
-	key: 'is_less_then_2_mins',
-	component: 'ReactComponent', // Actual component
+// Props passed to every step component
+export type StepComponentProps<TState> = {
+  state: TState
+  goNextStep: () => void
+  goPreviousStep: () => void
+  reset: (newState: TState) => void
 }
 
-// In each component you can updateTask and then more to next step. On some steps, you don't change anything, like when saying that task takes less then 2 mins
-
-const storeState = {
-	currentStepKey: 'step-1',
-	steps: [step, step, step],
-	state: 'task_id_1', // In generic case should be any object
-	actions: {
-		goNextStep: () => {},
-		goPreviousStep: () => {},
-		goToStep: (stepKey) => {}, // stepKey is valid step key
-		reset: (newState) => {}, // Go back to step 1 and resetState
-	},
+// Definition of a single step: a stable key and the component to render
+export type StepDef<TState> = {
+  key: string
+  component: React.ComponentType<StepComponentProps<TState>>
 }
 
-const inputTask: Partial<Task> = {
-	id: 'sdajfhasf_dfsdf',
-	title: 'Do thing',
-	status: 'inbox',
+// Actions exposed by the stepper store
+export type StepperActions<TState> = {
+  goNextStep: () => void
+  goPreviousStep: () => void
+  goToStep: (key: string) => void
+  reset: (newState: TState) => void
 }
 
-const resultTask: Task = {
-	id: 'sdajfhasf_dfsdf',
-	title: 'Do thing',
-	status: 'next_action',
-	// New data
-	area: 'personal',
-	context: 'admin',
-	estimatedMinutes: 15,
+// Shape of the Zustand state (steps array is closed over, NOT stored here)
+export type StepperState<TState> = {
+  currentStepKey: string
+  state: TState
+  actions: StepperActions<TState>
 }
 
-const inputTask2: Partial<Task> = {
-	id: 'sdajfhasf_dfsdf',
-	title: 'Message from the slack',
-	notes: 'Original message: ...',
-	area: 'work',
-	status: 'inbox',
-}
+/**
+ * Factory that creates a vanilla Zustand stepper store.
+ *
+ * @param steps       Ordered array of step definitions. Closed over — not stored in Zustand.
+ * @param initialState  The initial TState value.
+ */
+export function createStepperStore<TState>(
+  steps: StepDef<TState>[],
+  initialState: TState,
+) {
+  return createStore<StepperState<TState>>()((set, get) => ({
+    currentStepKey: steps[0]?.key ?? '',
+    state: initialState,
 
-const resultTask2: Task = {
-	id: 'sdajfhasf_dfsdf',
-	title: 'Message from the slack',
-	notes: 'Original message: ...',
-	area: 'work',
+    actions: {
+      goNextStep() {
+        const { currentStepKey } = get()
+        const idx = steps.findIndex((s) => s.key === currentStepKey)
+        // No-op if already at the last step or key is unknown
+        if (idx === -1 || idx >= steps.length - 1) return
+        set({ currentStepKey: steps[idx + 1].key })
+      },
 
-	// New data
-	status: 'next_action',
-	context: 'deep_work',
-	projectId: 'test',
-	estimatedMinutes: 30,
-}
+      goPreviousStep() {
+        const { currentStepKey } = get()
+        const idx = steps.findIndex((s) => s.key === currentStepKey)
+        // No-op if already at the first step or key is unknown
+        if (idx <= 0) return
+        set({ currentStepKey: steps[idx - 1].key })
+      },
 
-const inputProject: Partial<Task> = {
-	id: 'sdajfhasf_dfsdf',
-	title: 'Do something',
-}
+      goToStep(key: string) {
+        const exists = steps.some((s) => s.key === key)
+        // No-op for unknown keys
+        if (!exists) return
+        set({ currentStepKey: key })
+      },
 
-const resultProject: Task = {
-	id: 'sdajfhasf_dfsdf',
-	title: 'Do something',
-
-	// Next info
-	isProject: true,
-	area: 'work',
-	status: 'next_action',
+      reset(newState: TState) {
+        set({
+          currentStepKey: steps[0]?.key ?? '',
+          state: newState,
+        })
+      },
+    },
+  }))
 }
