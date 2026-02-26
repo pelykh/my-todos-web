@@ -12,72 +12,8 @@ import { Toolbar } from '@/components/Toolbar'
 import { useFilters } from '@/store'
 import { useGroupedFilteredTasks } from '@/store/taskStore'
 import { useTheme } from '@/theme'
-import type { Task } from '@/types'
-import { isTaskImportant } from '@/utils/tasks'
 
 export const Route = createFileRoute('/')({ component: App })
-
-const today = new Date().toISOString().slice(0, 10)
-
-function isToday(task: Task) {
-	return (
-		task.scheduledDate?.slice(0, 10) === today ||
-		task.dueDate?.slice(0, 10) === today
-	)
-}
-
-function applyToolbarFilters(
-	tasks: Task[],
-	context: string | null,
-	todayOnly: boolean,
-	maxMinutes: number | null,
-) {
-	return tasks.filter((t) => {
-		if (t.isProject) return false
-		if (t.status === 'done') return false
-		const isNextAction = t.status === 'next_action'
-		if (!isNextAction && !isToday(t)) return false
-		if (context && t.context !== context) return false
-		if (todayOnly && !isToday(t)) return false
-		if (
-			maxMinutes !== null &&
-			t.estimatedMinutes !== undefined &&
-			t.estimatedMinutes > maxMinutes
-		)
-			return false
-		return true
-	})
-}
-
-function groupByArea(tasks: Task[]): { area: string; tasks: Task[] }[] {
-	const map = new Map<string, Task[]>()
-	for (const task of tasks) {
-		const key = task.area ?? ''
-		if (!map.has(key)) map.set(key, [])
-		map.get(key)!.push(task)
-	}
-	return Array.from(map.entries()).map(([area, tasks]) => ({ area, tasks }))
-}
-
-type DisplayGroup = { area: string; tasks: Task[]; important?: boolean }
-
-function buildGroups(tasks: Task[]): DisplayGroup[] {
-	// Filter important by project to
-	const todayTasks = tasks.filter((t) => isTaskImportant(t, undefined))
-	const todayIds = new Set(todayTasks.map((t) => t.id))
-	const rest = tasks.filter((t) => !todayIds.has(t.id))
-
-	const areaGroups: DisplayGroup[] = groupByArea(rest).map((g) => ({
-		...g,
-		important: false,
-	}))
-
-	if (todayTasks.length === 0) return areaGroups
-	return [
-		{ area: 'important', tasks: todayTasks, important: true },
-		...areaGroups,
-	]
-}
 
 function App() {
 	const { colorScheme, toggleColorScheme } = useTheme()
@@ -88,7 +24,8 @@ function App() {
 	const groups = useGroupedFilteredTasks({
 		filters: {
 			...filters,
-			status: 'next_action',
+      status: 'next_action',
+      isProject: false
 		},
 		groupBy: 'area',
 		useImportant: true,

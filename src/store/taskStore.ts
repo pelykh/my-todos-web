@@ -56,6 +56,8 @@ function applyFilters(tasks: Task[], filters?: TaskFilters) {
 		if (filters.area !== undefined && t.area !== filters.area) return false
 		if (filters.projectId !== undefined && t.projectId !== filters.projectId)
 			return false
+		if (filters.isProject !== undefined && !!t.isProject !== filters.isProject)
+			return false
 		if (
 			filters.maxEstimatedMinutes !== undefined &&
 			(t.estimatedMinutes === undefined ||
