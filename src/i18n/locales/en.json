@@ -83,5 +83,13 @@
   "dueDate": "Due date",
   "simpleTaskModalTitle": "Add task",
   "simpleTaskModalPlaceholder": "Task title...",
-  "ariaPromoteToNextAction": "Promote to next action"
+  "ariaPromoteToNextAction": "Promote to next action",
+  "projectCompleteTitle": "Complete project",
+  "projectCompleteConfirm": "Mark all as done",
+  "projectCompleteCancel": "Cancel",
+  "projectCompleteText": "This will mark the project and {{count}} remaining task(s) as done.",
+  "ariaCompleteProject": "Complete project",
+  "ariaDemoteToBacklog": "Demote to backlog",
+  "projectDemoteToTask": "Demote to task",
+  "projectNoNextAction": "A project should always have at least one next action to make progress."
 }

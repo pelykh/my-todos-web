@@ -1,13 +1,12 @@
-import { ActionIcon, Button, Menu, Textarea } from '@mantine/core'
+import { ActionIcon, Button, Menu } from '@mantine/core'
 import { useNavigate } from '@tanstack/react-router'
 import { CheckCircle2, Ellipsis, FolderKanban, Trash2, X } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import ReactMarkdown from 'react-markdown'
-import remarkGfm from 'remark-gfm'
 
 import { BadgeSelect } from '@/components/BadgeSelect'
 import { DueDatePicker } from '@/components/DueDatePicker'
+import { MarkdownField } from '@/components/MarkdownField'
 import { ScheduledDatePicker } from '@/components/ScheduledDatePicker'
 import { useFocusedTaskActions, useFocusedTaskId } from '@/store'
 import { useTaskActions, useTaskWithProject } from '@/store/taskStore'
@@ -38,10 +37,7 @@ export function TaskFocusModal() {
 
 	const [visible, setVisible] = useState(false)
 	const [titleValue, setTitleValue] = useState('')
-	const [notesValue, setNotesValue] = useState('')
-	const [notesEditMode, setNotesEditMode] = useState(false)
 	const titleRef = useRef<HTMLInputElement>(null)
-	const checkboxIndexRef = useRef(0)
 
 	// Animate open/close
 	useEffect(() => {
@@ -54,8 +50,6 @@ export function TaskFocusModal() {
 	useEffect(() => {
 		if (task) {
 			setTitleValue(task.title)
-			setNotesValue(task.notes ?? '')
-			setNotesEditMode(false)
 		}
 	}, [task])
 
@@ -92,11 +86,9 @@ export function TaskFocusModal() {
 		if (e.key === 'Enter') e.currentTarget.blur()
 	}
 
-	function handleNotesBlur() {
-		if (task && notesValue !== (task.notes ?? '')) {
-			editTask(task.id, { notes: notesValue })
-		}
-		setNotesEditMode(false)
+	function handleNotesChange(value: string) {
+		if (!task) return
+		editTask(task.id, { notes: value })
 	}
 
 	function handleComplete() {
@@ -143,22 +135,6 @@ export function TaskFocusModal() {
 		editTask(task.id, { dueDate: value ?? undefined })
 	}
 
-	function toggleCheckbox(index: number) {
-		if (!task) return
-		let count = 0
-		const updated = (task.notes ?? '').replace(
-			/^(\s*[-*+]\s+)\[([ x])\]/gm,
-			(match, prefix, state) => {
-				const result =
-					count === index ? `${prefix}[${state === ' ' ? 'x' : ' '}]` : match
-				count++
-				return result
-			},
-		)
-		setNotesValue(updated)
-		editTask(task.id, { notes: updated })
-	}
-
 	if (!focusedTaskId && !visible) return null
 
 	const overlay: React.CSSProperties = {
@@ -195,8 +171,6 @@ export function TaskFocusModal() {
 
 	if (!task) return null
 
-	checkboxIndexRef.current = 0
-
 	const contextOptions = CONTEXTS.map((c) => ({
 		value: c,
 		label: t(`context.${c}`),
@@ -208,33 +182,18 @@ export function TaskFocusModal() {
 			<div style={modal} onClick={(e) => e.stopPropagation()}>
 				{/* Header */}
 				<div
-					style={{
-						padding: '20px 20px 16px',
-						borderBottom: `1px solid ${isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.07)'}`,
-						display: 'flex',
-						flexDirection: 'column',
-						gap: 12,
-					}}
+					className="flex flex-col gap-3 px-5 pt-5 pb-4"
+					style={{ borderBottom: `1px solid ${isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.07)'}` }}
 				>
 					{/* Title row */}
-					<div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+					<div className="flex items-center gap-2">
 						<input
 							ref={titleRef}
 							value={titleValue}
 							onChange={(e) => setTitleValue(e.target.value)}
 							onBlur={handleTitleBlur}
 							onKeyDown={handleTitleKey}
-							style={{
-								flex: 1,
-								fontSize: 18,
-								fontWeight: 600,
-								background: 'transparent',
-								border: 'none',
-								outline: 'none',
-								color: 'var(--mantine-color-text)',
-								padding: '2px 0',
-								minWidth: 0,
-							}}
+							className="flex-1 min-w-0 bg-transparent border-none outline-none text-lg font-semibold py-0.5 text-(--mantine-color-text)"
 						/>
 						<Button
 							onClick={handleComplete}
@@ -326,87 +285,21 @@ export function TaskFocusModal() {
 				</div>
 
 				{/* Notes */}
-				<div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px 20px' }}>
-					{notesEditMode ? (
-						<Textarea
-							autoFocus
-							value={notesValue}
-							onChange={(e) => setNotesValue(e.currentTarget.value)}
-							onBlur={handleNotesBlur}
-							placeholder={t('focusModalNotesPlaceholder')}
-							autosize
-							minRows={5}
-							styles={{
-								input: {
-									fontSize: 14,
-									background: 'transparent',
-									border: `1px solid ${isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.12)'}`,
-									fontFamily: 'monospace',
-								},
-							}}
-						/>
-					) : (
-						<div
-							onDoubleClick={() => setNotesEditMode(true)}
-							style={{
-								minHeight: 80,
-								cursor: 'text',
-								borderRadius: 8,
-								padding: '6px 4px',
-								color: notesValue
-									? 'var(--mantine-color-text)'
-									: 'var(--mantine-color-dimmed)',
-								fontSize: 14,
-								lineHeight: 1.6,
-							}}
-						>
-							{notesValue ? (
-								<div className="markdown-preview">
-									<ReactMarkdown
-										remarkPlugins={[remarkGfm]}
-										components={{
-											input({ checked }) {
-												const index = checkboxIndexRef.current++
-												return (
-													<input
-														type="checkbox"
-														checked={checked ?? false}
-														onChange={() => toggleCheckbox(index)}
-														style={{ cursor: 'pointer', marginRight: 4 }}
-													/>
-												)
-											},
-										}}
-									>
-										{notesValue}
-									</ReactMarkdown>
-								</div>
-							) : (
-								<span style={{ fontStyle: 'italic', opacity: 0.5 }}>
-									{t('focusModalNotesPlaceholder')}
-								</span>
-							)}
-						</div>
-					)}
+				<div className="flex-1 overflow-y-auto px-5 py-4">
+					<MarkdownField
+						value={task.notes ?? ''}
+						onChange={handleNotesChange}
+						minHeight={80}
+					/>
 
 					{project && (
 						<>
 							<div
-								style={{
-									borderTop: `1px solid ${isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.07)'}`,
-									margin: '16px 0 14px',
-								}}
+								className="mt-4 mb-3.5"
+								style={{ borderTop: `1px solid ${isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.07)'}` }}
 							/>
-							<div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-								<span
-									style={{
-										fontSize: 11,
-										fontWeight: 600,
-										textTransform: 'uppercase',
-										letterSpacing: '0.06em',
-										color: 'var(--mantine-color-dimmed)',
-									}}
-								>
+							<div className="flex flex-col gap-1.5">
+								<span className="text-[11px] font-semibold uppercase tracking-[0.06em] text-(--mantine-color-dimmed)">
 									{t('project')}
 								</span>
 								<Button
@@ -422,23 +315,17 @@ export function TaskFocusModal() {
 									size="xs"
 									radius="md"
 									justify="start"
-									style={{ alignSelf: 'flex-start' }}
+									className="self-start"
 								>
 									{project.title}
 								</Button>
 								{project.notes && (
-									<div
-										className="markdown-preview"
-										style={{
-											fontSize: 13,
-											color: 'var(--mantine-color-dimmed)',
-											lineHeight: 1.6,
-										}}
-									>
-										<ReactMarkdown remarkPlugins={[remarkGfm]}>
-											{project.notes}
-										</ReactMarkdown>
-									</div>
+									<MarkdownField
+										value={project.notes}
+										onChange={() => {}}
+										minHeight={0}
+										readOnly
+									/>
 								)}
 							</div>
 						</>

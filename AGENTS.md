@@ -70,6 +70,6 @@ Key naming convention: `<domain>.<value>` — e.g. `status.inbox`, `context.deep
 2. **Types** — add new fields to `src/types/index.tsx`
 3. **Translations** — add keys to **both** `en.json` and `uk.json`
 4. **Dark mode** — use `useTheme()` or Mantine CSS variables for any new colours
-5. **Styling** — Tailwind for layout, Mantine vars for colours, inline only for dynamic values
+5. **Styling** — Tailwind for layout, Mantine vars for colours
 6. **Mock data** — add realistic GTD examples to `src/mockData.ts` that exercise the new feature
 7. **Components** — extract to `src/components/` if used in more than one place

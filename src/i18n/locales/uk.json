@@ -83,5 +83,13 @@
   "dueDate": "Дедлайн",
   "simpleTaskModalTitle": "Додати завдання",
   "simpleTaskModalPlaceholder": "Назва завдання...",
-  "ariaPromoteToNextAction": "Перемістити до наступних дій"
+  "ariaPromoteToNextAction": "Перемістити до наступних дій",
+  "projectCompleteTitle": "Завершити проєкт",
+  "projectCompleteConfirm": "Позначити все як виконане",
+  "projectCompleteCancel": "Скасувати",
+  "projectCompleteText": "Це позначить проєкт та {{count}} залишених завдань як виконані.",
+  "ariaCompleteProject": "Завершити проєкт",
+  "ariaDemoteToBacklog": "Перемістити до беклогу",
+  "projectDemoteToTask": "Зробити завданням",
+  "projectNoNextAction": "Проєкт завжди повинен мати хоча б одну наступну дію для просування вперед."
 }

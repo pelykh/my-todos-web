@@ -96,6 +96,47 @@ code {
 }
 .markdown-preview li.task-list-item {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 6px;
+}
+
+/* Task-list checkboxes styled to match Mantine's Checkbox component */
+.markdown-preview input[type="checkbox"] {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  min-width: 16px;
+  border-radius: var(--mantine-radius-sm);
+  border: 1px solid;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  vertical-align: middle;
+  position: relative;
+  transition: background-color 100ms ease, border-color 100ms ease;
+}
+
+:where([data-mantine-color-scheme="light"]) .markdown-preview input[type="checkbox"] {
+  background-color: var(--mantine-color-white);
+  border-color: var(--mantine-color-gray-4);
+}
+
+:where([data-mantine-color-scheme="dark"]) .markdown-preview input[type="checkbox"] {
+  background-color: var(--mantine-color-dark-6);
+  border-color: var(--mantine-color-dark-4);
+}
+
+.markdown-preview input[type="checkbox"]:checked {
+  background-color: var(--mantine-primary-color-filled);
+  border-color: var(--mantine-primary-color-filled);
+}
+
+.markdown-preview input[type="checkbox"]:checked::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath fill='none' stroke='white' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' d='M1.5 5l2.5 2.5 4.5-4.5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 65%;
 }

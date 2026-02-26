@@ -6,6 +6,7 @@ import { TaskListItem } from '@/components/TaskListItem'
 import { useFocusedTaskActions } from '@/store'
 import { useFilteredTasks, useTaskActions } from '@/store/taskStore'
 import { useTheme } from '@/theme'
+import { useNavigate } from '@tanstack/react-router'
 
 interface CommandPaletteProps {
 	open: boolean
@@ -18,6 +19,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
 	const allTasks = useFilteredTasks()
 	const { addTask } = useTaskActions()
 	const setFocusedTaskId = useFocusedTaskActions()
+	const navigate = useNavigate()
 	const [search, setSearch] = useState('')
 	const inputRef = useRef<HTMLInputElement>(null)
 
@@ -95,7 +97,11 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
 								value={task.title}
 								onSelect={() => {
 									onClose()
-									setFocusedTaskId(task.id)
+									if (task.isProject) {
+										navigate({ to: '/project/$projectId', params: { projectId: task.id } })
+									} else {
+										setFocusedTaskId(task.id)
+									}
 								}}
 								style={itemStyle}
 								keywords={task.isProject ? ['project', 'проєкт'] : []}
