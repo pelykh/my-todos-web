@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ProcessInboxRouteImport } from './routes/process-inbox'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as TaskTaskIdRouteImport } from './routes/task.$taskId'
 import { Route as ProjectProjectIdRouteImport } from './routes/project.$projectId'
 
 const ProcessInboxRoute = ProcessInboxRouteImport.update({
@@ -23,6 +24,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TaskTaskIdRoute = TaskTaskIdRouteImport.update({
+  id: '/task/$taskId',
+  path: '/task/$taskId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProjectProjectIdRoute = ProjectProjectIdRouteImport.update({
   id: '/project/$projectId',
   path: '/project/$projectId',
@@ -33,30 +39,39 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/process-inbox': typeof ProcessInboxRoute
   '/project/$projectId': typeof ProjectProjectIdRoute
+  '/task/$taskId': typeof TaskTaskIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/process-inbox': typeof ProcessInboxRoute
   '/project/$projectId': typeof ProjectProjectIdRoute
+  '/task/$taskId': typeof TaskTaskIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/process-inbox': typeof ProcessInboxRoute
   '/project/$projectId': typeof ProjectProjectIdRoute
+  '/task/$taskId': typeof TaskTaskIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/process-inbox' | '/project/$projectId'
+  fullPaths: '/' | '/process-inbox' | '/project/$projectId' | '/task/$taskId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/process-inbox' | '/project/$projectId'
-  id: '__root__' | '/' | '/process-inbox' | '/project/$projectId'
+  to: '/' | '/process-inbox' | '/project/$projectId' | '/task/$taskId'
+  id:
+    | '__root__'
+    | '/'
+    | '/process-inbox'
+    | '/project/$projectId'
+    | '/task/$taskId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ProcessInboxRoute: typeof ProcessInboxRoute
   ProjectProjectIdRoute: typeof ProjectProjectIdRoute
+  TaskTaskIdRoute: typeof TaskTaskIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -75,6 +90,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/task/$taskId': {
+      id: '/task/$taskId'
+      path: '/task/$taskId'
+      fullPath: '/task/$taskId'
+      preLoaderRoute: typeof TaskTaskIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/project/$projectId': {
       id: '/project/$projectId'
       path: '/project/$projectId'
@@ -89,6 +111,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ProcessInboxRoute: ProcessInboxRoute,
   ProjectProjectIdRoute: ProjectProjectIdRoute,
+  TaskTaskIdRoute: TaskTaskIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

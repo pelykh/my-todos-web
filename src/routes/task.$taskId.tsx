@@ -1,5 +1,5 @@
 import { ActionIcon, Button, Menu } from '@mantine/core'
-import { useNavigate } from '@tanstack/react-router'
+import { createFileRoute, useNavigate, useRouter } from '@tanstack/react-router'
 import { CheckCircle2, Ellipsis, FolderKanban, Trash2, X } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -8,10 +8,11 @@ import { BadgeSelect } from '@/components/BadgeSelect'
 import { DueDatePicker } from '@/components/DueDatePicker'
 import { MarkdownField } from '@/components/MarkdownField'
 import { ScheduledDatePicker } from '@/components/ScheduledDatePicker'
-import { useFocusedTaskActions, useFocusedTaskId } from '@/store'
 import { useTaskActions, useTaskWithProject } from '@/store/taskStore'
 import { useTheme } from '@/theme'
 import type { Area, Context } from '@/types'
+
+export const Route = createFileRoute('/task/$taskId')({ component: TaskPage })
 
 const CONTEXTS: Context[] = ['deep_work', 'admin', 'home', 'agenda']
 const AREAS: Area[] = ['work', 'personal', 'health', 'learning']
@@ -24,56 +25,38 @@ const DURATION_OPTIONS = [
 	{ value: '120', label: '2h' },
 ]
 
-export function TaskFocusModal() {
+function TaskPage() {
+	const { taskId } = Route.useParams()
 	const { t } = useTranslation()
 	const { colorScheme } = useTheme()
 	const isDark = colorScheme === 'dark'
-
 	const navigate = useNavigate()
-	const focusedTaskId = useFocusedTaskId()
-	const setFocusedTaskId = useFocusedTaskActions()
-	const [task, project] = useTaskWithProject(focusedTaskId!)
+	const router = useRouter()
+
+	const [task, project] = useTaskWithProject(taskId)
 	const { editTask, removeTask } = useTaskActions()
 
-	const [visible, setVisible] = useState(false)
 	const [titleValue, setTitleValue] = useState('')
 	const titleRef = useRef<HTMLInputElement>(null)
 
-	// Animate open/close
 	useEffect(() => {
-		if (focusedTaskId) {
-			setVisible(true)
-		}
-	}, [focusedTaskId])
-
-	// Sync local state when task changes
-	useEffect(() => {
-		if (task) {
-			setTitleValue(task.title)
-		}
+		if (task) setTitleValue(task.title)
 	}, [task])
 
-	// Focus title input when modal opens
 	useEffect(() => {
-		if (visible && task) {
-			setTimeout(() => titleRef.current?.focus(), 50)
-		}
-	}, [visible, task])
+		setTimeout(() => titleRef.current?.focus(), 50)
+	}, [])
 
-	// Close on Escape
 	useEffect(() => {
 		function handleKey(e: KeyboardEvent) {
-			if (e.key === 'Escape') handleClose()
+			if (e.key === 'Escape') handleBack()
 		}
-		if (focusedTaskId) {
-			window.addEventListener('keydown', handleKey)
-			return () => window.removeEventListener('keydown', handleKey)
-		}
-	}, [focusedTaskId])
+		window.addEventListener('keydown', handleKey)
+		return () => window.removeEventListener('keydown', handleKey)
+	}, [])
 
-	function handleClose() {
-		setVisible(false)
-		setTimeout(() => setFocusedTaskId(null), 250)
+	function handleBack() {
+		router.history.back()
 	}
 
 	function handleTitleBlur() {
@@ -94,19 +77,18 @@ export function TaskFocusModal() {
 	function handleComplete() {
 		if (!task) return
 		editTask(task.id, { status: 'done' })
-		handleClose()
+		handleBack()
 	}
 
 	function handleDelete() {
 		if (!task) return
 		removeTask(task.id)
-		handleClose()
+		handleBack()
 	}
 
 	function handlePromoteToProject() {
 		if (!task) return
 		editTask(task.id, { isProject: true, status: 'next_action' })
-		handleClose()
 		navigate({ to: '/project/$projectId', params: { projectId: task.id } })
 	}
 
@@ -135,41 +117,15 @@ export function TaskFocusModal() {
 		editTask(task.id, { dueDate: value ?? undefined })
 	}
 
-	if (!focusedTaskId && !visible) return null
-
-	const overlay: React.CSSProperties = {
-		position: 'fixed',
-		top: 0,
-		left: 0,
-		width: '100vw',
-		height: '100vh',
-		backgroundColor: 'var(--mantine-color-body)',
-		zIndex: 200,
-		display: 'flex',
-		alignItems: 'flex-start',
-		justifyContent: 'center',
-		opacity: visible ? 1 : 0,
-		transition: 'opacity 0.25s ease',
+	if (!task) {
+		return (
+			<div className="flex items-center justify-center h-screen">
+				<span style={{ color: 'var(--mantine-color-dimmed)' }}>
+					{t('taskNotFound')}
+				</span>
+			</div>
+		)
 	}
-
-	const modal: React.CSSProperties = {
-		width: '100%',
-		maxWidth: 640,
-		height: '100%',
-		backgroundColor: 'var(--mantine-color-body)',
-		borderRadius: 0,
-		display: 'flex',
-		flexDirection: 'column',
-		overflow: 'hidden',
-		transform: visible
-			? 'translateY(0) scale(1)'
-			: 'translateY(16px) scale(0.97)',
-		transition: 'transform 0.25s ease, opacity 0.25s ease',
-		opacity: visible ? 1 : 0,
-		paddingTop: '10%',
-	}
-
-	if (!task) return null
 
 	const contextOptions = CONTEXTS.map((c) => ({
 		value: c,
@@ -177,13 +133,18 @@ export function TaskFocusModal() {
 	}))
 	const areaOptions = AREAS.map((a) => ({ value: a, label: t(`area.${a}`) }))
 
+	const divider = isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.07)'
+
 	return (
-		<div style={overlay}>
-			<div style={modal} onClick={(e) => e.stopPropagation()}>
+		<div className="flex justify-center min-h-screen" style={{ backgroundColor: 'var(--mantine-color-body)' }}>
+			<div
+				className="w-full flex flex-col"
+				style={{ maxWidth: 640, paddingTop: '10%' }}
+			>
 				{/* Header */}
 				<div
 					className="flex flex-col gap-3 px-5 pt-5 pb-4"
-					style={{ borderBottom: `1px solid ${isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.07)'}` }}
+					style={{ borderBottom: `1px solid ${divider}` }}
 				>
 					{/* Title row */}
 					<div className="flex items-center gap-2">
@@ -231,7 +192,7 @@ export function TaskFocusModal() {
 							</Menu.Dropdown>
 						</Menu>
 						<ActionIcon
-							onClick={handleClose}
+							onClick={handleBack}
 							variant="subtle"
 							color="gray"
 							size="lg"
@@ -243,7 +204,7 @@ export function TaskFocusModal() {
 					</div>
 
 					{/* Tags row */}
-					<div className="flex gap-2 items-center">
+					<div className="flex gap-2 items-center flex-wrap">
 						<BadgeSelect
 							options={contextOptions}
 							value={task.context ?? null}
@@ -262,9 +223,7 @@ export function TaskFocusModal() {
 						)}
 						<BadgeSelect
 							options={DURATION_OPTIONS}
-							value={
-								task.estimatedMinutes ? String(task.estimatedMinutes) : null
-							}
+							value={task.estimatedMinutes ? String(task.estimatedMinutes) : null}
 							onSelect={handleTimeChange}
 							placeholder={t('focusModalTime')}
 							color="gray"
@@ -296,20 +255,19 @@ export function TaskFocusModal() {
 						<>
 							<div
 								className="mt-4 mb-3.5"
-								style={{ borderTop: `1px solid ${isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.07)'}` }}
+								style={{ borderTop: `1px solid ${divider}` }}
 							/>
 							<div className="flex flex-col gap-1.5">
 								<span className="text-[11px] font-semibold uppercase tracking-[0.06em] text-(--mantine-color-dimmed)">
 									{t('project')}
 								</span>
 								<Button
-									onClick={() => {
-										handleClose()
+									onClick={() =>
 										navigate({
 											to: '/project/$projectId',
 											params: { projectId: project.id },
 										})
-									}}
+									}
 									variant="subtle"
 									color="gray"
 									size="xs"

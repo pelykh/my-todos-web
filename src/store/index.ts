@@ -8,7 +8,6 @@ import {
 	type FilterActions,
 	filterStore,
 } from './filterStore'
-import { focusedTaskStore } from './focusedTaskStore'
 
 // ── Filter store hooks ────────────────────────────────────────────────────────
 
@@ -25,13 +24,3 @@ export function useFilterActions(): FilterActions {
 
 export { DURATION_STEPS } from './filterStore'
 export type { DurationStep, FilterActions }
-
-// ── Focused task store hooks ──────────────────────────────────────────────────
-
-export function useFocusedTaskId() {
-	return useStore(focusedTaskStore, (s) => s.focusedTaskId)
-}
-
-export function useFocusedTaskActions() {
-	return useStore(focusedTaskStore, (s) => s.setFocusedTaskId)
-}

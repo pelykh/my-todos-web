@@ -1,5 +1,5 @@
 import { ActionIcon, Container, Group, Stack, Text, Title } from '@mantine/core'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { Moon, Search, Sun } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -7,10 +7,9 @@ import { useTranslation } from 'react-i18next'
 import { CommandPalette } from '@/components/CommandPalette'
 import { LangSelect } from '@/components/LangSelect'
 import { ProcessInboxButton } from '@/components/ProcessInboxButton'
-import { TaskFocusModal } from '@/components/TaskFocusModal'
 import { TaskListItem } from '@/components/TaskListItem'
 import { Toolbar } from '@/components/Toolbar'
-import { useFilters, useFocusedTaskActions } from '@/store'
+import { useFilters } from '@/store'
 import { useGroupedFilteredTasks } from '@/store/taskStore'
 import { useTheme } from '@/theme'
 import type { Task } from '@/types'
@@ -85,8 +84,8 @@ function App() {
 	const { t } = useTranslation()
 	const [cmdOpen, setCmdOpen] = useState(false)
 
+	const navigate = useNavigate()
 	const filters = useFilters()
-	const setFocusedTaskId = useFocusedTaskActions()
 	const groups = useGroupedFilteredTasks({
 		filters: {
 			...filters,
@@ -171,7 +170,7 @@ function App() {
 										taskId={task.id}
 										status={area === 'important' ? 'important' : undefined}
 										displayMeta={['project', 'duration']}
-										onClick={() => setFocusedTaskId(task.id)}
+										onClick={() => navigate({ to: '/task/$taskId', params: { taskId: task.id } })}
 									/>
 								))}
 							</Stack>
@@ -183,8 +182,6 @@ function App() {
 			<Toolbar />
 
 			<CommandPalette open={cmdOpen} onClose={() => setCmdOpen(false)} />
-
-			<TaskFocusModal />
 		</>
 	)
 }

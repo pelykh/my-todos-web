@@ -1,23 +1,23 @@
 import {
 	ActionIcon,
 	Button,
-	Container,
 	Group,
 	Menu,
 	Modal,
 	Stack,
 	Text,
 } from '@mantine/core'
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, useNavigate, useRouter } from '@tanstack/react-router'
 import {
-	ArrowLeft,
 	CheckCircle2,
 	ChevronsDown,
 	ChevronsUp,
 	Ellipsis,
+	FolderKanban,
 	FolderMinus,
 	Plus,
 	Trash2,
+	X,
 } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -28,9 +28,7 @@ import { DueDatePicker } from '@/components/DueDatePicker'
 import { MarkdownField } from '@/components/MarkdownField'
 import { ScheduledDatePicker } from '@/components/ScheduledDatePicker'
 import { SimpleTaskModal } from '@/components/SimpleTaskModal'
-import { TaskFocusModal } from '@/components/TaskFocusModal'
 import { TaskListItem } from '@/components/TaskListItem'
-import { useFocusedTaskActions } from '@/store'
 import {
 	useFilteredTasks,
 	useTaskActions,
@@ -55,7 +53,7 @@ function BacklogRow({
 	task: Task
 	onPromote: (id: string) => void
 }) {
-	const setFocusedTaskId = useFocusedTaskActions()
+	const navigate = useNavigate()
 	const { t } = useTranslation()
 	return (
 		<div className="group/row">
@@ -64,7 +62,7 @@ function BacklogRow({
 					<TaskListItem
 						taskId={task.id}
 						displayMeta={['duration']}
-						onClick={() => setFocusedTaskId(task.id)}
+						onClick={() => navigate({ to: '/task/$taskId', params: { taskId: task.id } })}
 					/>
 				</div>
 				<ActionIcon
@@ -91,7 +89,7 @@ function NextActionRow({
 	task,
 	onDemote,
 }: { task: Task; onDemote: (id: string) => void }) {
-	const setFocusedTaskId = useFocusedTaskActions()
+	const navigate = useNavigate()
 	const { t } = useTranslation()
 	return (
 		<div className="group/row">
@@ -100,7 +98,7 @@ function NextActionRow({
 					<TaskListItem
 						taskId={task.id}
 						displayMeta={['duration']}
-						onClick={() => setFocusedTaskId(task.id)}
+						onClick={() => navigate({ to: '/task/$taskId', params: { taskId: task.id } })}
 					/>
 				</div>
 				<ActionIcon
@@ -125,6 +123,7 @@ function NextActionRow({
 function ProjectPage() {
 	const { projectId } = Route.useParams()
 	const navigate = useNavigate()
+	const router = useRouter()
 	const { t } = useTranslation()
 	const { colorScheme } = useTheme()
 	const isDark = colorScheme === 'dark'
@@ -132,7 +131,6 @@ function ProjectPage() {
 	const [project] = useTaskWithProject(projectId)
 	const childTasks = useFilteredTasks({ projectId })
 	const { editTask, removeTask } = useTaskActions()
-	const setFocusedTaskId = useFocusedTaskActions()
 
 	const [titleValue, setTitleValue] = useState('')
 	const [addTaskOpen, setAddTaskOpen] = useState(false)
@@ -163,7 +161,7 @@ function ProjectPage() {
 	}, [])
 
 	function handleBack() {
-		navigate({ to: '/' })
+		router.history.back()
 	}
 
 	function handleTitleBlur() {
@@ -174,7 +172,6 @@ function ProjectPage() {
 
 	function handleTitleKey(e: React.KeyboardEvent<HTMLInputElement>) {
 		if (e.key === 'Enter') e.currentTarget.blur()
-		if (e.key === 'Escape') handleBack()
 	}
 
 	function handleNotesChange(value: string) {
@@ -232,17 +229,18 @@ function ProjectPage() {
 
 	if (!project) {
 		return (
-			<Container size="sm" py="xl">
-				<Text c="dimmed">{t('projectNotFound')}</Text>
-				<Button
-					mt="md"
-					variant="subtle"
-					onClick={handleBack}
-					leftSection={<ArrowLeft size={14} />}
-				>
-					{t('back')}
-				</Button>
-			</Container>
+			<div className="flex justify-center min-h-screen">
+				<div className="w-full px-5" style={{ maxWidth: 640, paddingTop: '10%' }}>
+					<Text c="dimmed">{t('projectNotFound')}</Text>
+					<Button
+						mt="md"
+						variant="subtle"
+						onClick={handleBack}
+					>
+						{t('back')}
+					</Button>
+				</div>
+			</div>
 		)
 	}
 
@@ -271,24 +269,19 @@ function ProjectPage() {
 
 	return (
 		<>
-			<Container size="sm" py="xl" pb={80}>
+			<div className="flex justify-center min-h-screen">
+			<div className="w-full flex flex-col pb-20" style={{ maxWidth: 640, paddingTop: '10%' }}>
 				{/* Header */}
 				<div
-					className="flex flex-col gap-3 pb-4 mb-5"
+					className="flex flex-col gap-3 px-5 pb-4 mb-5"
 					style={{ borderBottom: `1px solid ${dividerBorder}` }}
 				>
-					{/* Back + title row */}
+					{/* Title row */}
 					<div className="flex items-center gap-2">
-						<ActionIcon
-							onClick={handleBack}
-							variant="subtle"
-							color="gray"
-							size="lg"
-							radius="md"
-							aria-label={t('back')}
-						>
-							<ArrowLeft size={18} />
-						</ActionIcon>
+						<FolderKanban
+							size={18}
+							style={{ color: 'var(--mantine-color-dimmed)', flexShrink: 0 }}
+						/>
 
 						<input
 							ref={titleRef}
@@ -334,6 +327,17 @@ function ProjectPage() {
 								</Menu.Item>
 							</Menu.Dropdown>
 						</Menu>
+
+						<ActionIcon
+							onClick={handleBack}
+							variant="subtle"
+							color="gray"
+							size="lg"
+							radius="md"
+							aria-label={t('focusModalClose')}
+						>
+							<X size={18} />
+						</ActionIcon>
 					</div>
 
 					{/* Badges + dates on same row */}
@@ -354,6 +358,8 @@ function ProjectPage() {
 						/>
 					</div>
 				</div>
+
+				<div className="px-5">
 
 				{/* Next Actions */}
 				<Stack gap={0} mb={4}>
@@ -457,14 +463,16 @@ function ProjectPage() {
 									<TaskListItem
 										taskId={task.id}
 										displayMeta={['duration']}
-										onClick={() => setFocusedTaskId(task.id)}
+										onClick={() => navigate({ to: '/task/$taskId', params: { taskId: task.id } })}
 									/>
 								</div>
 							))}
 						</Stack>
 					</>
 				)}
-			</Container>
+				</div>
+		</div>
+		</div>
 
 			<SimpleTaskModal
 				open={addTaskOpen}
@@ -496,7 +504,6 @@ function ProjectPage() {
 			</Modal>
 
 			<CommandPalette open={cmdOpen} onClose={() => setCmdOpen(false)} />
-			<TaskFocusModal />
 		</>
 	)
 }

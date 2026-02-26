@@ -3,7 +3,6 @@ import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { TaskListItem } from '@/components/TaskListItem'
-import { useFocusedTaskActions } from '@/store'
 import { useFilteredTasks, useTaskActions } from '@/store/taskStore'
 import { useTheme } from '@/theme'
 import { useNavigate } from '@tanstack/react-router'
@@ -18,7 +17,6 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
 	const { colorScheme } = useTheme()
 	const allTasks = useFilteredTasks()
 	const { addTask } = useTaskActions()
-	const setFocusedTaskId = useFocusedTaskActions()
 	const navigate = useNavigate()
 	const [search, setSearch] = useState('')
 	const inputRef = useRef<HTMLInputElement>(null)
@@ -100,7 +98,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
 									if (task.isProject) {
 										navigate({ to: '/project/$projectId', params: { projectId: task.id } })
 									} else {
-										setFocusedTaskId(task.id)
+										navigate({ to: '/task/$taskId', params: { taskId: task.id } })
 									}
 								}}
 								style={itemStyle}
