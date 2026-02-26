@@ -1,0 +1,4 @@
+src/routeTree.gen.ts
+src/styles.css
+dist
+node_modules

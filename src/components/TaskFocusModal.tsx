@@ -5,16 +5,14 @@ import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+
 import { BadgeSelect } from '@/components/BadgeSelect'
 import { DueDatePicker } from '@/components/DueDatePicker'
 import { ScheduledDatePicker } from '@/components/ScheduledDatePicker'
-import {
-	useFocusedTaskActions,
-	useFocusedTaskId,
-} from '@/store'
+import { useFocusedTaskActions, useFocusedTaskId } from '@/store'
+import { useTaskActions, useTaskWithProject } from '@/store/taskStore'
 import { useTheme } from '@/theme'
 import type { Area, Context } from '@/types'
-import { useTaskWithProject, useTaskActions } from '@/store/taskStore'
 
 const CONTEXTS: Context[] = ['deep_work', 'admin', 'home', 'agenda']
 const AREAS: Area[] = ['work', 'personal', 'health', 'learning']
@@ -294,13 +292,15 @@ export function TaskFocusModal() {
 							placeholder={t('focusModalContext')}
 							color="blue"
 						/>
-            {!project && <BadgeSelect
-							options={areaOptions}
-							value={task.area ?? null}
-							onSelect={handleAreaChange}
-							placeholder={t('focusModalArea')}
-							color="violet"
-						/>}
+						{!project && (
+							<BadgeSelect
+								options={areaOptions}
+								value={task.area ?? null}
+								onSelect={handleAreaChange}
+								placeholder={t('focusModalArea')}
+								color="violet"
+							/>
+						)}
 						<BadgeSelect
 							options={DURATION_OPTIONS}
 							value={

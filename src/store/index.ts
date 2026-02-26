@@ -1,18 +1,22 @@
-import { type TaskFilters } from '@/types'
 import { useStore } from 'zustand'
 import { useShallow } from 'zustand/shallow'
+
+import { type TaskFilters } from '@/types'
+
 import {
-  type DurationStep,
-  type FilterActions,
-  filterStore,
+	type DurationStep,
+	type FilterActions,
+	filterStore,
 } from './filterStore'
 import { focusedTaskStore } from './focusedTaskStore'
-
 
 // ── Filter store hooks ────────────────────────────────────────────────────────
 
 export function useFilters(): TaskFilters {
-	return useStore(filterStore, useShallow((s) => s.filters))
+	return useStore(
+		filterStore,
+		useShallow((s) => s.filters),
+	)
 }
 
 export function useFilterActions(): FilterActions {

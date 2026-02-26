@@ -1,6 +1,7 @@
 import { Button } from '@mantine/core'
 import { Link } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
+
 import { useFilteredTasks } from '@/store/taskStore'
 
 export function ProcessInboxButton() {

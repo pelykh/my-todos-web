@@ -40,12 +40,19 @@ export function DueDatePicker({ value, onChange }: DueDatePickerProps) {
 			onChange={handleChange}
 			placeholder={t('dueDate')}
 			leftSection={
-				<Flag size={14} color={value ? 'var(--mantine-color-red-6)' : undefined} />
+				<Flag
+					size={14}
+					color={value ? 'var(--mantine-color-red-6)' : undefined}
+				/>
 			}
 			valueFormat="MMM D, YYYY"
 			clearable
 			size="xs"
-			minDate={(() => { const d = new Date(); d.setHours(0, 0, 0, 0); return d })()}
+			minDate={(() => {
+				const d = new Date()
+				d.setHours(0, 0, 0, 0)
+				return d
+			})()}
 			autoFocus={opened && !value}
 			onBlur={() => {
 				if (!value) setOpened(false)
@@ -55,7 +62,9 @@ export function DueDatePicker({ value, onChange }: DueDatePickerProps) {
 					if (!value) setOpened(false)
 				},
 			}}
-			styles={value ? { input: { color: 'var(--mantine-color-red-6)' } } : undefined}
+			styles={
+				value ? { input: { color: 'var(--mantine-color-red-6)' } } : undefined
+			}
 		/>
 	)
 }

@@ -14,18 +14,21 @@ import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+
 import { BadgeSelect } from '@/components/BadgeSelect'
 import { DueDatePicker } from '@/components/DueDatePicker'
 import { ScheduledDatePicker } from '@/components/ScheduledDatePicker'
 import { SimpleTaskModal } from '@/components/SimpleTaskModal'
 import { TaskFocusModal } from '@/components/TaskFocusModal'
 import { TaskListItem } from '@/components/TaskListItem'
+import { useFocusedTaskActions } from '@/store'
 import {
-	useFocusedTaskActions,
-} from '@/store'
+	useFilteredTasks,
+	useTaskActions,
+	useTaskWithProject,
+} from '@/store/taskStore'
 import { useTheme } from '@/theme'
 import type { Area, Context, Task } from '@/types'
-import { useFilteredTasks, useTaskActions, useTaskWithProject } from '@/store/taskStore'
 
 export const Route = createFileRoute('/project/$projectId')({
 	component: ProjectPage,
@@ -560,7 +563,10 @@ function ProjectPage() {
 							size="xs"
 							fw={600}
 							tt="uppercase"
-							style={{ letterSpacing: '0.05em', color: 'var(--mantine-color-dimmed)' }}
+							style={{
+								letterSpacing: '0.05em',
+								color: 'var(--mantine-color-dimmed)',
+							}}
 						>
 							{t('projectTasks')}
 						</Text>
@@ -592,7 +598,7 @@ function ProjectPage() {
 								task={task}
 								onDragStart={handleDragStart}
 								onDragEnd={handleDragEnd}
-								onPromote={(id) => editTask(id, { status: "next_action" })}
+								onPromote={(id) => editTask(id, { status: 'next_action' })}
 							/>
 						))
 					)}
