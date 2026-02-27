@@ -109,6 +109,7 @@
 	"validationRequired": "{{field}} є обов'язковим",
 	"fieldTitle": "Назва",
 	"fieldNotes": "Нотатки",
+	"taskRestore": "Відновити",
 	"processNewProjectTitle": "Назвіть свій проєкт",
 	"processNewProjectHint": "Назва має описувати результат, якого ви прагнете, а не фізичну дію — наприклад, «Сайт запущено» або «Звіт подано»."
 }

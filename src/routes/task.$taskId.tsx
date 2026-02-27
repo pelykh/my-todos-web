@@ -1,6 +1,6 @@
 import { ActionIcon, Button, Menu } from '@mantine/core'
 import { Link, createFileRoute, useNavigate, useRouter } from '@tanstack/react-router'
-import { CheckCircle2, Ellipsis, FolderKanban, Trash2, X } from 'lucide-react'
+import { CheckCircle2, Ellipsis, FolderKanban, RotateCcw, Trash2, X } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -84,6 +84,11 @@ function TaskPage() {
 		handleBack()
 	}
 
+	function handleRestore() {
+		if (!task) return
+		editTask(task.id, { status: 'next_action' })
+	}
+
 	function handleDelete() {
 		if (!task) return
 		removeTask(task.id)
@@ -160,16 +165,29 @@ function TaskPage() {
 							onKeyDown={handleTitleKey}
 							className="flex-1 min-w-0 bg-transparent border-none outline-none text-lg font-semibold py-0.5 text-(--mantine-color-text)"
 						/>
-						<Button
-							onClick={handleComplete}
-							variant="filled"
-							color="green"
-							size="sm"
-							radius="md"
-							leftSection={<CheckCircle2 size={16} />}
-						>
-							{t('focusModalComplete')}
-						</Button>
+						{task.status === 'done' ? (
+							<Button
+								onClick={handleRestore}
+								variant="filled"
+								color="gray"
+								size="sm"
+								radius="md"
+								leftSection={<RotateCcw size={16} />}
+							>
+								{t('taskRestore')}
+							</Button>
+						) : (
+							<Button
+								onClick={handleComplete}
+								variant="filled"
+								color="green"
+								size="sm"
+								radius="md"
+								leftSection={<CheckCircle2 size={16} />}
+							>
+								{t('focusModalComplete')}
+							</Button>
+						)}
 						<Menu withinPortal zIndex={600} position="bottom-end">
 							<Menu.Target>
 								<ActionIcon variant="subtle" color="gray" size="lg" radius="md">
