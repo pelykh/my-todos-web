@@ -25,8 +25,8 @@ import { NewProjectStep } from '@/components/inbox-steps/NewProjectStep'
 import { NotActionStep } from '@/components/inbox-steps/NotActionStep'
 import { ReferenceStep } from '@/components/inbox-steps/ReferenceStep'
 import { SelectProjectStep } from '@/components/inbox-steps/SelectProjectStep'
-import { resetInboxStepper, useInboxCurrentStep } from '@/store/inboxStepper'
-import { useFilteredTasks } from '@/store/taskStore'
+import { resetInboxStepper, useInboxCurrentStep, useInboxState } from '@/store/inboxStepper'
+import { useFilteredTasks, useTaskById } from '@/store/taskStore'
 
 export const Route = createFileRoute('/process-inbox')({
 	component: ProcessInbox,
@@ -41,6 +41,8 @@ function ProcessInbox() {
 	const [total] = useState(() => inboxTasks.length)
 
 	const currentStep = useInboxCurrentStep()
+	const { task: inboxStateTask } = useInboxState()
+	const liveNewTask = useTaskById(inboxStateTask?.id ?? null)
 
 	const task = inboxTasks[0]
 	const done = task === undefined
@@ -119,7 +121,7 @@ function ProcessInbox() {
 					)}
 					{currentStep === '4_1_2_existing_project' && (
 						<ExistingProjectStep
-							task={task}
+							task={liveNewTask ?? task}
 							projects={projects}
 							onAdvance={advance}
 						/>

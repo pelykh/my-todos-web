@@ -135,6 +135,12 @@ export function useTaskWithProject(id: string): [Task, Task | undefined] {
 	)
 }
 
+export function useTaskById(id: string | null): Task | null {
+	return useStore(taskStore, (s) =>
+		id ? (s.tasks.find((t) => t.id === id) ?? null) : null,
+	)
+}
+
 export function useTaskActions(): TaskActions {
 	return useStore(taskStore, (s) => s.actions)
 }

@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 
 import { TaskForm } from '@/components/TaskForm'
 import { useValidateTask } from '@/hooks/useValidateTask'
-import { goToInboxStep } from '@/store/inboxStepper'
+import { goToInboxStep, patchInboxState } from '@/store/inboxStepper'
 import { useTaskActions } from '@/store/taskStore'
 import type { Task } from '@/types'
 
@@ -15,14 +15,16 @@ type Props = {
 
 export function NewProjectStep({ task, onAdvance }: Props) {
 	const { t } = useTranslation()
-	const { editTask } = useTaskActions()
+	const { editTask, addTask } = useTaskActions()
 
 	const { canSubmit, errors, handleSubmit } = useValidateTask({
 		task,
 		fields: ['title', 'area'],
 		onSubmit: () => {
 			editTask(task.id, { status: 'next_action', isProject: true })
-			onAdvance()
+			const newTask = addTask({ title: 'Next action task', status: 'inbox', projectId: task.id, area: task.area })
+			patchInboxState({ task: newTask, selectedProjectId: task.id })
+			goToInboxStep('4_1_2_existing_project')
 		},
 	})
 
