@@ -10,12 +10,12 @@ import { MarkdownField } from '@/components/MarkdownField'
 import { ScheduledDatePicker } from '@/components/ScheduledDatePicker'
 import { useTaskActions, useTaskWithProject } from '@/store/taskStore'
 import { useTheme } from '@/theme'
+import { AREAS } from '@/types'
 import type { Area, Context } from '@/types'
 
 export const Route = createFileRoute('/task/$taskId')({ component: TaskPage })
 
 const CONTEXTS: Context[] = ['deep_work', 'admin', 'home', 'agenda']
-const AREAS: Area[] = ['work', 'personal', 'health', 'learning']
 const DURATION_OPTIONS = [
 	{ value: '5', label: "5'" },
 	{ value: '15', label: "15'" },

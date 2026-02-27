@@ -163,12 +163,12 @@ export const MOCK_TASKS: Task[] = [
 		updatedAt: d(1),
 	},
 
-	// ── Next actions – Health ─────────────────────────────────────────────────
+	// ── Next actions – Personal (health) ─────────────────────────────────────
 	{
 		id: 'task-11',
 		title: 'Morning run 5k',
 		status: 'next_action',
-		area: 'health',
+		area: 'personal',
 		context: 'home',
 		estimatedMinutes: 35,
 		scheduledDate: TODAY,
@@ -179,7 +179,7 @@ export const MOCK_TASKS: Task[] = [
 		id: 'task-12',
 		title: 'Book dentist appointment',
 		status: 'next_action',
-		area: 'health',
+		area: 'personal',
 		context: 'admin',
 		estimatedMinutes: 10,
 		createdAt: d(5),
@@ -189,7 +189,7 @@ export const MOCK_TASKS: Task[] = [
 		id: 'task-13',
 		title: 'Meal prep for the week',
 		status: 'next_action',
-		area: 'health',
+		area: 'personal',
 		context: 'home',
 		estimatedMinutes: 60,
 		scheduledDate: TODAY,
@@ -295,7 +295,7 @@ export const MOCK_TASKS: Task[] = [
 		id: 'task-23',
 		title: 'Buy standing desk mat',
 		status: 'done',
-		area: 'health',
+		area: 'personal',
 		context: 'home',
 		createdAt: d(8),
 		updatedAt: d(7),

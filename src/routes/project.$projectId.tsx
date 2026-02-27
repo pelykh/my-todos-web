@@ -35,13 +35,13 @@ import {
 	useTaskWithProject,
 } from '@/store/taskStore'
 import { useTheme } from '@/theme'
+import { AREAS } from '@/types'
 import type { Area, Context, Task } from '@/types'
 
 export const Route = createFileRoute('/project/$projectId')({
 	component: ProjectPage,
 })
 
-const AREAS: Area[] = ['work', 'personal', 'health', 'learning']
 const CONTEXTS: Context[] = ['deep_work', 'admin', 'home', 'agenda']
 const MAX_NEXT_ACTIONS = 3
 

@@ -3,12 +3,13 @@ import { createStore, useStore } from 'zustand'
 import { useShallow } from 'zustand/shallow'
 
 import {
-	type CreateTaskInput,
-	type ITaskService,
-	LocalStorageTaskService,
-	type UpdateTaskInput,
+  type CreateTaskInput,
+  type ITaskService,
+  LocalStorageTaskService,
+  type UpdateTaskInput,
 } from '@/services'
 import type { Task, TaskFilters } from '@/types'
+import { AREAS } from '@/types'
 import { getTaskArea, getTaskProject, isTaskImportant } from '@/utils/tasks'
 
 export type TaskActions = {
@@ -95,6 +96,11 @@ export function useGroupedFilteredTasks({
 	const tasks = useFilteredTasks(filters)
 
 	return React.useMemo(() => {
+		const seed: GroupedTasks = { important: [] }
+		if (groupBy === 'area') {
+			for (const area of AREAS) seed[area] = []
+		}
+
 		return tasks.reduce<GroupedTasks>((acc, task) => {
 			acc['important'] ??= []
 
@@ -107,8 +113,9 @@ export function useGroupedFilteredTasks({
 				}
 			}
 
-			if (groupBy === 'area') {
-				const key = getTaskArea(task, tasks) ?? 'other'
+      if (groupBy === 'area') {
+        const allTasks = taskStore.getState().tasks
+				const key = getTaskArea(task, allTasks) ?? 'other'
 				acc[key] ??= []
 				acc[key].push(task)
 				return acc
@@ -118,7 +125,7 @@ export function useGroupedFilteredTasks({
 			acc[key] ??= []
 			acc[key].push(task)
 			return acc
-		}, {})
+		}, seed)
 	}, [tasks])
 }
 

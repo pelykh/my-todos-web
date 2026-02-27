@@ -10,7 +10,8 @@ export type TaskStatus =
 
 export type Context = 'deep_work' | 'admin' | 'home' | 'agenda'
 
-export type Area = 'work' | 'personal' | 'health' | 'learning'
+export const AREAS = ['personal', 'child', 'finances', 'work', 'learning'] as const
+export type Area = (typeof AREAS)[number]
 
 export type Task = {
 	id: string

@@ -6,6 +6,7 @@ import { DueDatePicker } from '@/components/DueDatePicker'
 import { MarkdownField } from '@/components/MarkdownField'
 import { ScheduledDatePicker } from '@/components/ScheduledDatePicker'
 import { useTaskActions } from '@/store/taskStore'
+import { AREAS } from '@/types'
 import type { Area, Context, Task } from '@/types'
 
 export type TaskFormField =
@@ -23,7 +24,6 @@ type Props = {
 }
 
 const CONTEXTS: Context[] = ['deep_work', 'admin', 'home', 'agenda']
-const AREAS: Area[] = ['work', 'personal', 'health', 'learning']
 const DURATION_OPTIONS = [
 	{ value: '5', label: "5'" },
 	{ value: '15', label: "15'" },
