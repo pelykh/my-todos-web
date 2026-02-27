@@ -1,44 +1,59 @@
-import { Button, Stack, TextInput } from '@mantine/core'
+import { Button, Stack, Text } from '@mantine/core'
 import { ArrowLeft } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
-import { goToInboxStep, patchInboxState, useInboxState } from '@/store/inboxStepper'
+import { TaskForm } from '@/components/TaskForm'
+import { useValidateTask } from '@/hooks/useValidateTask'
+import { goToInboxStep } from '@/store/inboxStepper'
 import { useTaskActions } from '@/store/taskStore'
+import type { Task } from '@/types'
 
 type Props = {
-	task: { id: string }
+	task: Task
 	onAdvance: () => void
 }
 
 export function NewProjectStep({ task, onAdvance }: Props) {
 	const { t } = useTranslation()
-	const { newProjectName } = useInboxState()
-	const { editTask, addTask } = useTaskActions()
+	const { editTask } = useTaskActions()
+
+	const { canSubmit, errors, handleSubmit } = useValidateTask({
+		task,
+		fields: ['title', 'area'],
+		onSubmit: () => {
+			editTask(task.id, { status: 'next_action', isProject: true })
+			onAdvance()
+		},
+	})
 
 	return (
-		<Stack gap="md">
-			<TextInput
-				label={t('projectNamePlaceholder')}
-				placeholder={t('projectNamePlaceholder')}
-				value={newProjectName}
-				onChange={(e) =>
-					patchInboxState({ newProjectName: e.currentTarget.value })
-				}
+		<Stack gap="md" align="center">
+			<Text size="md" fw={500}>
+				{t('processNewProjectTitle')}
+			</Text>
+			<Text size="sm" c="dimmed" w="100%">
+				{t('processNewProjectHint')}
+			</Text>
+			<TaskForm
+				task={task}
+				fields={['title', 'notes', 'area', 'dueDate']}
 			/>
+			{errors.length > 0 && (
+				<Stack gap={4} w="100%" maw={320}>
+					{errors.map((err) => (
+						<Text key={err} size="sm" c="red">
+							{err}
+						</Text>
+					))}
+				</Stack>
+			)}
 			<Button
-				onClick={() => {
-					const project = addTask({
-						title: newProjectName.trim(),
-						status: 'next_action',
-						isProject: true,
-					})
-					editTask(task.id, { status: 'next_action', projectId: project.id })
-					onAdvance()
-				}}
+				onClick={handleSubmit}
+				disabled={!canSubmit}
 				variant="filled"
 				color="blue"
-				fullWidth
-				disabled={!newProjectName.trim()}
+				w="100%"
+				maw={320}
 			>
 				{t('processDoneUk')}
 			</Button>
@@ -46,7 +61,8 @@ export function NewProjectStep({ task, onAdvance }: Props) {
 				onClick={() => goToInboxStep('4_1_project')}
 				variant="subtle"
 				color="gray"
-				fullWidth
+				w="100%"
+				maw={320}
 				leftSection={<ArrowLeft size={14} />}
 			>
 				{t('processBackUk')}

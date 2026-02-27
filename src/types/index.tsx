@@ -6,7 +6,6 @@ export type TaskStatus =
 	| 'backlog'
 	| 'waiting_for'
 	| 'someday'
-	| 'reference'
 	| 'done'
 
 export type Context = 'deep_work' | 'admin' | 'home' | 'agenda'

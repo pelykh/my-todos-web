@@ -2,11 +2,15 @@ import { Button, Stack, Text } from '@mantine/core'
 import { ArrowLeft } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
+import { ShortcutButton } from '@/components/ShortcutButton'
+import { TaskForm } from '@/components/TaskForm'
+import { useValidateTask } from '@/hooks/useValidateTask'
 import { goToInboxStep } from '@/store/inboxStepper'
 import { useTaskActions } from '@/store/taskStore'
+import type { Task } from '@/types'
 
 type Props = {
-	task: { id: string }
+	task: Task
 	onAdvance: () => void
 }
 
@@ -14,19 +18,43 @@ export function DescribeTaskStep({ task, onAdvance }: Props) {
 	const { t } = useTranslation()
 	const { editTask } = useTaskActions()
 
+	const { canSubmit, errors, handleSubmit } = useValidateTask({
+		task,
+		fields: ['title', 'area', 'context', 'duration'],
+		onSubmit: () => {
+			editTask(task.id, { status: 'next_action' })
+			onAdvance()
+		},
+	})
+
 	return (
-		<Stack gap="md">
+		<Stack gap="md" align="center">
 			<Text size="md" fw={500}>
 				{t('processClarifyTitle')}
+      </Text>
+			<Text size="sm" c="dimmed" w="100%">
+				{t('processClarifyHint')}
 			</Text>
+			<TaskForm
+				task={task}
+				fields={['title', 'notes', 'area', 'context', 'duration', 'dueDate', 'scheduledDate']}
+			/>
+			{errors.length > 0 && (
+				<Stack gap={4} w="100%" maw={320}>
+					{errors.map((err) => (
+						<Text key={err} size="sm" c="red">
+							{err}
+						</Text>
+					))}
+				</Stack>
+			)}
 			<Button
-				onClick={() => {
-					editTask(task.id, { status: 'next_action' })
-					onAdvance()
-				}}
+				onClick={handleSubmit}
+				disabled={!canSubmit}
 				variant="filled"
 				color="blue"
-				fullWidth
+				w="100%"
+				maw={320}
 			>
 				{t('processDoneUk')}
 			</Button>
@@ -34,7 +62,8 @@ export function DescribeTaskStep({ task, onAdvance }: Props) {
 				onClick={() => goToInboxStep('4_0_is_project')}
 				variant="subtle"
 				color="gray"
-				fullWidth
+				w="100%"
+				maw={320}
 				leftSection={<ArrowLeft size={14} />}
 			>
 				{t('processBackUk')}

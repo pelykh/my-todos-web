@@ -31,7 +31,7 @@ export function TaskListItem({
 
 	const getMetaLabel = (metaKey: DisplayMeta) => {
 		if (metaKey === 'area') {
-			return task[metaKey]
+			return task.area ? t(`area.${task.area}`, { defaultValue: task.area }) : null
 		}
 
 		if (metaKey === 'duration') {

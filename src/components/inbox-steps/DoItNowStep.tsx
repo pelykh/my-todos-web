@@ -1,12 +1,16 @@
-import { Button, Stack, Text } from '@mantine/core'
+import { Stack, Text } from '@mantine/core'
 import { ArrowLeft } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
+import { CountdownTimer } from '@/components/CountdownTimer'
+import { ShortcutButton } from '@/components/ShortcutButton'
+import { TaskCard } from '@/components/TaskCard'
 import { goToInboxStep } from '@/store/inboxStepper'
 import { useTaskActions } from '@/store/taskStore'
+import type { Task } from '@/types'
 
 type Props = {
-	task: { id: string }
+	task: Task
 	onAdvance: () => void
 }
 
@@ -15,30 +19,36 @@ export function DoItNowStep({ task, onAdvance }: Props) {
 	const { removeTask } = useTaskActions()
 
 	return (
-		<Stack gap="md">
+		<Stack gap="md" align="center">
+      <TaskCard task={task} />
+			<CountdownTimer seconds={120} />
 			<Text size="md" fw={500}>
 				{t('processDoItLabel')}
-			</Text>
-			<Button
+      </Text>
+			<ShortcutButton
+				shortcut="1"
 				onClick={() => {
 					removeTask(task.id)
 					onAdvance()
 				}}
 				variant="filled"
 				color="green"
-				fullWidth
+				w="100%"
+				maw={320}
 			>
 				{t('processDoneUk')}
-			</Button>
-			<Button
+			</ShortcutButton>
+			<ShortcutButton
+				shortcut="2"
 				onClick={() => goToInboxStep('2_0_is_less_then_2_minutes')}
 				variant="subtle"
 				color="gray"
-				fullWidth
+				w="100%"
+				maw={320}
 				leftSection={<ArrowLeft size={14} />}
 			>
 				{t('processBackUk')}
-			</Button>
+			</ShortcutButton>
 		</Stack>
 	)
 }

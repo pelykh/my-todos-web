@@ -2,7 +2,6 @@ import {
 	ActionIcon,
 	Badge,
 	Button,
-	Card,
 	Container,
 	Group,
 	Stack,
@@ -94,20 +93,7 @@ function ProcessInbox() {
 						</Badge>
 					</Group>
 
-					<Card withBorder radius="md" p="xl">
-						<Stack gap="sm">
-							<Text fw={600} size="lg" style={{ lineHeight: 1.4 }}>
-								{task.title}
-							</Text>
-							{task.notes && (
-								<Text size="sm" c="dimmed" style={{ whiteSpace: 'pre-wrap' }}>
-									{task.notes}
-								</Text>
-							)}
-						</Stack>
-					</Card>
-
-					{currentStep === '1_0_is_actionable' && <IsActionableStep />}
+					{currentStep === '1_0_is_actionable' && <IsActionableStep task={task} />}
 					{currentStep === '1_1_not_action' && (
 						<NotActionStep task={task} onAdvance={advance} />
 					)}
@@ -115,18 +101,18 @@ function ProcessInbox() {
 						<ReferenceStep task={task} onAdvance={advance} />
 					)}
 					{currentStep === '2_0_is_less_then_2_minutes' && (
-						<IsLessThan2MinutesStep />
+						<IsLessThan2MinutesStep task={task} />
 					)}
 					{currentStep === '2_1_less_then_2_minutes' && (
 						<DoItNowStep task={task} onAdvance={advance} />
 					)}
-					{currentStep === '3_0_is_delegate' && <IsDelegateStep />}
+					{currentStep === '3_0_is_delegate' && <IsDelegateStep task={task} />}
 					{currentStep === '3_1_delegate' && (
 						<DelegateStep task={task} onAdvance={advance} />
 					)}
-					{currentStep === '4_0_is_project' && <IsProjectStep />}
+					{currentStep === '4_0_is_project' && <IsProjectStep task={task} />}
 					{currentStep === '4_1_project' && (
-						<SelectProjectStep projects={projects} />
+						<SelectProjectStep task={task} projects={projects} />
 					)}
 					{currentStep === '4_1_1_new_project' && (
 						<NewProjectStep task={task} onAdvance={advance} />
