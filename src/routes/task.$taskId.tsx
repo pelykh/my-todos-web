@@ -44,10 +44,6 @@ function TaskPage() {
 	}, [task])
 
 	useEffect(() => {
-		setTimeout(() => titleRef.current?.focus(), 50)
-	}, [])
-
-	useEffect(() => {
 		function handleKey(e: KeyboardEvent) {
 			if (e.key === 'Escape') handleBack()
 		}

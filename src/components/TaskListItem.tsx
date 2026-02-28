@@ -1,3 +1,4 @@
+import { Tooltip } from '@mantine/core'
 import { Link } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 
@@ -73,14 +74,26 @@ export function TaskListItem({
 
 			{/* Content */}
 			<div className="flex-1 min-w-0 flex items-center justify-between gap-3">
-				<span className="text-[13.5px] font-normal truncate text-(--mantine-color-text)">
-					{task.title}
-				</span>
+				<Tooltip label={task.title} openDelay={600} withinPortal>
+					<span className="flex-1 min-w-0 text-[13.5px] font-normal truncate text-(--mantine-color-text)">
+						{task.title}
+					</span>
+				</Tooltip>
 
 				<div className="flex items-center gap-1.5 shrink-0">
 					{displayMeta?.map((metaKey) => {
 						const label = getMetaLabel(metaKey)
 						if (!label) return null
+
+						if (metaKey === 'project') {
+							return (
+								<Tooltip key={metaKey} label={label} openDelay={600} withinPortal>
+									<span className="text-xs text-gray-400 max-w-[130px] truncate block">
+										{label}
+									</span>
+								</Tooltip>
+							)
+						}
 
 						return (
 							<span key={metaKey} className="text-xs text-gray-400">

@@ -144,10 +144,6 @@ function ProjectPage() {
 	}, [project])
 
 	useEffect(() => {
-		setTimeout(() => titleRef.current?.focus(), 50)
-	}, [])
-
-	useEffect(() => {
 		function handleKey(e: KeyboardEvent) {
 			if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
 				e.preventDefault()

@@ -10,6 +10,7 @@ import {
 } from '@mantine/core'
 import { IconGripHorizontal } from '@tabler/icons-react'
 import { Star } from 'lucide-react'
+import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import type { DurationStep } from '@/store'
@@ -54,7 +55,7 @@ export function Toolbar() {
 	const { t } = useTranslation()
 	const { context, isImportant: todayOnly, maxEstimatedMinutes } = useFilters()
 	const maxMinutes = maxEstimatedMinutes as DurationStep
-	const { setContext, setMaxMinutes, activateToday, clearAll } =
+	const { setContext, setMaxMinutes, activateToday, clearAll, toggleToday } =
 		useFilterActions()
 
 	const allTasks = useFilteredTasks()
@@ -66,6 +67,12 @@ export function Toolbar() {
 	const hasTodayTasks = todayTasks.length > 0
 	const allTodayDone =
 		hasTodayTasks && todayTasks.every((t) => t.status === 'done')
+
+	useEffect(() => {
+		if (todayOnly && (!hasTodayTasks || allTodayDone)) {
+			toggleToday()
+		}
+	}, [todayOnly, hasTodayTasks, allTodayDone])
 
 	const sliderIndex = stepToSliderIndex(maxMinutes)
 
