@@ -92,10 +92,14 @@ export function useGroupedFilteredTasks({
 	filters,
 	groupBy,
 	useImportant = false,
+	sortBy,
+	sortOrder = 'asc',
 }: {
 	filters?: TaskFilters
 	groupBy?: 'area' | 'context'
 	useImportant?: boolean
+	sortBy?: 'duration'
+	sortOrder?: 'asc' | 'desc'
 }): GroupedTasks {
 	const tasks = useFilteredTasks(filters)
 
@@ -105,7 +109,7 @@ export function useGroupedFilteredTasks({
 			for (const area of AREAS) seed[area] = []
 		}
 
-		return tasks.reduce<GroupedTasks>((acc, task) => {
+		const result = tasks.reduce<GroupedTasks>((acc, task) => {
 			acc['important'] ??= []
 
 			if (useImportant) {
@@ -130,7 +134,19 @@ export function useGroupedFilteredTasks({
 			acc[key].push(task)
 			return acc
 		}, seed)
-	}, [tasks])
+
+		if (sortBy === 'duration') {
+			for (const key of Object.keys(result)) {
+				result[key].sort((a, b) => {
+					const aMin = a.estimatedMinutes ?? 0
+					const bMin = b.estimatedMinutes ?? 0
+					return sortOrder === 'asc' ? aMin - bMin : bMin - aMin
+				})
+			}
+		}
+
+		return result
+	}, [tasks, sortBy, sortOrder])
 }
 
 export function useTaskWithProject(id: string): [Task, Task | undefined] {
