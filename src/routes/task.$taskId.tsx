@@ -1,6 +1,6 @@
 import { ActionIcon, Button, Menu } from '@mantine/core'
-import { Link, createFileRoute, useNavigate, useRouter } from '@tanstack/react-router'
-import { CheckCircle2, Ellipsis, FolderKanban, RotateCcw, Trash2, X } from 'lucide-react'
+import { createFileRoute, Link, useNavigate, useRouter } from '@tanstack/react-router'
+import { Archive, CheckCircle2, Ellipsis, FolderKanban, RotateCcw, Trash2, X } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -10,8 +10,8 @@ import { MarkdownField } from '@/components/MarkdownField'
 import { ScheduledDatePicker } from '@/components/ScheduledDatePicker'
 import { useTaskActions, useTaskWithProject } from '@/store/taskStore'
 import { useTheme } from '@/theme'
-import { AREAS } from '@/types'
 import type { Area, Context } from '@/types'
+import { AREAS } from '@/types'
 
 export const Route = createFileRoute('/task/$taskId')({ component: TaskPage })
 
@@ -93,6 +93,16 @@ function TaskPage() {
 		if (!task) return
 		removeTask(task.id)
 		handleBack()
+	}
+
+	function handleMoveToSomeday() {
+		if (!task) return
+		editTask(task.id, { status: 'someday' })
+	}
+
+	function handleRestoreFromSomeday() {
+		if (!task) return
+		editTask(task.id, { status: task.projectId ? 'backlog' : 'next_action' })
 	}
 
 	function handlePromoteToProject() {
@@ -201,6 +211,21 @@ function TaskPage() {
 										onClick={handlePromoteToProject}
 									>
 										{t('focusModalPromoteToProject')}
+									</Menu.Item>
+                )}
+								{task.status === 'someday' ? (
+									<Menu.Item
+										leftSection={<Archive size={14} />}
+										onClick={handleRestoreFromSomeday}
+									>
+										{task.projectId ? t('taskMoveToBacklog') : t('taskMoveToNextAction')}
+									</Menu.Item>
+								) : (
+									<Menu.Item
+										leftSection={<Archive size={14} />}
+										onClick={handleMoveToSomeday}
+									>
+										{t('taskMoveToSomeday')}
 									</Menu.Item>
 								)}
 								<Menu.Divider />

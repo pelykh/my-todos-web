@@ -9,6 +9,7 @@ import {
 } from '@mantine/core'
 import { createFileRoute, useNavigate, useRouter } from '@tanstack/react-router'
 import {
+	Archive,
 	CheckCircle2,
 	ChevronsDown,
 	ChevronsUp,
@@ -35,8 +36,8 @@ import {
 	useTaskWithProject,
 } from '@/store/taskStore'
 import { useTheme } from '@/theme'
-import { AREAS } from '@/types'
 import type { Area, Context, Task } from '@/types'
+import { AREAS } from '@/types'
 
 export const Route = createFileRoute('/project/$projectId')({
 	component: ProjectPage,
@@ -208,6 +209,16 @@ function ProjectPage() {
 		navigate({ to: '/' })
 	}
 
+	function handleMoveToSomeday() {
+		if (!project) return
+		editTask(project.id, { status: 'someday' })
+	}
+
+	function handleRestoreFromSomeday() {
+		if (!project) return
+		editTask(project.id, { status: 'next_action' })
+	}
+
 	function handleCompleteProject() {
 		if (!project) return
 		const incompleteTasks = childTasks.filter((t) => t.status !== 'done')
@@ -318,7 +329,22 @@ function ProjectPage() {
 									onClick={handleDemoteToTask}
 								>
 									{t('projectDemoteToTask')}
-								</Menu.Item>
+                  </Menu.Item>
+								{project.status === 'someday' ? (
+									<Menu.Item
+										leftSection={<Archive size={14} />}
+										onClick={handleRestoreFromSomeday}
+									>
+										{t('taskMoveToNextAction')}
+									</Menu.Item>
+								) : (
+									<Menu.Item
+										leftSection={<Archive size={14} />}
+										onClick={handleMoveToSomeday}
+									>
+										{t('taskMoveToSomeday')}
+									</Menu.Item>
+								)}
 								<Menu.Divider />
 								<Menu.Item
 									leftSection={<Trash2 size={14} />}

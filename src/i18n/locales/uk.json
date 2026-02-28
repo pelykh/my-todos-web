@@ -110,6 +110,9 @@
 	"fieldTitle": "Назва",
 	"fieldNotes": "Нотатки",
 	"taskRestore": "Відновити",
+	"taskMoveToSomeday": "Перемістити до «Колись»",
+	"taskMoveToNextAction": "Перемістити до наступних дій",
+	"taskMoveToBacklog": "Перемістити до беклогу",
 	"processNewProjectTitle": "Назвіть свій проєкт",
 	"processNewProjectHint": "Назва має описувати результат, якого ви прагнете, а не фізичну дію — наприклад, «Сайт запущено» або «Звіт подано»."
 }

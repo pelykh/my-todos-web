@@ -54,7 +54,7 @@ export function TaskListItem({
 	}
 
 	const className = cn(
-		'flex items-center gap-2.5 px-2 py-1.5 rounded-md cursor-pointer select-none transition-[background] duration-100 my-px hover:bg-(--mantine-color-default-hover)',
+		'group flex items-center gap-2.5 px-2 py-1.5 rounded-md cursor-pointer select-none transition-[background] duration-100 my-px hover:bg-(--mantine-color-default-hover)',
 	)
 
 	const content = (
@@ -63,7 +63,7 @@ export function TaskListItem({
 			<div className="flex items-center justify-center w-5 shrink-0">
 				<div
 					className={cn(
-						'w-1.5 h-1.5 rounded-[1.5px] shrink-0',
+						'w-1.5 h-1.5 rounded-[1.5px] shrink-0 transition-[transform,background-color] duration-100 group-hover:scale-[1.3]',
 						isImportant
 							? 'bg-(--mantine-color-orange-6)'
 							: 'bg-[rgb(216,216,212)]',

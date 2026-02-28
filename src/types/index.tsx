@@ -43,4 +43,5 @@ export type TaskFilters = Partial<
 	maxEstimatedMinutes?: number
 	isImportant?: boolean
 	isProject?: boolean
+	excludeFutureScheduled?: boolean
 }

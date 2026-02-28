@@ -24,8 +24,9 @@ function App() {
 	const groups = useGroupedFilteredTasks({
 		filters: {
 			...filters,
-      status: 'next_action',
-      isProject: false
+			status: 'next_action',
+			isProject: false,
+			excludeFutureScheduled: true,
 		},
 		groupBy: 'area',
 		useImportant: true,

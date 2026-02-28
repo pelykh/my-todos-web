@@ -110,6 +110,9 @@
 	"fieldTitle": "Title",
 	"fieldNotes": "Notes",
 	"taskRestore": "Restore",
+	"taskMoveToSomeday": "Move to someday",
+	"taskMoveToNextAction": "Move to next action",
+	"taskMoveToBacklog": "Move to backlog",
 	"processNewProjectTitle": "Name your project",
 	"processNewProjectHint": "The name should describe the outcome you're aiming for, not a physical action — e.g. \"Website launched\" or \"Report submitted\" (Getting Things Done)."
 }
