@@ -17,6 +17,7 @@ import {
 	FolderKanban,
 	FolderMinus,
 	Plus,
+	RotateCcw,
 	Trash2,
 	X,
 } from 'lucide-react'
@@ -210,6 +211,11 @@ function ProjectPage() {
 		editTask(project.id, { status: 'someday' })
 	}
 
+	function handleRestoreProject() {
+		if (!project) return
+		editTask(project.id, { status: 'next_action' })
+	}
+
 	function handleRestoreFromSomeday() {
 		if (!project) return
 		editTask(project.id, { status: 'next_action' })
@@ -302,16 +308,29 @@ function ProjectPage() {
 							style={{ color: 'var(--mantine-color-text)' }}
 						/>
 
-						<Button
-							variant="filled"
-							color="green"
-							size="sm"
-							radius="md"
-							leftSection={<CheckCircle2 size={16} />}
-							onClick={handleCompleteProject}
-						>
-							{t('ariaCompleteProject')}
-						</Button>
+						{project.status === 'done' ? (
+							<Button
+								variant="filled"
+								color="gray"
+								size="sm"
+								radius="md"
+								leftSection={<RotateCcw size={16} />}
+								onClick={handleRestoreProject}
+							>
+								{t('taskRestore')}
+							</Button>
+						) : (
+							<Button
+								variant="filled"
+								color="green"
+								size="sm"
+								radius="md"
+								leftSection={<CheckCircle2 size={16} />}
+								onClick={handleCompleteProject}
+							>
+								{t('ariaCompleteProject')}
+							</Button>
+						)}
 
 						<Menu withinPortal position="bottom-end">
 							<Menu.Target>
@@ -407,7 +426,7 @@ function ProjectPage() {
 							<NextActionRow
 								key={task.id}
 								task={task}
-								onDemote={(id) => editTask(id, { status: 'inbox' })}
+								onDemote={(id) => editTask(id, { status: 'backlog' })}
 							/>
 						))}
 					</div>

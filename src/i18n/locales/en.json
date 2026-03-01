@@ -114,5 +114,9 @@
 	"taskMoveToNextAction": "Move to next action",
 	"taskMoveToBacklog": "Move to backlog",
 	"processNewProjectTitle": "Name your project",
-	"processNewProjectHint": "The name should describe the outcome you're aiming for, not a physical action — e.g. \"Website launched\" or \"Report submitted\" (Getting Things Done)."
+	"processNewProjectHint": "The name should describe the outcome you're aiming for, not a physical action — e.g. \"Website launched\" or \"Report submitted\" (Getting Things Done).",
+	"whatsNextTitle": "What's next?",
+	"whatsNextAddTask": "Add task",
+	"whatsNextNoBacklog": "No tasks in the backlog.",
+	"whatsNextCompleteProject": "Complete project"
 }

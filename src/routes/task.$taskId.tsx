@@ -4,11 +4,12 @@ import { Archive, CheckCircle2, Ellipsis, FolderKanban, RotateCcw, Trash2, X } f
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { WhatsNextModal } from '@/components/WhatsNextModal'
 import { BadgeSelect } from '@/components/BadgeSelect'
 import { DueDatePicker } from '@/components/DueDatePicker'
 import { MarkdownField } from '@/components/MarkdownField'
 import { ScheduledDatePicker } from '@/components/ScheduledDatePicker'
-import { useTaskActions, useTaskWithProject } from '@/store/taskStore'
+import { useFilteredTasks, useTaskActions, useTaskWithProject } from '@/store/taskStore'
 import { useTheme } from '@/theme'
 import type { Area, Context } from '@/types'
 import { AREAS } from '@/types'
@@ -35,6 +36,10 @@ function TaskPage() {
 
 	const [task, project] = useTaskWithProject(taskId)
 	const { editTask, removeTask } = useTaskActions()
+	const projectNextActions = useFilteredTasks(
+		task?.projectId ? { projectId: task.projectId, status: 'next_action' } : undefined,
+	)
+	const [whatsNextOpen, setWhatsNextOpen] = useState(false)
 
 	const [titleValue, setTitleValue] = useState('')
 	const titleRef = useRef<HTMLInputElement>(null)
@@ -77,6 +82,15 @@ function TaskPage() {
 	function handleComplete() {
 		if (!task) return
 		editTask(task.id, { status: 'done' })
+
+		if (task.projectId) {
+			const remaining = projectNextActions.filter((t) => t.id !== task.id)
+			if (remaining.length === 0) {
+				setWhatsNextOpen(true)
+				return
+			}
+		}
+
 		handleBack()
 	}
 
@@ -151,6 +165,7 @@ function TaskPage() {
 	const divider = isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.07)'
 
 	return (
+		<>
 		<div className="flex justify-center min-h-screen" style={{ backgroundColor: 'var(--mantine-color-body)' }}>
 			<div
 				className="w-full flex flex-col"
@@ -334,5 +349,17 @@ function TaskPage() {
 				</div>
 			</div>
 		</div>
+
+		{task.projectId && (
+			<WhatsNextModal
+				projectId={task.projectId}
+				opened={whatsNextOpen}
+				onClose={() => {
+					setWhatsNextOpen(false)
+					handleBack()
+				}}
+			/>
+		)}
+		</>
 	)
 }
