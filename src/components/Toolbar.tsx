@@ -1,4 +1,13 @@
-import { ActionIcon, Box, Group, Slider, Stack, Text } from '@mantine/core'
+import {
+	ActionIcon,
+	Box,
+	Button,
+	ButtonGroup,
+	Group,
+	Slider,
+	Stack,
+	Text,
+} from '@mantine/core'
 import {
 	IconBrain,
 	IconBriefcase,
@@ -13,9 +22,17 @@ import { useTranslation } from 'react-i18next'
 import type { DurationStep } from '@/store'
 import { DURATION_STEPS, useFilterActions, useFilters } from '@/store'
 import { useFilteredTasks } from '@/store/taskStore'
+import { useTheme } from '@/theme'
 import type { Context } from '@/types'
 
 const today = new Date().toISOString().slice(0, 10)
+
+const CONTEXT_KEYS: { value: Context; key: string }[] = [
+	{ value: 'deep_work', key: 'context.deep_work' },
+	{ value: 'admin', key: 'context.admin' },
+	{ value: 'home', key: 'context.home' },
+	{ value: 'agenda', key: 'context.agenda' },
+]
 
 const CONTEXT_ICONS: {
 	value: Context
@@ -51,6 +68,7 @@ function stepToSliderIndex(step: DurationStep): number {
 }
 
 export function Toolbar() {
+	const { colorScheme } = useTheme()
 	const { t } = useTranslation()
 	const { context, isImportant: todayOnly, maxEstimatedMinutes } = useFilters()
 	const maxMinutes = maxEstimatedMinutes as DurationStep
@@ -87,85 +105,142 @@ export function Toolbar() {
 		}
 	}
 
-	return (
-		<div className="fixed bottom-0 left-0 right-0 z-[100] sm:bottom-6 sm:left-1/2 sm:right-auto sm:-translate-x-1/2 sm:w-fit">
-			<Box
-				px="md"
-				pt="md"
-				pb="md"
-				className="rounded-t-2xl sm:rounded-b-2xl"
-				style={(theme) => ({
-					background: 'var(--mantine-color-body)',
-					boxShadow: theme.shadows.lg,
-					paddingBottom: 'calc(var(--mantine-spacing-md) + env(safe-area-inset-bottom, 0px))',
-				})}
-			>
-				<Stack gap="sm">
-					{/* Row 1: context icon buttons + today star */}
-					<Group gap="xs" justify="center">
-						<Group gap="xs">
-							{CONTEXT_ICONS.map((ctx) => (
-								<ActionIcon
-									key={ctx.value}
-									size="lg"
-									variant={context === ctx.value ? 'filled' : 'subtle'}
-									onClick={() =>
-										setContext(context === ctx.value ? null : ctx.value)
-									}
-									aria-label={t(ctx.key)}
-								>
-									<ctx.Icon size={18} />
-								</ActionIcon>
-							))}
-						</Group>
-						<ActionIcon
-							size="lg"
-							variant={todayOnly ? 'filled' : 'subtle'}
-							color="yellow"
-							disabled={!hasTodayTasks || allTodayDone}
-							onClick={handleStarClick}
-							aria-label={t('ariaToday')}
-							className={
-								!todayOnly && hasTodayTasks && !allTodayDone
-									? 'today-pulse'
-									: ''
-							}
-						>
-							<Star size={18} fill={todayOnly ? 'currentColor' : 'none'} />
-						</ActionIcon>
-					</Group>
+	const sliderRow = (
+		<Group gap="md" align="center">
+			<Slider
+				style={{ flex: 1 }}
+				min={0}
+				max={SLIDER_STEPS.length}
+				step={1}
+				value={sliderIndex}
+				onChange={handleSlider}
+				label={null}
+				thumbLabel={t('ariaDurationFilter')}
+				thumbChildren={<IconGripHorizontal size={16} stroke={1.5} />}
+				marks={[
+					...SLIDER_STEPS.map((_, i) => ({ value: i })),
+					{ value: SLIDER_STEPS.length },
+				]}
+				classNames={{
+					thumb: '!w-7 !h-[22px] !rounded-sm !border !border-[var(--mantine-color-dark-2)] !bg-[var(--mantine-color-body)] !text-[var(--mantine-color-gray-5)]',
+				}}
+			/>
+			<Text size="xs" w={36} ta="right" c={maxMinutes ? 'blue' : 'dimmed'}>
+				{maxMinutes ? t(DURATION_KEYS[maxMinutes]) : t('duration.any')}
+			</Text>
+		</Group>
+	)
 
-					{/* Row 2: duration slider */}
-					<Group gap="md" align="center">
-						<Slider
-							style={{ flex: 1, minWidth: 160 }}
-							min={0}
-							max={SLIDER_STEPS.length}
-							step={1}
-							value={sliderIndex}
-							onChange={handleSlider}
-							label={null}
-							thumbLabel={t('ariaDurationFilter')}
-							thumbChildren={<IconGripHorizontal size={16} stroke={1.5} />}
-							marks={[
-								...SLIDER_STEPS.map((_, i) => ({ value: i })),
-								{ value: SLIDER_STEPS.length },
-							]}
-							classNames={{
-								thumb: '!w-7 !h-[22px] !rounded-sm !border !border-[var(--mantine-color-dark-2)] !bg-[var(--mantine-color-body)] !text-[var(--mantine-color-gray-5)]',
-							}}
-						/>
-						<Text
-							size="xs"
-							w={36}
-							ta="right"
-							c={maxMinutes ? 'blue' : 'dimmed'}
-						>
-							{maxMinutes ? t(DURATION_KEYS[maxMinutes]) : t('duration.any')}
-						</Text>
-					</Group>
-				</Stack>
+	return (
+		<>
+			{/* Mobile: full-width icon toolbar */}
+			<div className="sm:hidden fixed bottom-0 left-0 right-0 z-[100]">
+				<Box
+					px="md"
+					pt="md"
+					className="rounded-t-2xl"
+					style={(theme) => ({
+						background: 'var(--mantine-color-body)',
+						boxShadow: theme.shadows.lg,
+						paddingBottom:
+							'calc(var(--mantine-spacing-md) + env(safe-area-inset-bottom, 0px))',
+					})}
+				>
+					<Stack gap="sm">
+						<Group gap="xs" justify="center">
+							<Group gap="xs">
+								{CONTEXT_ICONS.map((ctx) => (
+									<ActionIcon
+										key={ctx.value}
+										size="lg"
+										variant={context === ctx.value ? 'filled' : 'subtle'}
+										onClick={() =>
+											setContext(context === ctx.value ? null : ctx.value)
+										}
+										aria-label={t(ctx.key)}
+									>
+										<ctx.Icon size={18} />
+									</ActionIcon>
+								))}
+							</Group>
+							<ActionIcon
+								size="lg"
+								variant={todayOnly ? 'filled' : 'subtle'}
+								color="yellow"
+								disabled={!hasTodayTasks || allTodayDone}
+								onClick={handleStarClick}
+								aria-label={t('ariaToday')}
+								className={
+									!todayOnly && hasTodayTasks && !allTodayDone
+										? 'today-pulse'
+										: ''
+								}
+							>
+								<Star size={18} fill={todayOnly ? 'currentColor' : 'none'} />
+							</ActionIcon>
+						</Group>
+						{sliderRow}
+					</Stack>
+				</Box>
+			</div>
+
+			{/* Desktop: original centered floating toolbar */}
+			<Box
+				className="hidden sm:block"
+				style={{
+					position: 'fixed',
+					bottom: 24,
+					left: '50%',
+					transform: 'translateX(-50%)',
+					zIndex: 100,
+					width: 'fit-content',
+				}}
+			>
+				<Box
+					p="md"
+					style={(theme) => ({
+						background: 'var(--mantine-color-body)',
+						border: `1px solid ${theme.colors.gray[colorScheme === 'dark' ? 7 : 2]}`,
+						borderRadius: theme.radius.lg,
+						boxShadow: theme.shadows.lg,
+					})}
+				>
+					<Stack gap="sm">
+						<Group gap="xs" justify="center">
+							<ButtonGroup>
+								{CONTEXT_KEYS.map((ctx) => (
+									<Button
+										key={ctx.value}
+										size="xs"
+										variant={context === ctx.value ? 'filled' : 'default'}
+										onClick={() =>
+											setContext(context === ctx.value ? null : ctx.value)
+										}
+									>
+										{t(ctx.key)}
+									</Button>
+								))}
+							</ButtonGroup>
+							<ActionIcon
+								size="md"
+								variant={todayOnly ? 'filled' : 'default'}
+								color="yellow"
+								disabled={!hasTodayTasks || allTodayDone}
+								onClick={handleStarClick}
+								aria-label={t('ariaToday')}
+								className={
+									!todayOnly && hasTodayTasks && !allTodayDone
+										? 'today-pulse'
+										: ''
+								}
+							>
+								<Star size={14} fill={todayOnly ? 'currentColor' : 'none'} />
+							</ActionIcon>
+						</Group>
+						{sliderRow}
+					</Stack>
+				</Box>
 			</Box>
-		</div>
+		</>
 	)
 }
