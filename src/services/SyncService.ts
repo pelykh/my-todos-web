@@ -44,11 +44,6 @@ async function runPush(tasks: Task[]): Promise<void> {
   }
 }
 
-/** Push all local tasks — used on login to fully sync with the server. */
-export async function pushAllSync(): Promise<void> {
-  await runPush(taskStore.getState().tasks)
-}
-
 /** Push only tasks changed since the last successful push. No-ops if nothing is pending. */
 export async function pushSync(): Promise<void> {
   const pending = taskStore.getState().pendingSync
