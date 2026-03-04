@@ -57,7 +57,9 @@ export async function pullSync(): Promise<void> {
     const existing = loadLocalTasks()
     const merged = upsertTasks(existing, incoming)
     saveLocalTasks(merged)
+    isPullUpdate = true
     taskStore.setState({ tasks: merged })
+    isPullUpdate = false
     const maxVersion = Math.max(
       ...incoming.map((t) => (t as unknown as { serverVersion?: number }).serverVersion ?? 0),
     )
@@ -66,6 +68,10 @@ export async function pullSync(): Promise<void> {
     setError(e instanceof Error ? e.message : 'Pull failed')
   }
 }
+
+// True while pullSync is writing to taskStore — used by useSyncEffect to suppress
+// the debounce push that would otherwise re-trigger a server broadcast and loop.
+export let isPullUpdate = false
 
 let sseAbortController: AbortController | null = null
 

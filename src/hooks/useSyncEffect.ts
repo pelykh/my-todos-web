@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 
-import { disconnectSSE, pushSync, subscribeSSE } from '@/services/SyncService'
+import { disconnectSSE, isPullUpdate, pushSync, subscribeSSE } from '@/services/SyncService'
 import { useAuthStore } from '@/store/authStore'
 import { taskStore } from '@/store/taskStore'
 
@@ -18,6 +18,7 @@ export function useSyncEffect(): void {
     let timer: ReturnType<typeof setTimeout> | null = null
 
     const unsubscribe = taskStore.subscribe(() => {
+      if (isPullUpdate) return
       if (timer) clearTimeout(timer)
       timer = setTimeout(() => void pushSync(), DEBOUNCE_MS)
     })
