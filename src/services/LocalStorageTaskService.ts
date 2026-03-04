@@ -7,7 +7,7 @@ import type {
 	UpdateTaskInput,
 } from './TaskService'
 
-const STORAGE_KEY = 'tasks'
+export const STORAGE_KEY = 'tasks'
 
 function generateId(): string {
 	return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`

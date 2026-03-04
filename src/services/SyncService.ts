@@ -6,8 +6,7 @@ import { taskStore } from '@/store/taskStore'
 import type { Task } from '@/types'
 
 import { ApiClient } from './ApiClient'
-
-const STORAGE_KEY = 'tasks'
+import { STORAGE_KEY } from './LocalStorageTaskService'
 
 function loadLocalTasks(): Task[] {
   try {
@@ -51,6 +50,7 @@ export async function pullSync(): Promise<void> {
   if (!token) return
   const { lastSyncVersion, setLastSyncVersion, setError } = useSyncStore.getState()
   try {
+    setError(null)
     const client = new ApiClient(apiUrl, token)
     const incoming = await client.pullSync(lastSyncVersion)
     if (!incoming.length) return

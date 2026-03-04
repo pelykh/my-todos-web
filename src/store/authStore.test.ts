@@ -61,5 +61,6 @@ describe('register', () => {
     )
     await useAuthStore.getState().register('new@b.com', 'pass1234')
     expect(useAuthStore.getState().token).toBe('newtok')
+    expect(useAuthStore.getState().email).toBe('new@b.com')
   })
 })

@@ -1,5 +1,5 @@
 import { Button, Modal, Stack, TextInput } from '@mantine/core'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { useAuthStore } from '@/store/authStore'
 
@@ -11,6 +11,10 @@ interface SettingsModalProps {
 export function SettingsModal({ opened, onClose }: SettingsModalProps) {
   const { apiUrl, setApiUrl } = useAuthStore()
   const [value, setValue] = useState(apiUrl)
+
+  useEffect(() => {
+    if (opened) setValue(apiUrl)
+  }, [opened, apiUrl])
 
   function handleSave() {
     setApiUrl(value.trim() || 'http://localhost:8000')
