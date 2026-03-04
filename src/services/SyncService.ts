@@ -26,11 +26,10 @@ function upsertTasks(existing: Task[], incoming: Task[]): Task[] {
   return Array.from(map.values())
 }
 
-export async function pushSync(): Promise<void> {
+async function runPush(tasks: Task[]): Promise<void> {
   const { token, apiUrl } = useAuthStore.getState()
   if (!token) return
   const { setLastSyncVersion, setSyncing, setSyncedAt, setError } = useSyncStore.getState()
-  const tasks = taskStore.getState().tasks
   try {
     setSyncing(true)
     setError(null)
@@ -43,6 +42,19 @@ export async function pushSync(): Promise<void> {
   } finally {
     setSyncing(false)
   }
+}
+
+/** Push all local tasks — used on login to fully sync with the server. */
+export async function pushAllSync(): Promise<void> {
+  await runPush(taskStore.getState().tasks)
+}
+
+/** Push only tasks changed since the last successful push. No-ops if nothing is pending. */
+export async function pushSync(): Promise<void> {
+  const pending = taskStore.getState().pendingSync
+  if (!pending.length) return
+  await runPush(pending)
+  taskStore.getState().actions.clearPendingSync()
 }
 
 export async function pullSync(): Promise<void> {

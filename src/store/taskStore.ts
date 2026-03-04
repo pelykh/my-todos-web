@@ -16,30 +16,46 @@ export type TaskActions = {
 	addTask: (input: CreateTaskInput) => Task
 	editTask: (id: string, input: UpdateTaskInput) => Task
 	removeTask: (id: string) => void
+	clearPendingSync: () => void
 }
 
 export type TaskState = {
 	tasks: Task[]
+	pendingSync: Task[]
 	actions: TaskActions
+}
+
+function upsertPending(pending: Task[], task: Task): Task[] {
+	return [...pending.filter((t) => t.id !== task.id), task]
 }
 
 export function createTaskStore(service: ITaskService) {
 	return createStore<TaskState>()((set) => ({
 		tasks: service.getTasks(),
+		pendingSync: [],
 		actions: {
 			addTask(input) {
 				const task = service.createTask(input)
-				set((s) => ({ tasks: [...s.tasks, task] }))
+				set((s) => ({ tasks: [...s.tasks, task], pendingSync: upsertPending(s.pendingSync, task) }))
 				return task
 			},
 			editTask(id, input) {
 				const task = service.updateTask(id, input)
-				set((s) => ({ tasks: s.tasks.map((t) => (t.id === id ? task : t)) }))
+				set((s) => ({
+					tasks: s.tasks.map((t) => (t.id === id ? task : t)),
+					pendingSync: upsertPending(s.pendingSync, task),
+				}))
 				return task
 			},
 			removeTask(id) {
 				service.deleteTask(id)
-				set((s) => ({ tasks: s.tasks.filter((t) => t.id !== id) }))
+				set((s) => ({
+					tasks: s.tasks.filter((t) => t.id !== id),
+					pendingSync: s.pendingSync.filter((t) => t.id !== id),
+				}))
+			},
+			clearPendingSync() {
+				set({ pendingSync: [] })
 			},
 		},
 	}))
