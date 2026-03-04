@@ -5,6 +5,7 @@ import { TanStackDevtools } from '@tanstack/react-devtools'
 import { createRootRoute, Outlet } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 
+import { useSyncEffect } from '@/hooks/useSyncEffect'
 import { ThemeProvider, useTheme } from '@/theme'
 
 export const Route = createRootRoute({
@@ -21,6 +22,8 @@ function RootComponent() {
 
 function ThemedApp() {
 	const { colorScheme } = useTheme()
+	useSyncEffect()
+
 	return (
 		<MantineProvider forceColorScheme={colorScheme}>
 			<Outlet />
