@@ -1,24 +1,29 @@
 import { ActionIcon, Container, Group, Stack, Text, Title } from '@mantine/core'
 import { createFileRoute } from '@tanstack/react-router'
-import { Moon, Search, Sun } from 'lucide-react'
+import { Search } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { CommandPalette } from '@/components/CommandPalette'
-import { LangSelect } from '@/components/LangSelect'
+import { LoginModal } from '@/components/LoginModal'
+import { OverflowMenu } from '@/components/OverflowMenu'
 import { ProcessInboxButton } from '@/components/ProcessInboxButton'
+import { RegisterModal } from '@/components/RegisterModal'
+import { SettingsModal } from '@/components/SettingsModal'
+import { SyncButton } from '@/components/SyncButton'
 import { TaskListItem } from '@/components/TaskListItem'
 import { Toolbar } from '@/components/Toolbar'
 import { useFilters } from '@/store'
 import { useGroupedFilteredTasks } from '@/store/taskStore'
-import { useTheme } from '@/theme'
 
 export const Route = createFileRoute('/')({ component: App })
 
 function App() {
-	const { colorScheme, toggleColorScheme } = useTheme()
 	const { t } = useTranslation()
 	const [cmdOpen, setCmdOpen] = useState(false)
+	const [loginOpen, setLoginOpen] = useState(false)
+	const [registerOpen, setRegisterOpen] = useState(false)
+	const [settingsOpen, setSettingsOpen] = useState(false)
 
 	const filters = useFilters()
 	const groups = useGroupedFilteredTasks({
@@ -62,18 +67,8 @@ function App() {
 				>
 					<Search size={18} />
 				</ActionIcon>
-				<LangSelect />
-				<ActionIcon
-					onClick={toggleColorScheme}
-					variant="default"
-					size="lg"
-					radius="md"
-					aria-label={
-						colorScheme === 'dark' ? t('ariaThemeLight') : t('ariaThemeDark')
-					}
-				>
-					{colorScheme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
-				</ActionIcon>
+				<SyncButton onLoginRequest={() => setLoginOpen(true)} />
+				<OverflowMenu onSettings={() => setSettingsOpen(true)} />
 			</Group>
 
 			<Container size="sm" py="xl" pb={120}>
@@ -121,6 +116,24 @@ function App() {
 			<Toolbar />
 
 			<CommandPalette open={cmdOpen} onClose={() => setCmdOpen(false)} />
+
+			<LoginModal
+				opened={loginOpen}
+				onClose={() => setLoginOpen(false)}
+				onSwitchToRegister={() => {
+					setLoginOpen(false)
+					setRegisterOpen(true)
+				}}
+			/>
+			<RegisterModal
+				opened={registerOpen}
+				onClose={() => setRegisterOpen(false)}
+				onSwitchToLogin={() => {
+					setRegisterOpen(false)
+					setLoginOpen(true)
+				}}
+			/>
+			<SettingsModal opened={settingsOpen} onClose={() => setSettingsOpen(false)} />
 		</>
 	)
 }
