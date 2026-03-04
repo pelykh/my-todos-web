@@ -49,10 +49,18 @@ export function createTaskStore(service: ITaskService) {
 			},
 			removeTask(id) {
 				service.deleteTask(id)
-				set((s) => ({
-					tasks: s.tasks.filter((t) => t.id !== id),
-					pendingSync: s.pendingSync.filter((t) => t.id !== id),
-				}))
+				set((s) => {
+					const task = s.tasks.find((t) => t.id === id)
+					const deletedEntry = task
+						? { ...task, status: 'deleted' as const, updatedAt: new Date().toISOString() }
+						: null
+					return {
+						tasks: s.tasks.filter((t) => t.id !== id),
+						pendingSync: deletedEntry
+							? upsertPending(s.pendingSync.filter((t) => t.id !== id), deletedEntry)
+							: s.pendingSync.filter((t) => t.id !== id),
+					}
+				})
 			},
 			clearPendingSync() {
 				set({ pendingSync: [] })

@@ -7,6 +7,7 @@ export type TaskStatus =
 	| 'waiting_for'
 	| 'someday'
 	| 'done'
+	| 'deleted'
 
 export type Context = 'deep_work' | 'admin' | 'home' | 'agenda'
 

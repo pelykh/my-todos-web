@@ -70,7 +70,7 @@ export async function pullSync(): Promise<void> {
     const merged = upsertTasks(existing, incoming)
     saveLocalTasks(merged)
     isPullUpdate = true
-    taskStore.setState({ tasks: merged })
+    taskStore.setState({ tasks: merged.filter((t) => t.status !== 'deleted') })
     isPullUpdate = false
     const maxVersion = Math.max(
       ...incoming.map((t) => (t as unknown as { serverVersion?: number }).serverVersion ?? 0),
