@@ -77,7 +77,7 @@ function applyFilters(tasks: Task[], filters?: TaskFilters) {
 	})
 }
 
-const taskStore = createTaskStore(new LocalStorageTaskService())
+export const taskStore = createTaskStore(new LocalStorageTaskService())
 
 export function useFilteredTasks(filters?: TaskFilters) {
 	return useStore(
