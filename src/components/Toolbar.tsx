@@ -183,6 +183,6 @@ export function Toolbar() {
 					</Group>
 				</Stack>
 			</Box>
-		</>
+		</Box>
 	)
 }
