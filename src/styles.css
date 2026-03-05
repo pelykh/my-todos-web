@@ -31,19 +31,6 @@ code {
   to { transform: rotate(360deg); }
 }
 
-@keyframes today-pulse {
-  0%,
-  100% {
-    box-shadow: 0 0 0 0 rgba(234, 179, 8, 0.5);
-  }
-  50% {
-    box-shadow: 0 0 0 6px rgba(234, 179, 8, 0);
-  }
-}
-
-.today-pulse {
-  animation: today-pulse 3s ease-in-out infinite;
-}
 
 /* cmdk item highlight */
 [cmdk-item][data-selected="true"] {

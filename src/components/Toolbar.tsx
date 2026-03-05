@@ -1,5 +1,4 @@
 import {
-	ActionIcon,
 	Box,
 	Button,
 	ButtonGroup,
@@ -18,6 +17,8 @@ import { DURATION_STEPS, useFilterActions, useFilters } from '@/store'
 import { useFilteredTasks } from '@/store/taskStore'
 import { useTheme } from '@/theme'
 import type { Context } from '@/types'
+
+import { XpBar } from './XpBar'
 
 const today = new Date().toISOString().slice(0, 10)
 
@@ -46,7 +47,7 @@ function sliderIndexToStep(index: number): DurationStep {
 }
 
 function stepToSliderIndex(step: DurationStep): number {
-	if (step === undefined) return SLIDER_STEPS.length
+	if (step === undefined) return SLIDER_STEPS.length - 1
 	return SLIDER_STEPS.indexOf(step)
 }
 
@@ -99,78 +100,69 @@ export function Toolbar() {
 				width: 'fit-content',
 			}}
 		>
+			<XpBar value={35} />
 			<Box
-				p="md"
+				p={0}
 				style={(theme) => ({
 					background: 'var(--mantine-color-body)',
-					border: `1px solid ${theme.colors.gray[colorScheme === 'dark' ? 7 : 2]}`,
-					borderRadius: theme.radius.lg,
-					boxShadow: theme.shadows.lg,
+					borderRadius: theme.radius.sm,
+          boxShadow: theme.shadows.lg,
 				})}
 			>
-				<Stack gap="sm">
-					{/* Row 1: context buttons + today star */}
-					<Group gap="xs" justify="center">
-						<ButtonGroup>
-							{CONTEXT_KEYS.map((ctx) => (
-								<Button
-									key={ctx.value}
-									size="xs"
-									variant={context === ctx.value ? 'filled' : 'default'}
-									onClick={() =>
-										setContext(context === ctx.value ? null : ctx.value)
-									}
-								>
-									{t(ctx.key)}
-								</Button>
-							))}
-						</ButtonGroup>
-						<ActionIcon
-							size="md"
+				<Stack gap="0">
+          {/* Row 1: context buttons + today star */}
+					<ButtonGroup className="[&_button]:rounded-bl-none! [&_button]:rounded-br-none!">
+						{CONTEXT_KEYS.map((ctx) => (
+							<Button
+								key={ctx.value}
+                variant={context === ctx.value ? 'filled' : 'default'}
+                color='blue'
+								onClick={() =>
+									setContext(context === ctx.value ? null : ctx.value)
+								}
+							>
+								{t(ctx.key)}
+							</Button>
+						))}
+						<Button
 							variant={todayOnly ? 'filled' : 'default'}
 							color="yellow"
 							disabled={!hasTodayTasks || allTodayDone}
 							onClick={handleStarClick}
 							aria-label={t('ariaToday')}
-							className={
-								!todayOnly && hasTodayTasks && !allTodayDone
-									? 'today-pulse'
-									: ''
-							}
+							px={12}
 						>
 							<Star size={14} fill={todayOnly ? 'currentColor' : 'none'} />
-						</ActionIcon>
-					</Group>
+						</Button>
+					</ButtonGroup>
 
 					{/* Row 2: duration slider */}
-					<Group gap="md" align="center">
+					<Group gap="md" align="center" className='h-6 px-1.5 border border-gray-300 border-t-0 rounded-b-sm!'>
 						<Slider
 							style={{ flex: 1 }}
 							min={0}
-							max={SLIDER_STEPS.length}
+							max={SLIDER_STEPS.length - 1}
 							step={1}
 							value={sliderIndex}
-							onChange={handleSlider}
-							label={null}
+              onChange={handleSlider}
+							label={(value) => t(DURATION_KEYS[SLIDER_STEPS[value]])}
 							thumbLabel={t('ariaDurationFilter')}
 							thumbChildren={<IconGripHorizontal size={16} stroke={1.5} />}
-							marks={[
-								...SLIDER_STEPS.map((_, i) => ({ value: i })),
-								{ value: SLIDER_STEPS.length },
-							]}
+							marks={SLIDER_STEPS.map((step, i) => ({ value: i }))}
 							classNames={{
 								thumb:
-									'!w-7 !h-[22px] !rounded-sm !border !border-[var(--mantine-color-dark-2)] !bg-[var(--mantine-color-body)] !text-[var(--mantine-color-gray-5)]',
-							}}
+									'!w-7 !h-[25px] !rounded-xs !border !border-[var(--mantine-color-default-border)] !bg-[var(--mantine-color-body)] !text-[var(--mantine-color-gray-5)]',
+
+						}}
 						/>
-						<Text
+						{/*<Text
 							size="xs"
 							w={36}
 							ta="right"
 							c={maxMinutes ? 'blue' : 'dimmed'}
 						>
 							{maxMinutes ? t(DURATION_KEYS[maxMinutes]) : t('duration.any')}
-						</Text>
+						</Text>*/}
 					</Group>
 				</Stack>
 			</Box>
