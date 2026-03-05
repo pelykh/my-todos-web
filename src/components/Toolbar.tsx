@@ -144,7 +144,7 @@ export function Toolbar() {
 					</ButtonGroup>
 
 					{/* Row 2: duration slider */}
-					<Group gap="md" align="center" className='h-6 px-1.5 border border-gray-300 border-t-0 rounded-b-sm!'>
+					<Group gap="md" align="center" className='h-6 px-1.5 border border-[var(--mantine-color-default-border)] border-t-0 rounded-b-sm!'>
 						<Slider
 							style={{ flex: 1 }}
 							min={0}
