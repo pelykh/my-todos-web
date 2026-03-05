@@ -1,16 +1,22 @@
-import { Button, Modal, Stack, TextInput } from '@mantine/core'
+import { Button, Divider, Group, Modal, Stack, Text, TextInput } from '@mantine/core'
 import { useEffect, useState } from 'react'
 
+import { pushAllSync } from '@/services/SyncService'
 import { useAuthStore } from '@/store/authStore'
+import { useSyncStore } from '@/store/syncStore'
+
+import { SyncButton } from './SyncButton'
 
 interface SettingsModalProps {
   opened: boolean
   onClose: () => void
+  onLoginRequest: () => void
 }
 
-export function SettingsModal({ opened, onClose }: SettingsModalProps) {
+export function SettingsModal({ opened, onClose, onLoginRequest }: SettingsModalProps) {
   const { apiUrl, setApiUrl } = useAuthStore()
   const [value, setValue] = useState(apiUrl)
+  const { isSyncing } = useSyncStore()
 
   useEffect(() => {
     if (opened) setValue(apiUrl)
@@ -18,7 +24,6 @@ export function SettingsModal({ opened, onClose }: SettingsModalProps) {
 
   function handleSave() {
     setApiUrl(value.trim() || 'http://localhost:8000')
-    onClose()
   }
 
   return (
@@ -33,6 +38,23 @@ export function SettingsModal({ opened, onClose }: SettingsModalProps) {
           onKeyDown={(e) => e.key === 'Enter' && handleSave()}
         />
         <Button onClick={handleSave}>Save</Button>
+
+        <Divider />
+
+        <Stack gap="xs">
+          <Text size="sm" fw={500}>Sync</Text>
+          <Group>
+            <SyncButton onLoginRequest={onLoginRequest} />
+            <Button
+              variant="default"
+              size="sm"
+              loading={isSyncing}
+              onClick={() => void pushAllSync()}
+            >
+              Sync all to server
+            </Button>
+          </Group>
+        </Stack>
       </Stack>
     </Modal>
   )

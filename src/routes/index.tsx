@@ -10,7 +10,6 @@ import { OverflowMenu } from '@/components/OverflowMenu'
 import { ProcessInboxButton } from '@/components/ProcessInboxButton'
 import { RegisterModal } from '@/components/RegisterModal'
 import { SettingsModal } from '@/components/SettingsModal'
-import { SyncButton } from '@/components/SyncButton'
 import { TaskListItem } from '@/components/TaskListItem'
 import { Toolbar } from '@/components/Toolbar'
 import { useFilters } from '@/store'
@@ -67,7 +66,6 @@ function App() {
 				>
 					<Search size={18} />
 				</ActionIcon>
-				<SyncButton onLoginRequest={() => setLoginOpen(true)} />
 				<OverflowMenu onSettings={() => setSettingsOpen(true)} />
 			</Group>
 
@@ -133,7 +131,7 @@ function App() {
 					setLoginOpen(true)
 				}}
 			/>
-			<SettingsModal opened={settingsOpen} onClose={() => setSettingsOpen(false)} />
+			<SettingsModal opened={settingsOpen} onClose={() => setSettingsOpen(false)} onLoginRequest={() => setLoginOpen(true)} />
 		</>
 	)
 }

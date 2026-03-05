@@ -52,6 +52,14 @@ export async function pushSync(): Promise<void> {
   taskStore.getState().actions.clearPendingSync()
 }
 
+/** Push all tasks in the store to the server, regardless of pending state. */
+export async function pushAllSync(): Promise<void> {
+  const tasks = taskStore.getState().tasks
+  if (!tasks.length) return
+  await runPush(tasks)
+  taskStore.getState().actions.clearPendingSync()
+}
+
 export async function pullSync(): Promise<void> {
   const { token, apiUrl } = useAuthStore.getState()
   if (!token) return

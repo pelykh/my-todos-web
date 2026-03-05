@@ -30,7 +30,7 @@ export function LoginModal({ opened, onClose, onSwitchToRegister }: LoginModalPr
   }
 
   return (
-    <Modal opened={opened} onClose={onClose} title="Sign in">
+    <Modal opened={opened} onClose={onClose} title="Sign in" zIndex={400}>
       <Stack>
         {error && <Alert color="red">{error}</Alert>}
         <TextInput
