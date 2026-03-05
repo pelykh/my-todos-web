@@ -5,7 +5,6 @@ import {
 	Group,
 	Slider,
 	Stack,
-	Text,
 } from '@mantine/core'
 import {
 	IconBrain,
@@ -28,18 +27,7 @@ import { XpBar } from './XpBar'
 
 const today = new Date().toISOString().slice(0, 10)
 
-const CONTEXT_KEYS: { value: Context; key: string }[] = [
-	{ value: 'deep_work', key: 'context.deep_work' },
-	{ value: 'admin', key: 'context.admin' },
-	{ value: 'home', key: 'context.home' },
-	{ value: 'agenda', key: 'context.agenda' },
-]
-
-const CONTEXT_ICONS: {
-	value: Context
-	key: string
-	Icon: React.FC<{ size?: number }>
-}[] = [
+const CONTEXTS: { value: Context; key: string; Icon: React.FC<{ size?: number }> }[] = [
 	{ value: 'deep_work', key: 'context.deep_work', Icon: IconBrain },
 	{ value: 'admin', key: 'context.admin', Icon: IconBriefcase },
 	{ value: 'home', key: 'context.home', Icon: IconHome },
@@ -108,13 +96,13 @@ export function Toolbar() {
 
 	return (
 		<Box
+			className="w-[calc(100vw-32px)] sm:w-fit"
 			style={{
 				position: 'fixed',
 				bottom: 24,
 				left: '50%',
 				transform: 'translateX(-50%)',
 				zIndex: 100,
-				width: 'fit-content',
 			}}
 		>
 			<XpBar value={35} />
@@ -128,17 +116,19 @@ export function Toolbar() {
 			>
 				<Stack gap="0">
           {/* Row 1: context buttons + today star */}
-					<ButtonGroup className="[&_button]:rounded-bl-none! [&_button]:rounded-br-none!">
-						{CONTEXT_KEYS.map((ctx) => (
+					<ButtonGroup className="[&_button]:rounded-bl-none! [&_button]:rounded-br-none! flex sm:inline-flex">
+						{CONTEXTS.map(({ value, key, Icon }) => (
 							<Button
-								key={ctx.value}
-                variant={context === ctx.value ? 'filled' : 'default'}
-                color='blue'
-								onClick={() =>
-									setContext(context === ctx.value ? null : ctx.value)
-								}
+								key={value}
+								variant={context === value ? 'filled' : 'default'}
+								color='blue'
+								onClick={() => setContext(context === value ? null : value)}
+								aria-label={t(key)}
+								className="flex-1 sm:flex-none"
+							px={{ base: 10, sm: undefined }}
 							>
-								{t(ctx.key)}
+								<Box component="span" visibleFrom="sm">{t(key)}</Box>
+								<Box component="span" hiddenFrom="sm"><Icon size={16} /></Box>
 							</Button>
 						))}
 						<Button
