@@ -7,7 +7,13 @@ import {
 	Stack,
 	Text,
 } from '@mantine/core'
-import { IconGripHorizontal } from '@tabler/icons-react'
+import {
+	IconBrain,
+	IconBriefcase,
+	IconCalendarEvent,
+	IconGripHorizontal,
+	IconHome,
+} from '@tabler/icons-react'
 import { Star } from 'lucide-react'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -27,6 +33,17 @@ const CONTEXT_KEYS: { value: Context; key: string }[] = [
 	{ value: 'admin', key: 'context.admin' },
 	{ value: 'home', key: 'context.home' },
 	{ value: 'agenda', key: 'context.agenda' },
+]
+
+const CONTEXT_ICONS: {
+	value: Context
+	key: string
+	Icon: React.FC<{ size?: number }>
+}[] = [
+	{ value: 'deep_work', key: 'context.deep_work', Icon: IconBrain },
+	{ value: 'admin', key: 'context.admin', Icon: IconBriefcase },
+	{ value: 'home', key: 'context.home', Icon: IconHome },
+	{ value: 'agenda', key: 'context.agenda', Icon: IconCalendarEvent },
 ]
 
 const DURATION_KEYS: Record<number, string> = {
@@ -166,6 +183,6 @@ export function Toolbar() {
 					</Group>
 				</Stack>
 			</Box>
-		</Box>
+		</>
 	)
 }
