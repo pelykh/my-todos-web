@@ -1,6 +1,6 @@
 import { ActionIcon, Container, Group, Stack, Text, Title } from '@mantine/core'
-import { createFileRoute } from '@tanstack/react-router'
-import { Search } from 'lucide-react'
+import { createFileRoute, Link } from '@tanstack/react-router'
+import { Archive, CheckCircle2, FolderKanban, Search } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -57,6 +57,36 @@ function App() {
 				style={{ position: 'fixed', top: 16, right: 16, zIndex: 200 }}
 			>
 				<ProcessInboxButton />
+				<ActionIcon
+					component={Link}
+					to="/someday"
+					variant="default"
+					size="lg"
+					radius="md"
+					aria-label={t('status.someday')}
+				>
+					<Archive size={18} />
+				</ActionIcon>
+				<ActionIcon
+					component={Link}
+					to="/done"
+					variant="default"
+					size="lg"
+					radius="md"
+					aria-label={t('status.done')}
+				>
+					<CheckCircle2 size={18} />
+				</ActionIcon>
+				<ActionIcon
+					component={Link}
+					to="/projects"
+					variant="default"
+					size="lg"
+					radius="md"
+					aria-label={t('navProjects', { defaultValue: 'Projects' })}
+				>
+					<FolderKanban size={18} />
+				</ActionIcon>
 				<ActionIcon
 					onClick={() => setCmdOpen(true)}
 					variant="default"

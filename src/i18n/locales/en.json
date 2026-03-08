@@ -118,5 +118,6 @@
 	"whatsNextTitle": "What's next?",
 	"whatsNextAddTask": "Add task",
 	"whatsNextNoBacklog": "No tasks in the backlog.",
-	"whatsNextCompleteProject": "Complete project"
+	"whatsNextCompleteProject": "Complete project",
+	"navProjects": "Projects"
 }

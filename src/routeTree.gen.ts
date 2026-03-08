@@ -9,14 +9,32 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SomedayRouteImport } from './routes/someday'
+import { Route as ProjectsRouteImport } from './routes/projects'
 import { Route as ProcessInboxRouteImport } from './routes/process-inbox'
+import { Route as DoneRouteImport } from './routes/done'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TaskTaskIdRouteImport } from './routes/task.$taskId'
 import { Route as ProjectProjectIdRouteImport } from './routes/project.$projectId'
 
+const SomedayRoute = SomedayRouteImport.update({
+  id: '/someday',
+  path: '/someday',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProjectsRoute = ProjectsRouteImport.update({
+  id: '/projects',
+  path: '/projects',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProcessInboxRoute = ProcessInboxRouteImport.update({
   id: '/process-inbox',
   path: '/process-inbox',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DoneRoute = DoneRouteImport.update({
+  id: '/done',
+  path: '/done',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -37,50 +55,100 @@ const ProjectProjectIdRoute = ProjectProjectIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/done': typeof DoneRoute
   '/process-inbox': typeof ProcessInboxRoute
+  '/projects': typeof ProjectsRoute
+  '/someday': typeof SomedayRoute
   '/project/$projectId': typeof ProjectProjectIdRoute
   '/task/$taskId': typeof TaskTaskIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/done': typeof DoneRoute
   '/process-inbox': typeof ProcessInboxRoute
+  '/projects': typeof ProjectsRoute
+  '/someday': typeof SomedayRoute
   '/project/$projectId': typeof ProjectProjectIdRoute
   '/task/$taskId': typeof TaskTaskIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/done': typeof DoneRoute
   '/process-inbox': typeof ProcessInboxRoute
+  '/projects': typeof ProjectsRoute
+  '/someday': typeof SomedayRoute
   '/project/$projectId': typeof ProjectProjectIdRoute
   '/task/$taskId': typeof TaskTaskIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/process-inbox' | '/project/$projectId' | '/task/$taskId'
+  fullPaths:
+    | '/'
+    | '/done'
+    | '/process-inbox'
+    | '/projects'
+    | '/someday'
+    | '/project/$projectId'
+    | '/task/$taskId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/process-inbox' | '/project/$projectId' | '/task/$taskId'
+  to:
+    | '/'
+    | '/done'
+    | '/process-inbox'
+    | '/projects'
+    | '/someday'
+    | '/project/$projectId'
+    | '/task/$taskId'
   id:
     | '__root__'
     | '/'
+    | '/done'
     | '/process-inbox'
+    | '/projects'
+    | '/someday'
     | '/project/$projectId'
     | '/task/$taskId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  DoneRoute: typeof DoneRoute
   ProcessInboxRoute: typeof ProcessInboxRoute
+  ProjectsRoute: typeof ProjectsRoute
+  SomedayRoute: typeof SomedayRoute
   ProjectProjectIdRoute: typeof ProjectProjectIdRoute
   TaskTaskIdRoute: typeof TaskTaskIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/someday': {
+      id: '/someday'
+      path: '/someday'
+      fullPath: '/someday'
+      preLoaderRoute: typeof SomedayRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/projects': {
+      id: '/projects'
+      path: '/projects'
+      fullPath: '/projects'
+      preLoaderRoute: typeof ProjectsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/process-inbox': {
       id: '/process-inbox'
       path: '/process-inbox'
       fullPath: '/process-inbox'
       preLoaderRoute: typeof ProcessInboxRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/done': {
+      id: '/done'
+      path: '/done'
+      fullPath: '/done'
+      preLoaderRoute: typeof DoneRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -109,7 +177,10 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  DoneRoute: DoneRoute,
   ProcessInboxRoute: ProcessInboxRoute,
+  ProjectsRoute: ProjectsRoute,
+  SomedayRoute: SomedayRoute,
   ProjectProjectIdRoute: ProjectProjectIdRoute,
   TaskTaskIdRoute: TaskTaskIdRoute,
 }

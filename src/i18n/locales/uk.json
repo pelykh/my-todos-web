@@ -118,5 +118,6 @@
 	"whatsNextTitle": "Що далі?",
 	"whatsNextAddTask": "Додати задачу",
 	"whatsNextNoBacklog": "Немає задач у беклозі.",
-	"whatsNextCompleteProject": "Завершити проєкт"
+	"whatsNextCompleteProject": "Завершити проєкт",
+	"navProjects": "Проєкти"
 }
