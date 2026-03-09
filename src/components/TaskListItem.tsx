@@ -55,7 +55,7 @@ export function TaskListItem({
 	}
 
 	const className = cn(
-		'group flex items-center gap-2.5 px-2 py-1.5 rounded-md cursor-pointer select-none transition-[background] duration-100 my-px hover:bg-(--mantine-color-default-hover)',
+		'group flex items-center gap-1.5 md:gap-2.5 px-1 md:px-2 py-1.5 rounded-md cursor-pointer select-none transition-[background] duration-100 my-px hover:bg-(--mantine-color-default-hover)',
 	)
 
 	const content = (

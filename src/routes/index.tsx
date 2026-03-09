@@ -14,6 +14,7 @@ import { TaskListItem } from '@/components/TaskListItem'
 import { Toolbar } from '@/components/Toolbar'
 import { useFilters } from '@/store'
 import { useGroupedFilteredTasks } from '@/store/taskStore'
+import { isMobile } from '@/utils'
 
 export const Route = createFileRoute('/')({ component: App })
 
@@ -99,7 +100,7 @@ function App() {
 				<OverflowMenu onSettings={() => setSettingsOpen(true)} />
 			</Group>
 
-			<Container size="sm" py="xl" pb={120}>
+			<Container size="sm" py="xl" pb={120} px={{ base: 'xs', sm: 'md' }}>
 				<Stack gap="lg">
 					<Title order={2} ta="center">
 						{t('pageTitle')}
@@ -131,7 +132,7 @@ function App() {
 										key={task.id}
 										taskId={task.id}
 										status={area === 'important' ? 'important' : undefined}
-										displayMeta={['project', 'duration']}
+										displayMeta={isMobile() ? [] : ['project', 'duration']}
 										href={`/task/${task.id}`}
 									/>
 								))}

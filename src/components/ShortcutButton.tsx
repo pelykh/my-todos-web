@@ -1,6 +1,8 @@
 import { Button, type ButtonProps } from '@mantine/core'
 import { useEffect } from 'react'
 
+import { isMobile } from '@/utils'
+
 type ShortcutButtonProps = ButtonProps & {
 	shortcut: string
 }
@@ -30,9 +32,9 @@ export function ShortcutButton({
 			onClick={onClick}
 			disabled={disabled}
 			rightSection={
-				<kbd style={{ fontSize: '0.7em', opacity: 0.6, fontFamily: 'monospace' }}>
-					{shortcut}
-				</kbd>
+			isMobile() ? undefined : <kbd style={{ fontSize: '0.7em', opacity: 0.6, fontFamily: 'monospace' }}>
+				{shortcut}
+			</kbd>
 			}
 			{...rest}
 		>

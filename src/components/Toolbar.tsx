@@ -87,7 +87,7 @@ export function Toolbar() {
 
 	function handleSlider(value: number) {
 		if (value !== lastHapticSliderIndex.current) {
-			haptic('light')
+		haptic('selection')
 			lastHapticSliderIndex.current = value
 		}
 		setMaxMinutes(sliderIndexToStep(value))

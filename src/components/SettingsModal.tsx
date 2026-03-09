@@ -6,9 +6,9 @@ import { useAuthStore } from '@/store/authStore'
 import { type HapticMode, useSettingsStore } from '@/store/settingsStore'
 import { useSyncStore } from '@/store/syncStore'
 
-import { SyncButton } from './SyncButton'
+import { isMobile } from '@/utils'
 
-const isMobile = typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches
+import { SyncButton } from './SyncButton'
 
 interface SettingsModalProps {
   opened: boolean
@@ -24,7 +24,7 @@ export function SettingsModal({ opened, onClose, onLoginRequest }: SettingsModal
 
   const hapticOptions = [
     { label: 'Sound', value: 'sound' },
-    ...(isMobile ? [{ label: 'Vibration', value: 'vibration' }] : []),
+    ...(isMobile() ? [{ label: 'Vibration', value: 'vibration' }] : []),
     { label: 'Off', value: 'off' },
   ]
 
