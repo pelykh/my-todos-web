@@ -1,8 +1,6 @@
 import { ActionIcon, Menu, SegmentedControl, Stack, Text } from '@mantine/core'
-import { Moon, MoreHorizontal, Settings, Sun } from 'lucide-react'
+import { MoreHorizontal, Settings } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-
-import { useTheme } from '@/theme'
 
 interface OverflowMenuProps {
   onSettings: () => void
@@ -14,7 +12,6 @@ const LANGS = [
 ]
 
 export function OverflowMenu({ onSettings }: OverflowMenuProps) {
-  const { colorScheme, toggleColorScheme } = useTheme()
   const { i18n, t } = useTranslation()
   const current = LANGS.some((l) => l.value === i18n.language) ? i18n.language : 'en'
 
@@ -26,12 +23,6 @@ export function OverflowMenu({ onSettings }: OverflowMenuProps) {
         </ActionIcon>
       </Menu.Target>
       <Menu.Dropdown>
-        <Menu.Item
-          leftSection={colorScheme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
-          onClick={toggleColorScheme}
-        >
-          {colorScheme === 'dark' ? t('ariaThemeLight') : t('ariaThemeDark')}
-        </Menu.Item>
         <Menu.Item closeMenuOnClick={false}>
           <Stack gap={4}>
             <Text size="xs" c="dimmed">

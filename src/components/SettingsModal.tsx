@@ -5,7 +5,7 @@ import { pushAllSync } from '@/services/SyncService'
 import { useAuthStore } from '@/store/authStore'
 import { type HapticMode, useSettingsStore } from '@/store/settingsStore'
 import { useSyncStore } from '@/store/syncStore'
-
+import { type ColorSchemeMode, useTheme } from '@/theme'
 import { isMobile } from '@/utils'
 
 import { SyncButton } from './SyncButton'
@@ -21,6 +21,7 @@ export function SettingsModal({ opened, onClose, onLoginRequest }: SettingsModal
   const [value, setValue] = useState(apiUrl)
   const { isSyncing } = useSyncStore()
   const { hapticMode, setHapticMode } = useSettingsStore()
+  const { colorSchemeMode, setColorSchemeMode } = useTheme()
 
   const hapticOptions = [
     { label: 'Sound', value: 'sound' },
@@ -48,6 +49,22 @@ export function SettingsModal({ opened, onClose, onLoginRequest }: SettingsModal
           onKeyDown={(e) => e.key === 'Enter' && handleSave()}
         />
         <Button onClick={handleSave}>Save</Button>
+
+        <Divider />
+
+        <Stack gap="xs">
+          <Text size="sm" fw={500}>Theme</Text>
+          <SegmentedControl
+            data={[
+              { label: 'Light', value: 'light' },
+              { label: 'System', value: 'system' },
+              { label: 'Dark', value: 'dark' },
+            ]}
+            value={colorSchemeMode}
+            onChange={(v) => setColorSchemeMode(v as ColorSchemeMode)}
+            size="sm"
+          />
+        </Stack>
 
         <Divider />
 
