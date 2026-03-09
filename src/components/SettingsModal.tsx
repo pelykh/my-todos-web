@@ -1,11 +1,14 @@
-import { Button, Divider, Group, Modal, Stack, Text, TextInput } from '@mantine/core'
+import { Button, Divider, Group, Modal, SegmentedControl, Stack, Text, TextInput } from '@mantine/core'
 import { useEffect, useState } from 'react'
 
 import { pushAllSync } from '@/services/SyncService'
 import { useAuthStore } from '@/store/authStore'
+import { type HapticMode, useSettingsStore } from '@/store/settingsStore'
 import { useSyncStore } from '@/store/syncStore'
 
 import { SyncButton } from './SyncButton'
+
+const canVibrate = typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function'
 
 interface SettingsModalProps {
   opened: boolean
@@ -17,6 +20,13 @@ export function SettingsModal({ opened, onClose, onLoginRequest }: SettingsModal
   const { apiUrl, setApiUrl } = useAuthStore()
   const [value, setValue] = useState(apiUrl)
   const { isSyncing } = useSyncStore()
+  const { hapticMode, setHapticMode } = useSettingsStore()
+
+  const hapticOptions = [
+    { label: 'Off', value: 'off' },
+    ...(canVibrate ? [{ label: 'Vibration', value: 'vibration' }] : []),
+    { label: 'Sound', value: 'sound' },
+  ]
 
   useEffect(() => {
     if (opened) setValue(apiUrl)
@@ -38,6 +48,18 @@ export function SettingsModal({ opened, onClose, onLoginRequest }: SettingsModal
           onKeyDown={(e) => e.key === 'Enter' && handleSave()}
         />
         <Button onClick={handleSave}>Save</Button>
+
+        <Divider />
+
+        <Stack gap="xs">
+          <Text size="sm" fw={500}>Haptic feedback</Text>
+          <SegmentedControl
+            data={hapticOptions}
+            value={hapticMode}
+            onChange={(v) => setHapticMode(v as HapticMode)}
+            size="sm"
+          />
+        </Stack>
 
         <Divider />
 

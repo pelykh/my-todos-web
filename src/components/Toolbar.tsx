@@ -14,9 +14,10 @@ import {
 	IconHome,
 } from '@tabler/icons-react'
 import { Star } from 'lucide-react'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { useHaptic } from '@/hooks/useHaptic'
 import type { DurationStep } from '@/store'
 import { DURATION_STEPS, useFilterActions, useFilters } from '@/store'
 import { useFilteredTasks } from '@/store/taskStore'
@@ -59,6 +60,7 @@ function stepToSliderIndex(step: DurationStep): number {
 export function Toolbar() {
 	const { colorScheme } = useTheme()
 	const { t } = useTranslation()
+	const haptic = useHaptic()
 	const { context, isImportant: todayOnly, maxEstimatedMinutes } = useFilters()
 	const maxMinutes = maxEstimatedMinutes as DurationStep
 	const { setContext, setMaxMinutes, activateToday, clearAll, toggleToday } =
@@ -81,15 +83,22 @@ export function Toolbar() {
 	}, [todayOnly, hasTodayTasks, allTodayDone])
 
 	const sliderIndex = stepToSliderIndex(maxMinutes)
+	const lastHapticSliderIndex = useRef(sliderIndex)
 
 	function handleSlider(value: number) {
+		if (value !== lastHapticSliderIndex.current) {
+			haptic('light')
+			lastHapticSliderIndex.current = value
+		}
 		setMaxMinutes(sliderIndexToStep(value))
 	}
 
 	function handleStarClick() {
 		if (todayOnly) {
+			haptic('selection')
 			clearAll()
 		} else {
+			haptic('medium')
 			activateToday()
 		}
 	}
@@ -122,7 +131,7 @@ export function Toolbar() {
 								key={value}
 								variant={context === value ? 'filled' : 'default'}
 								color='blue'
-								onClick={() => setContext(context === value ? null : value)}
+								onClick={() => { haptic('selection'); setContext(context === value ? null : value) }}
 								aria-label={t(key)}
 								className="flex-1 sm:flex-none"
 							px={{ base: 10, sm: undefined }}
