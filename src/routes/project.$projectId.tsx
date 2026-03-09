@@ -292,95 +292,98 @@ function ProjectPage() {
 					style={{ borderBottom: `1px solid ${dividerBorder}` }}
 				>
 					{/* Title row */}
-					<div className="flex items-center gap-2">
-						<FolderKanban
-							size={18}
-							style={{ color: 'var(--mantine-color-dimmed)', flexShrink: 0 }}
-						/>
+					<div className="flex flex-col sm:flex-row sm:items-center gap-2">
+						<div className="flex items-center gap-2 flex-1 min-w-0">
+							<FolderKanban
+								size={18}
+								style={{ color: 'var(--mantine-color-dimmed)', flexShrink: 0 }}
+							/>
+							<input
+								ref={titleRef}
+								value={titleValue}
+								onChange={(e) => setTitleValue(e.target.value)}
+								onBlur={handleTitleBlur}
+								onKeyDown={handleTitleKey}
+								className="flex-1 min-w-0 bg-transparent border-none outline-none text-lg font-semibold py-0.5"
+								style={{ color: 'var(--mantine-color-text)' }}
+							/>
+						</div>
 
-						<input
-							ref={titleRef}
-							value={titleValue}
-							onChange={(e) => setTitleValue(e.target.value)}
-							onBlur={handleTitleBlur}
-							onKeyDown={handleTitleKey}
-							className="flex-1 min-w-0 bg-transparent border-none outline-none text-lg font-semibold py-0.5"
-							style={{ color: 'var(--mantine-color-text)' }}
-						/>
+						<div className="flex items-center gap-2 shrink-0">
+							{project.status === 'done' ? (
+								<Button
+									variant="filled"
+									color="gray"
+									size="sm"
+									radius="md"
+									leftSection={<RotateCcw size={16} />}
+									onClick={handleRestoreProject}
+								>
+									{t('taskRestore')}
+								</Button>
+							) : (
+								<Button
+									variant="filled"
+									color="green"
+									size="sm"
+									radius="md"
+									leftSection={<CheckCircle2 size={16} />}
+									onClick={handleCompleteProject}
+								>
+									{t('ariaCompleteProject')}
+								</Button>
+							)}
 
-						{project.status === 'done' ? (
-							<Button
-								variant="filled"
+							<Menu withinPortal position="bottom-end">
+								<Menu.Target>
+									<ActionIcon variant="subtle" color="gray" size="lg" radius="md">
+										<Ellipsis size={18} />
+									</ActionIcon>
+								</Menu.Target>
+								<Menu.Dropdown>
+									<Menu.Item
+										leftSection={<FolderMinus size={14} />}
+										onClick={handleDemoteToTask}
+									>
+										{t('projectDemoteToTask')}
+									</Menu.Item>
+									{project.status === 'someday' ? (
+										<Menu.Item
+											leftSection={<Archive size={14} />}
+											onClick={handleRestoreFromSomeday}
+										>
+											{t('taskMoveToNextAction')}
+										</Menu.Item>
+									) : (
+										<Menu.Item
+											leftSection={<Archive size={14} />}
+											onClick={handleMoveToSomeday}
+										>
+											{t('taskMoveToSomeday')}
+										</Menu.Item>
+									)}
+									<Menu.Divider />
+									<Menu.Item
+										leftSection={<Trash2 size={14} />}
+										color="red"
+										onClick={handleDelete}
+									>
+										{t('focusModalDelete')}
+									</Menu.Item>
+								</Menu.Dropdown>
+							</Menu>
+
+							<ActionIcon
+								onClick={handleBack}
+								variant="subtle"
 								color="gray"
-								size="sm"
+								size="lg"
 								radius="md"
-								leftSection={<RotateCcw size={16} />}
-								onClick={handleRestoreProject}
+								aria-label={t('focusModalClose')}
 							>
-								{t('taskRestore')}
-							</Button>
-						) : (
-							<Button
-								variant="filled"
-								color="green"
-								size="sm"
-								radius="md"
-								leftSection={<CheckCircle2 size={16} />}
-								onClick={handleCompleteProject}
-							>
-								{t('ariaCompleteProject')}
-							</Button>
-						)}
-
-						<Menu withinPortal position="bottom-end">
-							<Menu.Target>
-								<ActionIcon variant="subtle" color="gray" size="lg" radius="md">
-									<Ellipsis size={18} />
-								</ActionIcon>
-							</Menu.Target>
-							<Menu.Dropdown>
-								<Menu.Item
-									leftSection={<FolderMinus size={14} />}
-									onClick={handleDemoteToTask}
-								>
-									{t('projectDemoteToTask')}
-                  </Menu.Item>
-								{project.status === 'someday' ? (
-									<Menu.Item
-										leftSection={<Archive size={14} />}
-										onClick={handleRestoreFromSomeday}
-									>
-										{t('taskMoveToNextAction')}
-									</Menu.Item>
-								) : (
-									<Menu.Item
-										leftSection={<Archive size={14} />}
-										onClick={handleMoveToSomeday}
-									>
-										{t('taskMoveToSomeday')}
-									</Menu.Item>
-								)}
-								<Menu.Divider />
-								<Menu.Item
-									leftSection={<Trash2 size={14} />}
-									color="red"
-									onClick={handleDelete}
-								>
-									{t('focusModalDelete')}
-								</Menu.Item>
-							</Menu.Dropdown>
-						</Menu>
-
-						<ActionIcon
-							onClick={handleBack}
-							variant="subtle"
-							color="gray"
-							size="lg"
-							radius="md"
-							aria-label={t('focusModalClose')}
-						>
-							<X size={18} />
-						</ActionIcon>
+								<X size={18} />
+							</ActionIcon>
+						</div>
 					</div>
 
 					{/* Badges + dates on same row */}

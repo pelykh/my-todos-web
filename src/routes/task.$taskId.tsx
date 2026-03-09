@@ -177,7 +177,7 @@ function TaskPage() {
 					style={{ borderBottom: `1px solid ${divider}` }}
 				>
 					{/* Title row */}
-					<div className="flex items-center gap-2">
+					<div className="flex flex-col sm:flex-row sm:items-center gap-2">
 						<input
 							ref={titleRef}
 							value={titleValue}
@@ -186,79 +186,81 @@ function TaskPage() {
 							onKeyDown={handleTitleKey}
 							className="flex-1 min-w-0 bg-transparent border-none outline-none text-lg font-semibold py-0.5 text-(--mantine-color-text)"
 						/>
-						{task.status === 'done' ? (
-							<Button
-								onClick={handleRestore}
-								variant="filled"
-								color="gray"
-								size="sm"
-								radius="md"
-								leftSection={<RotateCcw size={16} />}
-							>
-								{t('taskRestore')}
-							</Button>
-						) : (
-							<Button
-								onClick={handleComplete}
-								variant="filled"
-								color="green"
-								size="sm"
-								radius="md"
-								leftSection={<CheckCircle2 size={16} />}
-							>
-								{t('focusModalComplete')}
-							</Button>
-						)}
-						<Menu withinPortal zIndex={600} position="bottom-end">
-							<Menu.Target>
-								<ActionIcon variant="subtle" color="gray" size="lg" radius="md">
-									<Ellipsis size={18} />
-								</ActionIcon>
-							</Menu.Target>
-							<Menu.Dropdown>
-								{!task.isProject && (
-									<Menu.Item
-										leftSection={<FolderKanban size={14} />}
-										onClick={handlePromoteToProject}
-									>
-										{t('focusModalPromoteToProject')}
-									</Menu.Item>
-                )}
-								{task.status === 'someday' ? (
-									<Menu.Item
-										leftSection={<Archive size={14} />}
-										onClick={handleRestoreFromSomeday}
-									>
-										{task.projectId ? t('taskMoveToBacklog') : t('taskMoveToNextAction')}
-									</Menu.Item>
-								) : (
-									<Menu.Item
-										leftSection={<Archive size={14} />}
-										onClick={handleMoveToSomeday}
-									>
-										{t('taskMoveToSomeday')}
-									</Menu.Item>
-								)}
-								<Menu.Divider />
-								<Menu.Item
-									leftSection={<Trash2 size={14} />}
-									color="red"
-									onClick={handleDelete}
+						<div className="flex items-center gap-2 shrink-0">
+							{task.status === 'done' ? (
+								<Button
+									onClick={handleRestore}
+									variant="filled"
+									color="gray"
+									size="sm"
+									radius="md"
+									leftSection={<RotateCcw size={16} />}
 								>
-									{t('focusModalDelete')}
-								</Menu.Item>
-							</Menu.Dropdown>
-						</Menu>
-						<ActionIcon
-							onClick={handleBack}
-							variant="subtle"
-							color="gray"
-							size="lg"
-							radius="md"
-							aria-label={t('focusModalClose')}
-						>
-							<X size={18} />
-						</ActionIcon>
+									{t('taskRestore')}
+								</Button>
+							) : (
+								<Button
+									onClick={handleComplete}
+									variant="filled"
+									color="green"
+									size="sm"
+									radius="md"
+									leftSection={<CheckCircle2 size={16} />}
+								>
+									{t('focusModalComplete')}
+								</Button>
+							)}
+							<Menu withinPortal zIndex={600} position="bottom-end">
+								<Menu.Target>
+									<ActionIcon variant="subtle" color="gray" size="lg" radius="md">
+										<Ellipsis size={18} />
+									</ActionIcon>
+								</Menu.Target>
+								<Menu.Dropdown>
+									{!task.isProject && (
+										<Menu.Item
+											leftSection={<FolderKanban size={14} />}
+											onClick={handlePromoteToProject}
+										>
+											{t('focusModalPromoteToProject')}
+										</Menu.Item>
+									)}
+									{task.status === 'someday' ? (
+										<Menu.Item
+											leftSection={<Archive size={14} />}
+											onClick={handleRestoreFromSomeday}
+										>
+											{task.projectId ? t('taskMoveToBacklog') : t('taskMoveToNextAction')}
+										</Menu.Item>
+									) : (
+										<Menu.Item
+											leftSection={<Archive size={14} />}
+											onClick={handleMoveToSomeday}
+										>
+											{t('taskMoveToSomeday')}
+										</Menu.Item>
+									)}
+									<Menu.Divider />
+									<Menu.Item
+										leftSection={<Trash2 size={14} />}
+										color="red"
+										onClick={handleDelete}
+									>
+										{t('focusModalDelete')}
+									</Menu.Item>
+								</Menu.Dropdown>
+							</Menu>
+							<ActionIcon
+								onClick={handleBack}
+								variant="subtle"
+								color="gray"
+								size="lg"
+								radius="md"
+								aria-label={t('focusModalClose')}
+							>
+								<X size={18} />
+							</ActionIcon>
+						</div>
 					</div>
 
 					{/* Tags row */}
