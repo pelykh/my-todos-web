@@ -1,11 +1,13 @@
+import { useNavigate } from '@tanstack/react-router'
 import { Command } from 'cmdk'
+import { X } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { TaskListItem } from '@/components/TaskListItem'
 import { useFilteredTasks, useTaskActions } from '@/store/taskStore'
 import { useTheme } from '@/theme'
-import { useNavigate } from '@tanstack/react-router'
+import { isMobile } from '@/utils'
 
 interface CommandPaletteProps {
 	open: boolean
@@ -20,37 +22,58 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
 	const navigate = useNavigate()
 	const [search, setSearch] = useState('')
 	const inputRef = useRef<HTMLInputElement>(null)
+  const mobile = isMobile()
 
 	useEffect(() => {
 		if (open) {
-			setTimeout(() => inputRef.current?.focus(), 0)
+			setTimeout(() => inputRef.current?.focus(), 100)
 		} else {
 			setSearch('')
 		}
 	}, [open])
 
 	const isDark = colorScheme === 'dark'
+	const border = `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'}`
 
-	const overlay: React.CSSProperties = {
-		position: 'fixed',
-		inset: 0,
-		backgroundColor: isDark ? 'rgba(0,0,0,0.6)' : 'rgba(0,0,0,0.3)',
-		zIndex: 1000,
-		display: 'flex',
-		alignItems: 'flex-start',
-		justifyContent: 'center',
-		paddingTop: '15vh',
-	}
+	const overlay: React.CSSProperties = mobile
+		? {
+				position: 'fixed',
+				inset: 0,
+				backgroundColor: isDark ? 'rgba(0,0,0,0.6)' : 'rgba(0,0,0,0.3)',
+				zIndex: 1000,
+				display: 'flex',
+				flexDirection: 'column',
+			}
+		: {
+				position: 'fixed',
+				inset: 0,
+				backgroundColor: isDark ? 'rgba(0,0,0,0.6)' : 'rgba(0,0,0,0.3)',
+				zIndex: 1000,
+				display: 'flex',
+				alignItems: 'flex-start',
+				justifyContent: 'center',
+				paddingTop: '15vh',
+			}
 
-	const dialog: React.CSSProperties = {
-		width: '100%',
-		maxWidth: 560,
-		backgroundColor: 'var(--mantine-color-body)',
-		borderRadius: 12,
-		boxShadow: '0 16px 70px rgba(0,0,0,0.2)',
-		overflow: 'hidden',
-		border: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'}`,
-	}
+	const dialog: React.CSSProperties = mobile
+		? {
+				width: '100%',
+				flex: 1,
+				backgroundColor: 'var(--mantine-color-body)',
+				overflow: 'hidden',
+				border,
+				display: 'flex',
+				flexDirection: 'column',
+			}
+		: {
+				width: '100%',
+				maxWidth: 560,
+				backgroundColor: 'var(--mantine-color-body)',
+				borderRadius: 12,
+				boxShadow: '0 16px 70px rgba(0,0,0,0.2)',
+				overflow: 'hidden',
+				border,
+			}
 
 	const inputStyle: React.CSSProperties = {
 		width: '100%',
@@ -60,14 +83,12 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
 		border: 'none',
 		outline: 'none',
 		color: 'var(--mantine-color-text)',
-		borderBottom: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'}`,
+		borderBottom: border,
 	}
 
-	const listStyle: React.CSSProperties = {
-		maxHeight: 360,
-		overflowY: 'auto',
-		padding: '8px 0',
-	}
+	const listStyle: React.CSSProperties = mobile
+		? { flex: 1, overflowY: 'auto', padding: '8px 0' }
+		: { maxHeight: 360, overflowY: 'auto', padding: '8px 0' }
 
 	const itemStyle: React.CSSProperties = {
 		padding: '0 12px',
@@ -80,14 +101,37 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
 	return (
 		<div style={overlay} onClick={onClose}>
 			<div style={dialog} onClick={(e) => e.stopPropagation()}>
-				<Command label={t('cmdPlaceholder')} shouldFilter={true}>
-					<Command.Input
-						ref={inputRef}
-						value={search}
-						onValueChange={setSearch}
-						placeholder={t('cmdPlaceholder')}
-						style={inputStyle}
-					/>
+				<Command label={t('cmdPlaceholder')} shouldFilter={true} style={mobile ? { display: 'flex', flexDirection: 'column', height: '100%' } : undefined}>
+					<div style={{ position: 'relative' }}>
+						<Command.Input
+							ref={inputRef}
+							value={search}
+							onValueChange={setSearch}
+							placeholder={t('cmdPlaceholder')}
+							style={{ ...inputStyle, paddingRight: mobile ? 52 : undefined }}
+						/>
+						{mobile && (
+							<button
+								onClick={onClose}
+								style={{
+									position: 'absolute',
+									right: 12,
+									top: '50%',
+									transform: 'translateY(-50%)',
+									background: 'none',
+									border: 'none',
+									cursor: 'pointer',
+									color: 'var(--mantine-color-dimmed)',
+									padding: 4,
+									display: 'flex',
+									alignItems: 'center',
+									justifyContent: 'center',
+								}}
+							>
+								<X size={20} />
+							</button>
+						)}
+					</div>
 					<Command.List style={listStyle}>
 						{allTasks.map((task) => (
 							<Command.Item
