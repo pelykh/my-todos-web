@@ -1,7 +1,7 @@
 import { ActionIcon, Container, Group, Stack, Text, Title } from '@mantine/core'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { Archive, CheckCircle2, FolderKanban, Search } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { CommandPalette } from '@/components/CommandPalette'
@@ -21,6 +21,7 @@ export const Route = createFileRoute('/')({ component: App })
 function App() {
 	const { t } = useTranslation()
 	const [cmdOpen, setCmdOpen] = useState(false)
+	const cmdInputRef = useRef<HTMLInputElement>(null)
 	const [loginOpen, setLoginOpen] = useState(false)
 	const [registerOpen, setRegisterOpen] = useState(false)
 	const [settingsOpen, setSettingsOpen] = useState(false)
@@ -43,7 +44,10 @@ function App() {
 		function handleKey(e: KeyboardEvent) {
 			if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
 				e.preventDefault()
-				setCmdOpen((o) => !o)
+				setCmdOpen((o) => {
+					if (!o) cmdInputRef.current?.focus()
+					return !o
+				})
 			}
 			if (e.key === 'Escape') setCmdOpen(false)
 		}
@@ -89,7 +93,7 @@ function App() {
 					<FolderKanban size={18} />
 				</ActionIcon>
 				<ActionIcon
-					onClick={() => setCmdOpen(true)}
+					onClick={() => { cmdInputRef.current?.focus(); setCmdOpen(true) }}
 					variant="default"
 					size="lg"
 					radius="md"
@@ -144,7 +148,7 @@ function App() {
 
 			<Toolbar />
 
-			<CommandPalette open={cmdOpen} onClose={() => setCmdOpen(false)} />
+			<CommandPalette ref={cmdInputRef} open={cmdOpen} onClose={() => setCmdOpen(false)} />
 
 			<LoginModal
 				opened={loginOpen}
