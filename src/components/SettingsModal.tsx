@@ -8,7 +8,7 @@ import { useSyncStore } from '@/store/syncStore'
 
 import { SyncButton } from './SyncButton'
 
-const canVibrate = typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function'
+const isMobile = typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches
 
 interface SettingsModalProps {
   opened: boolean
@@ -23,9 +23,9 @@ export function SettingsModal({ opened, onClose, onLoginRequest }: SettingsModal
   const { hapticMode, setHapticMode } = useSettingsStore()
 
   const hapticOptions = [
-    { label: 'Off', value: 'off' },
-    ...(canVibrate ? [{ label: 'Vibration', value: 'vibration' }] : []),
     { label: 'Sound', value: 'sound' },
+    ...(isMobile ? [{ label: 'Vibration', value: 'vibration' }] : []),
+    { label: 'Off', value: 'off' },
   ]
 
   useEffect(() => {

@@ -11,7 +11,7 @@ type SettingsStore = {
 export const useSettingsStore = create<SettingsStore>()(
   persist(
     (set) => ({
-      hapticMode: 'vibration',
+      hapticMode: 'sound',
       setHapticMode: (hapticMode) => set({ hapticMode }),
     }),
     {
