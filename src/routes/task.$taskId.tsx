@@ -7,6 +7,7 @@ import { toast } from 'sonner'
 
 import { WhatsNextModal } from '@/components/WhatsNextModal'
 import { BadgeSelect } from '@/components/BadgeSelect'
+import { StatusBadge } from '@/components/StatusBadge'
 import { DueDatePicker } from '@/components/DueDatePicker'
 import { MarkdownField } from '@/components/MarkdownField'
 import { ScheduledDatePicker } from '@/components/ScheduledDatePicker'
@@ -279,6 +280,7 @@ function TaskPage() {
 
 					{/* Tags row */}
 					<div className="flex gap-2 items-center flex-wrap">
+						<StatusBadge status={task.status} />
 						<BadgeSelect
 							options={contextOptions}
 							value={task.context ?? null}
