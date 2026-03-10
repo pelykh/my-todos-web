@@ -3,6 +3,7 @@ import { createFileRoute, Link, useNavigate, useRouter } from '@tanstack/react-r
 import { Archive, CheckCircle2, Ellipsis, FolderKanban, RotateCcw, Trash2, X } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
 
 import { WhatsNextModal } from '@/components/WhatsNextModal'
 import { BadgeSelect } from '@/components/BadgeSelect'
@@ -82,6 +83,19 @@ function TaskPage() {
 	function handleComplete() {
 		if (!task) return
 		editTask(task.id, { status: 'done' })
+
+		const taskId = task.id
+		const taskTitle = task.title
+		toast(t('toastTaskCompleted'), {
+			description: taskTitle,
+			action: {
+				label: t('toastUndo'),
+				onClick: () => {
+					editTask(taskId, { status: 'next_action' })
+					navigate({ to: '/task/$taskId', params: { taskId } })
+				},
+			},
+		})
 
 		if (task.projectId) {
 			const remaining = projectNextActions.filter((t) => t.id !== task.id)

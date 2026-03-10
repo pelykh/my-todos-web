@@ -119,5 +119,8 @@
 	"whatsNextAddTask": "Додати задачу",
 	"whatsNextNoBacklog": "Немає задач у беклозі.",
 	"whatsNextCompleteProject": "Завершити проєкт",
-	"navProjects": "Проєкти"
+	"navProjects": "Проєкти",
+	"toastTaskCompleted": "Завдання завершено",
+	"toastProjectCompleted": "Проєкт завершено",
+	"toastUndo": "Скасувати"
 }

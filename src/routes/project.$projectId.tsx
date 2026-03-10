@@ -23,6 +23,7 @@ import {
 } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
 
 import { BadgeSelect } from '@/components/BadgeSelect'
 import { CommandPalette } from '@/components/CommandPalette'
@@ -227,6 +228,7 @@ function ProjectPage() {
 		if (incompleteTasks.length === 0) {
 			editTask(project.id, { status: 'done' })
 			navigate({ to: '/' })
+			toast(t('toastProjectCompleted'), { description: project.title })
 		} else {
 			setCompleteModalOpen(true)
 		}
@@ -240,6 +242,7 @@ function ProjectPage() {
 		}
 		editTask(project.id, { status: 'done' })
 		navigate({ to: '/' })
+		toast(t('toastProjectCompleted'), { description: project.title })
 	}
 
 	if (!project) {
