@@ -76,6 +76,7 @@ function applyFilters(tasks: Task[], filters?: TaskFilters) {
 	return tasks.filter((t) => {
 		if (filters.status !== undefined && t.status !== filters.status)
 			return false
+		if (filters.excludeStatuses?.includes(t.status)) return false
 		if (filters.context !== undefined && t.context !== filters.context)
 			return false
 		if (filters.area !== undefined && t.area !== filters.area) return false
@@ -103,10 +104,30 @@ function applyFilters(tasks: Task[], filters?: TaskFilters) {
 
 export const taskStore = createTaskStore(new LocalStorageTaskService())
 
-export function useFilteredTasks(filters?: TaskFilters) {
+type SortBy = 'duration' | 'createdAt' | 'updatedAt'
+type SortOrder = 'asc' | 'desc'
+
+function applySorting(tasks: Task[], sort?: { sortBy?: SortBy; sortOrder?: SortOrder }): Task[] {
+	if (!sort?.sortBy) return tasks
+	const { sortBy, sortOrder = 'asc' } = sort
+	return [...tasks].sort((a, b) => {
+		let aVal: number
+		let bVal: number
+		if (sortBy === 'duration') {
+			aVal = a.estimatedMinutes ?? 0
+			bVal = b.estimatedMinutes ?? 0
+		} else {
+			aVal = new Date(a[sortBy]).getTime()
+			bVal = new Date(b[sortBy]).getTime()
+		}
+		return sortOrder === 'asc' ? aVal - bVal : bVal - aVal
+	})
+}
+
+export function useFilteredTasks(filters?: TaskFilters, sort?: { sortBy?: SortBy; sortOrder?: SortOrder }) {
 	return useStore(
 		taskStore,
-		useShallow((s) => applyFilters(s.tasks, filters)),
+		useShallow((s) => applySorting(applyFilters(s.tasks, filters), sort)),
 	)
 }
 
@@ -116,16 +137,14 @@ export function useGroupedFilteredTasks({
 	filters,
 	groupBy,
 	useImportant = false,
-	sortBy,
-	sortOrder = 'asc',
+	sort,
 }: {
 	filters?: TaskFilters
 	groupBy?: 'area' | 'context'
 	useImportant?: boolean
-	sortBy?: 'duration'
-	sortOrder?: 'asc' | 'desc'
+	sort?: { sortBy?: SortBy; sortOrder?: SortOrder }
 }): GroupedTasks {
-	const tasks = useFilteredTasks(filters)
+	const tasks = useFilteredTasks(filters, sort)
 
 	return React.useMemo(() => {
 		const seed: GroupedTasks = { important: [] }
@@ -133,7 +152,7 @@ export function useGroupedFilteredTasks({
 			for (const area of AREAS) seed[area] = []
 		}
 
-		const result = tasks.reduce<GroupedTasks>((acc, task) => {
+		return tasks.reduce<GroupedTasks>((acc, task) => {
 			acc['important'] ??= []
 
 			if (useImportant) {
@@ -145,8 +164,8 @@ export function useGroupedFilteredTasks({
 				}
 			}
 
-      if (groupBy === 'area') {
-        const allTasks = taskStore.getState().tasks
+			if (groupBy === 'area') {
+				const allTasks = taskStore.getState().tasks
 				const key = getTaskArea(task, allTasks) ?? 'other'
 				acc[key] ??= []
 				acc[key].push(task)
@@ -158,19 +177,7 @@ export function useGroupedFilteredTasks({
 			acc[key].push(task)
 			return acc
 		}, seed)
-
-		if (sortBy === 'duration') {
-			for (const key of Object.keys(result)) {
-				result[key].sort((a, b) => {
-					const aMin = a.estimatedMinutes ?? 0
-					const bMin = b.estimatedMinutes ?? 0
-					return sortOrder === 'asc' ? aMin - bMin : bMin - aMin
-				})
-			}
-		}
-
-		return result
-	}, [tasks, sortBy, sortOrder])
+	}, [tasks, groupBy, useImportant])
 }
 
 export function useTaskWithProject(id: string): [Task, Task | undefined] {

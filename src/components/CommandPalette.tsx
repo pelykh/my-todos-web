@@ -18,7 +18,10 @@ export const CommandPalette = forwardRef<HTMLInputElement, CommandPaletteProps>(
 	function CommandPalette({ open, onClose }, inputRef) {
 		const { t } = useTranslation()
 		const { colorScheme } = useTheme()
-		const allTasks = useFilteredTasks()
+		const allTasks = useFilteredTasks(
+			{ excludeStatuses: ['done', 'deleted'] },
+			{ sortBy: 'updatedAt', sortOrder: 'desc' },
+		)
 		const { addTask } = useTaskActions()
 		const navigate = useNavigate()
 		const [search, setSearch] = useState('')

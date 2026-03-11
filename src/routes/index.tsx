@@ -36,8 +36,7 @@ function App() {
 		},
 		groupBy: 'area',
 		useImportant: true,
-		sortBy: 'duration',
-		sortOrder: 'desc',
+		sort: { sortBy: 'duration', sortOrder: 'desc' },
 	})
 
 	useEffect(() => {

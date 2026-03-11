@@ -45,4 +45,5 @@ export type TaskFilters = Partial<
 	isImportant?: boolean
 	isProject?: boolean
 	excludeFutureScheduled?: boolean
+	excludeStatuses?: TaskStatus[]
 }
