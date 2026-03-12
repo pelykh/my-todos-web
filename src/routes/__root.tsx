@@ -7,6 +7,7 @@ import { createRootRoute, Outlet } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { Toaster } from 'sonner'
 
+import { MiniTimer } from '@/components/MiniTimer'
 import { useSyncEffect } from '@/hooks/useSyncEffect'
 import { ThemeProvider, useTheme } from '@/theme'
 
@@ -30,6 +31,9 @@ function ThemedApp() {
 	return (
 		<MantineProvider forceColorScheme={colorScheme}>
 			<Outlet />
+			<div style={{ position: 'fixed', bottom: 24, right: 24, zIndex: 100 }}>
+				<MiniTimer />
+			</div>
 			<Toaster
 				position={isMobile ? 'top-center' : 'bottom-right'}
 				theme={colorScheme}

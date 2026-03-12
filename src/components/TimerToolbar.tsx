@@ -1,9 +1,7 @@
 import { Button } from '@mantine/core'
 import { IconPlayerPause, IconPlayerPlay, IconRotate } from '@tabler/icons-react'
-import { useNavigate } from '@tanstack/react-router'
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
 
 import { useTimerActions, useTimerState } from '@/store'
 import type { Task } from '@/types'
@@ -16,7 +14,6 @@ function formatTime(seconds: number): string {
 
 export function TimerToolbar({ task }: { task: Task }) {
 	const { t } = useTranslation()
-	const navigate = useNavigate()
 	const { remainingSeconds, totalSeconds, isRunning, isExpired, focusedTaskId } =
 		useTimerState()
 	const actions = useTimerActions()
@@ -31,24 +28,6 @@ export function TimerToolbar({ task }: { task: Task }) {
 	const [isDraggingState, setIsDraggingState] = useState(false)
 
 	const isExpiredState = isActive && isExpired
-	// Don't fire toast if already expired on mount
-	const hasShownToast = useRef(isExpiredState)
-
-	useEffect(() => {
-		if (isExpiredState && !hasShownToast.current) {
-			hasShownToast.current = true
-			toast.success(t('timer.toastDone'), {
-				description: task.title,
-				action: {
-					label: t('timer.toastOpenTask'),
-					onClick: () => navigate({ to: '/task/$taskId', params: { taskId: task.id } }),
-				},
-			})
-		}
-		if (!isExpiredState) {
-			hasShownToast.current = false
-		}
-	}, [isExpiredState])
 
 	function getSecondsFromPointer(clientX: number): number {
 		const rect = barRef.current!.getBoundingClientRect()

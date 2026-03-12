@@ -12,6 +12,7 @@ import { StatusBadge } from '@/components/StatusBadge'
 import { DueDatePicker } from '@/components/DueDatePicker'
 import { MarkdownField } from '@/components/MarkdownField'
 import { ScheduledDatePicker } from '@/components/ScheduledDatePicker'
+import { useTimerState } from '@/store'
 import { useFilteredTasks, useTaskActions, useTaskWithProject } from '@/store/taskStore'
 import { ADD_XP_VALUES, MINUS_XP_VALUES, useXpActions } from '@/store/xp'
 import { useTheme } from '@/theme'
@@ -38,6 +39,7 @@ function TaskPage() {
 	const navigate = useNavigate()
 	const router = useRouter()
 
+	const { focusedTaskId } = useTimerState()
 	const [task, project] = useTaskWithProject(taskId)
 	const { editTask, removeTask } = useTaskActions()
 	const { addXp, minusXp } = useXpActions()
@@ -374,18 +376,20 @@ function TaskPage() {
 			</div>
 		</div>
 
-		<div
-			className="w-[calc(100vw-32px)] sm:w-96"
-			style={{
-				position: 'fixed',
-				bottom: 24,
-				left: '50%',
-				transform: 'translateX(-50%)',
-				zIndex: 100,
-			}}
-		>
-			<TimerToolbar task={task} />
-		</div>
+		{(!focusedTaskId || focusedTaskId === task.id) && (
+			<div
+				className="w-[calc(100vw-32px)] sm:w-96"
+				style={{
+					position: 'fixed',
+					bottom: 24,
+					left: '50%',
+					transform: 'translateX(-50%)',
+					zIndex: 100,
+				}}
+			>
+				<TimerToolbar task={task} />
+			</div>
+		)}
 
 		{task.projectId && (
 			<WhatsNextModal
