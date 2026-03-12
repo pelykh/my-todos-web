@@ -122,5 +122,12 @@
 	"navProjects": "Projects",
 	"toastTaskCompleted": "Task completed",
 	"toastProjectCompleted": "Project completed",
-	"toastUndo": "Undo"
+	"toastUndo": "Undo",
+	"timer.done": "Done",
+	"timer.ariaPlay": "Start timer",
+	"timer.ariaPause": "Pause timer",
+	"timer.ariaResume": "Resume timer",
+	"timer.ariaReset": "Reset timer",
+	"timer.toastDone": "Focus session complete",
+	"timer.toastOpenTask": "Open task"
 }

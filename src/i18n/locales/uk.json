@@ -122,5 +122,12 @@
 	"navProjects": "Проєкти",
 	"toastTaskCompleted": "Завдання завершено",
 	"toastProjectCompleted": "Проєкт завершено",
-	"toastUndo": "Скасувати"
+	"toastUndo": "Скасувати",
+	"timer.done": "Готово",
+	"timer.ariaPlay": "Запустити таймер",
+	"timer.ariaPause": "Зупинити таймер",
+	"timer.ariaResume": "Продовжити таймер",
+	"timer.ariaReset": "Скинути таймер",
+	"timer.toastDone": "Сесію фокусу завершено",
+	"timer.toastOpenTask": "Відкрити задачу"
 }

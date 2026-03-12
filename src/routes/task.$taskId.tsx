@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 
+import { TimerToolbar } from '@/components/TimerToolbar'
 import { WhatsNextModal } from '@/components/WhatsNextModal'
 import { BadgeSelect } from '@/components/BadgeSelect'
 import { StatusBadge } from '@/components/StatusBadge'
@@ -371,6 +372,19 @@ function TaskPage() {
 					)}
 				</div>
 			</div>
+		</div>
+
+		<div
+			className="w-[calc(100vw-32px)] sm:w-96"
+			style={{
+				position: 'fixed',
+				bottom: 24,
+				left: '50%',
+				transform: 'translateX(-50%)',
+				zIndex: 100,
+			}}
+		>
+			<TimerToolbar task={task} />
 		</div>
 
 		{task.projectId && (
