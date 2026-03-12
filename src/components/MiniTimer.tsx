@@ -7,6 +7,7 @@ import { toast } from 'sonner'
 
 import { useTimerActions, useTimerState } from '@/store'
 import { useTaskById } from '@/store/taskStore'
+import { useTheme } from '@/theme'
 
 function formatTime(seconds: number): string {
 	const m = Math.floor(seconds / 60)
@@ -14,13 +15,70 @@ function formatTime(seconds: number): string {
 	return `${m}:${s.toString().padStart(2, '0')}`
 }
 
+function createTimerFavicon(progress: number): string {
+	const canvas = document.createElement('canvas')
+	canvas.width = 32
+	canvas.height = 32
+	const ctx = canvas.getContext('2d')!
+
+	// Track
+	ctx.fillStyle = '#d3f9d8'
+	ctx.beginPath()
+	ctx.arc(16, 16, 15, 0, Math.PI * 2)
+	ctx.fill()
+
+	// Progress pie (remaining)
+	const color = progress < 0.15 ? '#fa5252' : '#2f9e44'
+	ctx.fillStyle = color
+	ctx.beginPath()
+	ctx.moveTo(16, 16)
+	ctx.arc(16, 16, 15, -Math.PI / 2, -Math.PI / 2 + progress * Math.PI * 2)
+	ctx.closePath()
+	ctx.fill()
+
+	// Center cutout
+	ctx.fillStyle = '#fff'
+	ctx.beginPath()
+	ctx.arc(16, 16, 7, 0, Math.PI * 2)
+	ctx.fill()
+
+	return canvas.toDataURL()
+}
+
 export function MiniTimer() {
 	const { t } = useTranslation()
 	const navigate = useNavigate()
 	const routerState = useRouterState()
-	const { remainingSeconds, isExpired, focusedTaskId } = useTimerState()
+	const { remainingSeconds, totalSeconds, isRunning, isExpired, focusedTaskId } = useTimerState()
 	const actions = useTimerActions()
 	const task = useTaskById(focusedTaskId)
+	const { colorScheme } = useTheme()
+	const isDark = colorScheme === 'dark'
+
+	// Save originals once on mount
+	const originalTitle = useRef(document.title)
+	const originalFavicon = useRef<string | null>(null)
+	useEffect(() => {
+		const el = document.querySelector<HTMLLinkElement>('link[rel="icon"]')
+		if (el) originalFavicon.current = el.getAttribute('href')
+	}, [])
+
+	// Tab title + favicon
+	useEffect(() => {
+		const faviconEl = document.querySelector<HTMLLinkElement>('link[rel="icon"]')
+		const isIdle = !isRunning && remainingSeconds === totalSeconds
+		if (focusedTaskId && task && !isIdle) {
+			document.title = `${formatTime(remainingSeconds)} · ${task.title}`
+			if (faviconEl) {
+				faviconEl.href = createTimerFavicon(
+					totalSeconds > 0 ? remainingSeconds / totalSeconds : 0,
+				)
+			}
+		} else {
+			document.title = originalTitle.current
+			if (faviconEl && originalFavicon.current) faviconEl.setAttribute('href', originalFavicon.current)
+		}
+	}, [remainingSeconds, totalSeconds, isRunning, focusedTaskId, task])
 
 	// Centralized expiry handler — runs regardless of which page is active
 	const hasShownToast = useRef(isExpired && !!focusedTaskId)
@@ -53,9 +111,9 @@ export function MiniTimer() {
 			<div
 				className="flex cursor-pointer items-center gap-1.5 rounded-md border-2 px-4 py-3 text-md font-bold tabular-nums select-none"
 				style={{
-					background: 'var(--mantine-color-green-3)',
-					borderColor: 'var(--mantine-color-green-5)',
-					color: 'var(--mantine-color-green-9)',
+					background: isDark ? 'var(--mantine-color-green-9)' : 'var(--mantine-color-green-3)',
+					borderColor: isDark ? 'var(--mantine-color-green-7)' : 'var(--mantine-color-green-5)',
+					color: isDark ? 'var(--mantine-color-green-2)' : 'var(--mantine-color-green-9)',
 				}}
 				onClick={() =>
 					navigate({ to: '/task/$taskId', params: { taskId: focusedTaskId } })

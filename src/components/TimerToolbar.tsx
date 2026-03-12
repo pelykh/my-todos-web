@@ -4,6 +4,7 @@ import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { useTimerActions, useTimerState } from '@/store'
+import { useTheme } from '@/theme'
 import type { Task } from '@/types'
 
 function formatTime(seconds: number): string {
@@ -14,6 +15,8 @@ function formatTime(seconds: number): string {
 
 export function TimerToolbar({ task }: { task: Task }) {
 	const { t } = useTranslation()
+	const { colorScheme } = useTheme()
+	const isDark = colorScheme === 'dark'
 	const { remainingSeconds, totalSeconds, isRunning, isExpired, focusedTaskId } =
 		useTimerState()
 	const actions = useTimerActions()
@@ -114,7 +117,7 @@ export function TimerToolbar({ task }: { task: Task }) {
 				className="relative h-6 select-none"
 				style={{
 					cursor: isActive ? 'ew-resize' : 'default',
-					background: 'var(--mantine-color-blue-1)',
+					background: isDark ? 'var(--mantine-color-dark-5)' : 'var(--mantine-color-blue-1)',
 				}}
 				onPointerDown={handlePointerDown}
 				onPointerMove={handlePointerMove}
@@ -125,7 +128,7 @@ export function TimerToolbar({ task }: { task: Task }) {
 					className="absolute inset-y-0 left-0"
 					style={{
 						width: `${progress * 100}%`,
-						background: 'var(--mantine-color-blue-4)',
+						background: isDark ? 'var(--mantine-color-blue-7)' : 'var(--mantine-color-blue-4)',
 						transition: isDraggingState ? 'none' : undefined,
 					}}
 				/>
