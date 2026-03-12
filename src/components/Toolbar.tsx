@@ -25,6 +25,7 @@ import { useTheme } from '@/theme'
 import type { Context } from '@/types'
 
 import { XpBar } from './XpBar'
+import { XpDebugButtons } from './XpDebugButtons'
 
 const today = new Date().toISOString().slice(0, 10)
 
@@ -114,7 +115,8 @@ export function Toolbar() {
 				zIndex: 100,
 			}}
 		>
-			<XpBar value={35} />
+			<XpDebugButtons />
+			<XpBar />
 			<Box
 				p={0}
 				style={(theme) => ({

@@ -37,6 +37,7 @@ import {
 	useTaskActions,
 	useTaskWithProject,
 } from '@/store/taskStore'
+import { ADD_XP_VALUES, MINUS_XP_VALUES, useXpActions } from '@/store/xp'
 import { useTheme } from '@/theme'
 import type { Area, Context, Task } from '@/types'
 import { AREAS } from '@/types'
@@ -132,6 +133,7 @@ function ProjectPage() {
 	const [project] = useTaskWithProject(projectId)
 	const childTasks = useFilteredTasks({ projectId })
 	const { editTask, removeTask } = useTaskActions()
+	const { addXp, minusXp } = useXpActions()
 
 	const [titleValue, setTitleValue] = useState('')
 	const [addTaskOpen, setAddTaskOpen] = useState(false)
@@ -215,6 +217,7 @@ function ProjectPage() {
 	function handleRestoreProject() {
 		if (!project) return
 		editTask(project.id, { status: 'next_action' })
+		minusXp(MINUS_XP_VALUES.taskRestored)
 	}
 
 	function handleRestoreFromSomeday() {
@@ -227,6 +230,7 @@ function ProjectPage() {
 		const incompleteTasks = childTasks.filter((t) => t.status !== 'done')
 		if (incompleteTasks.length === 0) {
 			editTask(project.id, { status: 'done' })
+			addXp(ADD_XP_VALUES.taskDone)
 			navigate({ to: '/' })
 			toast(t('toastProjectCompleted'), { description: project.title })
 		} else {
@@ -241,6 +245,7 @@ function ProjectPage() {
 			editTask(task.id, { status: 'done' })
 		}
 		editTask(project.id, { status: 'done' })
+		addXp(ADD_XP_VALUES.taskDone * (incompleteTasks.length + 1))
 		navigate({ to: '/' })
 		toast(t('toastProjectCompleted'), { description: project.title })
 	}

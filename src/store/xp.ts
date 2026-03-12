@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 import { createStore, useStore } from 'zustand'
 import { persist } from 'zustand/middleware'
 
@@ -91,46 +91,29 @@ export function useCurrentXpLevel(): number {
 // ANIMATION_DURATION should match the CSS transition duration on the XP bar
 const ANIMATION_DURATION = 600
 
-export function useXpLevelProgress({ onLevelUp }: { onLevelUp?: () => void } = {}): number {
-	const isPending = useIsPendingXpUpdate()
-	const progress = useStore(xpStore, (s) => getXpLevelProgress(s.nextXp))
-	const onLevelUpRef = useRef(onLevelUp)
-	onLevelUpRef.current = onLevelUp
+export function useXpLevelProgress(): { progress: number; level: number } {
+	const currentXp = useStore(xpStore, (s) => s.currentXp)
+	const nextXp = useStore(xpStore, (s) => s.nextXp)
 
 	useEffect(() => {
-		if (!isPending) return
-
-		let timer: ReturnType<typeof setTimeout>
-
-		function processNext() {
-			const { currentXp, nextXp, actions } = xpStore.getState()
-			const currentLevel = getXpLevel(currentXp)
-			const nextLevel = getXpLevel(nextXp)
-
-			if (nextLevel > currentLevel) {
-				// Commit to level boundary immediately so the bar animates to 100%
-				actions.commitCurrentXp(getLevelStartXp(currentLevel + 1))
-				// After animation completes, fire onLevelUp and continue to next level
-				timer = setTimeout(() => {
-					onLevelUpRef.current?.()
-					processNext()
-				}, ANIMATION_DURATION)
-			} else {
-				// Same level — commit final value immediately so bar animates to target
-				actions.commitCurrentXp(nextXp)
-				// After animation completes, clear pending state
-				timer = setTimeout(() => {
-					actions.setCurrentXp(nextXp)
-				}, ANIMATION_DURATION)
-			}
+		if (currentXp === nextXp) return
+		const { actions } = xpStore.getState()
+		const startTimer = setTimeout(() => {
+			actions.commitCurrentXp(nextXp)
+		}, 100)
+		const endTimer = setTimeout(() => {
+			actions.setCurrentXp(nextXp)
+		}, 100 + ANIMATION_DURATION)
+		return () => {
+			clearTimeout(startTimer)
+			clearTimeout(endTimer)
 		}
+	}, [currentXp, nextXp])
 
-		processNext()
-
-		return () => clearTimeout(timer)
-	}, [isPending])
-
-	return progress
+	return {
+		progress: getXpLevelProgress(currentXp),
+		level: getXpLevel(currentXp),
+	}
 }
 
 export function useXpActions(): XpActions {

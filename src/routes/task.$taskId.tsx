@@ -12,6 +12,7 @@ import { DueDatePicker } from '@/components/DueDatePicker'
 import { MarkdownField } from '@/components/MarkdownField'
 import { ScheduledDatePicker } from '@/components/ScheduledDatePicker'
 import { useFilteredTasks, useTaskActions, useTaskWithProject } from '@/store/taskStore'
+import { ADD_XP_VALUES, MINUS_XP_VALUES, useXpActions } from '@/store/xp'
 import { useTheme } from '@/theme'
 import type { Area, Context } from '@/types'
 import { AREAS } from '@/types'
@@ -38,6 +39,7 @@ function TaskPage() {
 
 	const [task, project] = useTaskWithProject(taskId)
 	const { editTask, removeTask } = useTaskActions()
+	const { addXp, minusXp } = useXpActions()
 	const projectNextActions = useFilteredTasks(
 		task?.projectId ? { projectId: task.projectId, status: 'next_action' } : undefined,
 	)
@@ -84,6 +86,7 @@ function TaskPage() {
 	function handleComplete() {
 		if (!task) return
 		editTask(task.id, { status: 'done' })
+		addXp(ADD_XP_VALUES.taskDone)
 
 		const taskId = task.id
 		const taskTitle = task.title
@@ -93,6 +96,7 @@ function TaskPage() {
 				label: t('toastUndo'),
 				onClick: () => {
 					editTask(taskId, { status: 'next_action' })
+					minusXp(MINUS_XP_VALUES.taskRestored)
 					navigate({ to: '/task/$taskId', params: { taskId } })
 				},
 			},
@@ -112,6 +116,7 @@ function TaskPage() {
 	function handleRestore() {
 		if (!task) return
 		editTask(task.id, { status: 'next_action' })
+		minusXp(MINUS_XP_VALUES.taskRestored)
 	}
 
 	function handleDelete() {
