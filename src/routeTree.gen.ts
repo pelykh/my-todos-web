@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SomedayRouteImport } from './routes/someday'
+import { Route as ShoppingListRouteImport } from './routes/shopping-list'
 import { Route as ProjectsRouteImport } from './routes/projects'
 import { Route as ProcessInboxRouteImport } from './routes/process-inbox'
 import { Route as DoneRouteImport } from './routes/done'
@@ -20,6 +21,11 @@ import { Route as ProjectProjectIdRouteImport } from './routes/project.$projectI
 const SomedayRoute = SomedayRouteImport.update({
   id: '/someday',
   path: '/someday',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ShoppingListRoute = ShoppingListRouteImport.update({
+  id: '/shopping-list',
+  path: '/shopping-list',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProjectsRoute = ProjectsRouteImport.update({
@@ -58,6 +64,7 @@ export interface FileRoutesByFullPath {
   '/done': typeof DoneRoute
   '/process-inbox': typeof ProcessInboxRoute
   '/projects': typeof ProjectsRoute
+  '/shopping-list': typeof ShoppingListRoute
   '/someday': typeof SomedayRoute
   '/project/$projectId': typeof ProjectProjectIdRoute
   '/task/$taskId': typeof TaskTaskIdRoute
@@ -67,6 +74,7 @@ export interface FileRoutesByTo {
   '/done': typeof DoneRoute
   '/process-inbox': typeof ProcessInboxRoute
   '/projects': typeof ProjectsRoute
+  '/shopping-list': typeof ShoppingListRoute
   '/someday': typeof SomedayRoute
   '/project/$projectId': typeof ProjectProjectIdRoute
   '/task/$taskId': typeof TaskTaskIdRoute
@@ -77,6 +85,7 @@ export interface FileRoutesById {
   '/done': typeof DoneRoute
   '/process-inbox': typeof ProcessInboxRoute
   '/projects': typeof ProjectsRoute
+  '/shopping-list': typeof ShoppingListRoute
   '/someday': typeof SomedayRoute
   '/project/$projectId': typeof ProjectProjectIdRoute
   '/task/$taskId': typeof TaskTaskIdRoute
@@ -88,6 +97,7 @@ export interface FileRouteTypes {
     | '/done'
     | '/process-inbox'
     | '/projects'
+    | '/shopping-list'
     | '/someday'
     | '/project/$projectId'
     | '/task/$taskId'
@@ -97,6 +107,7 @@ export interface FileRouteTypes {
     | '/done'
     | '/process-inbox'
     | '/projects'
+    | '/shopping-list'
     | '/someday'
     | '/project/$projectId'
     | '/task/$taskId'
@@ -106,6 +117,7 @@ export interface FileRouteTypes {
     | '/done'
     | '/process-inbox'
     | '/projects'
+    | '/shopping-list'
     | '/someday'
     | '/project/$projectId'
     | '/task/$taskId'
@@ -116,6 +128,7 @@ export interface RootRouteChildren {
   DoneRoute: typeof DoneRoute
   ProcessInboxRoute: typeof ProcessInboxRoute
   ProjectsRoute: typeof ProjectsRoute
+  ShoppingListRoute: typeof ShoppingListRoute
   SomedayRoute: typeof SomedayRoute
   ProjectProjectIdRoute: typeof ProjectProjectIdRoute
   TaskTaskIdRoute: typeof TaskTaskIdRoute
@@ -128,6 +141,13 @@ declare module '@tanstack/react-router' {
       path: '/someday'
       fullPath: '/someday'
       preLoaderRoute: typeof SomedayRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/shopping-list': {
+      id: '/shopping-list'
+      path: '/shopping-list'
+      fullPath: '/shopping-list'
+      preLoaderRoute: typeof ShoppingListRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/projects': {
@@ -180,6 +200,7 @@ const rootRouteChildren: RootRouteChildren = {
   DoneRoute: DoneRoute,
   ProcessInboxRoute: ProcessInboxRoute,
   ProjectsRoute: ProjectsRoute,
+  ShoppingListRoute: ShoppingListRoute,
   SomedayRoute: SomedayRoute,
   ProjectProjectIdRoute: ProjectProjectIdRoute,
   TaskTaskIdRoute: TaskTaskIdRoute,

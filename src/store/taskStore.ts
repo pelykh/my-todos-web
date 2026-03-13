@@ -95,6 +95,8 @@ function applyFilters(tasks: Task[], filters?: TaskFilters) {
 			const today = new Date().toISOString().slice(0, 10)
 			if (t.scheduledDate && t.scheduledDate > today) return false
 		}
+		if (filters.tags?.length && !filters.tags.every((tag) => t.tags?.includes(tag)))
+			return false
 		if (filters.isImportant) {
 			return isTaskImportant(t, getTaskProject(t, tasks))
 		}

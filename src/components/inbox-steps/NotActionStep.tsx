@@ -42,9 +42,22 @@ export function NotActionStep({ task, onAdvance }: Props) {
 					{t('processSomedayUk')}
 				</ShortcutButton>
 			</Group>
-			<Group gap="sm" w="100%" maw={320}>
-				<ShortcutButton
+      <Group gap="sm" w="100%" maw={320}>
+        <ShortcutButton
 					shortcut="3"
+					onClick={() => goToInboxStep('1_1_2_shopping_list')}
+					variant="light"
+					color="teal"
+					flex={1}
+				>
+					{t('processShoppingListUk')}
+				</ShortcutButton>
+
+
+			</Group>
+      <Group gap="sm" w="100%" maw={320}>
+        <ShortcutButton
+					shortcut="4"
 					onClick={() => goToInboxStep('1_0_is_actionable')}
 					variant="subtle"
 					color="gray"

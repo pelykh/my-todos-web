@@ -11,6 +11,7 @@ export type InboxStepKey =
 	| '1_0_is_actionable'
 	| '1_1_not_action'
 	| '1_1_1_reference'
+	| '1_1_2_shopping_list'
 	| '2_0_is_less_then_2_minutes'
 	| '2_1_less_then_2_minutes'
 	| '3_0_is_delegate'
@@ -42,6 +43,7 @@ const INBOX_STEPS: { key: InboxStepKey }[] = [
 	{ key: '1_0_is_actionable' },
 	{ key: '1_1_not_action' },
 	{ key: '1_1_1_reference' },
+	{ key: '1_1_2_shopping_list' },
 	{ key: '2_0_is_less_then_2_minutes' },
 	{ key: '2_1_less_then_2_minutes' },
 	{ key: '3_0_is_delegate' },

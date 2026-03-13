@@ -1,6 +1,6 @@
 import { ActionIcon, Container, Group, Stack, Text, Title } from '@mantine/core'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { Archive, CheckCircle2, FolderKanban, Search } from 'lucide-react'
+import { Archive, CheckCircle2, FolderKanban, Search, ShoppingCart } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -61,6 +61,16 @@ function App() {
 				style={{ position: 'fixed', top: 16, right: 16, zIndex: 200 }}
 			>
 				<ProcessInboxButton />
+				<ActionIcon
+					component={Link}
+					to="/shopping-list"
+					variant="default"
+					size="lg"
+					radius="md"
+					aria-label={t('shoppingList')}
+				>
+					<ShoppingCart size={18} />
+				</ActionIcon>
 				<ActionIcon
 					component={Link}
 					to="/someday"

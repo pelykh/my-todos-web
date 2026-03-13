@@ -129,5 +129,10 @@
 	"timer.ariaResume": "Resume timer",
 	"timer.ariaReset": "Reset timer",
 	"timer.toastDone": "Focus session complete",
-	"timer.toastOpenTask": "Open task"
+	"timer.toastOpenTask": "Open task",
+	"shoppingList": "Shopping List",
+	"shoppingListToBuy": "To buy",
+	"shoppingListDoneToday": "Done today",
+	"processShoppingListUk": "Shopping List",
+	"processShoppingListHint": "Enter the name of the item you need to buy."
 }

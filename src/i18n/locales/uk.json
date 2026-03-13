@@ -129,5 +129,10 @@
 	"timer.ariaResume": "Продовжити таймер",
 	"timer.ariaReset": "Скинути таймер",
 	"timer.toastDone": "Сесію фокусу завершено",
-	"timer.toastOpenTask": "Відкрити задачу"
+	"timer.toastOpenTask": "Відкрити задачу",
+	"shoppingList": "Список покупок",
+	"shoppingListToBuy": "Купити",
+	"shoppingListDoneToday": "Куплено сьогодні",
+	"processShoppingListUk": "Список покупок",
+	"processShoppingListHint": "Введіть назву товару, який потрібно купити."
 }

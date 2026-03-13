@@ -36,6 +36,7 @@ export type Task = {
 	createdAt: string
 	updatedAt: string
 	completedAt?: string
+	tags?: string[]
 }
 
 export type TaskFilters = Partial<
@@ -46,4 +47,5 @@ export type TaskFilters = Partial<
 	isProject?: boolean
 	excludeFutureScheduled?: boolean
 	excludeStatuses?: TaskStatus[]
+	tags?: string[]
 }

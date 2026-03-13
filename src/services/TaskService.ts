@@ -21,6 +21,7 @@ export type CreateTaskInput = {
 	dueDate?: string
 	estimatedMinutes?: number
 	waitingSince?: string
+	tags?: string[]
 }
 
 export type UpdateTaskInput = Partial<CreateTaskInput> & {

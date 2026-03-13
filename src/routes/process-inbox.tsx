@@ -24,6 +24,7 @@ import { IsProjectStep } from '@/components/inbox-steps/IsProjectStep'
 import { NewProjectStep } from '@/components/inbox-steps/NewProjectStep'
 import { NotActionStep } from '@/components/inbox-steps/NotActionStep'
 import { ReferenceStep } from '@/components/inbox-steps/ReferenceStep'
+import { ShoppingListStep } from '@/components/inbox-steps/ShoppingListStep'
 import { SelectProjectStep } from '@/components/inbox-steps/SelectProjectStep'
 import { resetInboxStepper, useInboxCurrentStep, useInboxState } from '@/store/inboxStepper'
 import { useFilteredTasks, useTaskById } from '@/store/taskStore'
@@ -101,6 +102,9 @@ function ProcessInbox() {
 					)}
 					{currentStep === '1_1_1_reference' && (
 						<ReferenceStep task={task} onAdvance={advance} />
+					)}
+					{currentStep === '1_1_2_shopping_list' && (
+						<ShoppingListStep task={task} onAdvance={advance} />
 					)}
 					{currentStep === '2_0_is_less_then_2_minutes' && (
 						<IsLessThan2MinutesStep task={task} />
