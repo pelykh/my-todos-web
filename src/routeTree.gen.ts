@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as WaitingForRouteImport } from './routes/waiting-for'
 import { Route as SomedayRouteImport } from './routes/someday'
 import { Route as ShoppingListRouteImport } from './routes/shopping-list'
 import { Route as ProjectsRouteImport } from './routes/projects'
@@ -18,6 +19,11 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as TaskTaskIdRouteImport } from './routes/task.$taskId'
 import { Route as ProjectProjectIdRouteImport } from './routes/project.$projectId'
 
+const WaitingForRoute = WaitingForRouteImport.update({
+  id: '/waiting-for',
+  path: '/waiting-for',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SomedayRoute = SomedayRouteImport.update({
   id: '/someday',
   path: '/someday',
@@ -66,6 +72,7 @@ export interface FileRoutesByFullPath {
   '/projects': typeof ProjectsRoute
   '/shopping-list': typeof ShoppingListRoute
   '/someday': typeof SomedayRoute
+  '/waiting-for': typeof WaitingForRoute
   '/project/$projectId': typeof ProjectProjectIdRoute
   '/task/$taskId': typeof TaskTaskIdRoute
 }
@@ -76,6 +83,7 @@ export interface FileRoutesByTo {
   '/projects': typeof ProjectsRoute
   '/shopping-list': typeof ShoppingListRoute
   '/someday': typeof SomedayRoute
+  '/waiting-for': typeof WaitingForRoute
   '/project/$projectId': typeof ProjectProjectIdRoute
   '/task/$taskId': typeof TaskTaskIdRoute
 }
@@ -87,6 +95,7 @@ export interface FileRoutesById {
   '/projects': typeof ProjectsRoute
   '/shopping-list': typeof ShoppingListRoute
   '/someday': typeof SomedayRoute
+  '/waiting-for': typeof WaitingForRoute
   '/project/$projectId': typeof ProjectProjectIdRoute
   '/task/$taskId': typeof TaskTaskIdRoute
 }
@@ -99,6 +108,7 @@ export interface FileRouteTypes {
     | '/projects'
     | '/shopping-list'
     | '/someday'
+    | '/waiting-for'
     | '/project/$projectId'
     | '/task/$taskId'
   fileRoutesByTo: FileRoutesByTo
@@ -109,6 +119,7 @@ export interface FileRouteTypes {
     | '/projects'
     | '/shopping-list'
     | '/someday'
+    | '/waiting-for'
     | '/project/$projectId'
     | '/task/$taskId'
   id:
@@ -119,6 +130,7 @@ export interface FileRouteTypes {
     | '/projects'
     | '/shopping-list'
     | '/someday'
+    | '/waiting-for'
     | '/project/$projectId'
     | '/task/$taskId'
   fileRoutesById: FileRoutesById
@@ -130,12 +142,20 @@ export interface RootRouteChildren {
   ProjectsRoute: typeof ProjectsRoute
   ShoppingListRoute: typeof ShoppingListRoute
   SomedayRoute: typeof SomedayRoute
+  WaitingForRoute: typeof WaitingForRoute
   ProjectProjectIdRoute: typeof ProjectProjectIdRoute
   TaskTaskIdRoute: typeof TaskTaskIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/waiting-for': {
+      id: '/waiting-for'
+      path: '/waiting-for'
+      fullPath: '/waiting-for'
+      preLoaderRoute: typeof WaitingForRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/someday': {
       id: '/someday'
       path: '/someday'
@@ -202,6 +222,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProjectsRoute: ProjectsRoute,
   ShoppingListRoute: ShoppingListRoute,
   SomedayRoute: SomedayRoute,
+  WaitingForRoute: WaitingForRoute,
   ProjectProjectIdRoute: ProjectProjectIdRoute,
   TaskTaskIdRoute: TaskTaskIdRoute,
 }

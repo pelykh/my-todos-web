@@ -134,5 +134,11 @@
 	"shoppingListToBuy": "To buy",
 	"shoppingListDoneToday": "Done today",
 	"processShoppingListUk": "Shopping List",
-	"processShoppingListHint": "Enter the name of the item you need to buy."
+	"processShoppingListHint": "Enter the name of the item you need to buy.",
+	"processDelegateHint": "Add the person's name in the notes so you know who to follow up with.",
+	"waitingFor": "Waiting For",
+	"waitingForEmpty": "Nothing waiting. All clear!",
+	"waitingSinceToday": "Today",
+	"waitingSince": "{{days}}d waiting",
+	"waitingSinceWeeks": "{{weeks}}w waiting"
 }

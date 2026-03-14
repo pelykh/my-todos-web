@@ -134,5 +134,11 @@
 	"shoppingListToBuy": "Купити",
 	"shoppingListDoneToday": "Куплено сьогодні",
 	"processShoppingListUk": "Список покупок",
-	"processShoppingListHint": "Введіть назву товару, який потрібно купити."
+	"processShoppingListHint": "Введіть назву товару, який потрібно купити.",
+	"processDelegateHint": "Додайте ім'я людини в нотатках, щоб знати, до кого звертатися.",
+	"waitingFor": "Очікування",
+	"waitingForEmpty": "Нічого не очікує. Все чисто!",
+	"waitingSinceToday": "Сьогодні",
+	"waitingSince": "{{days}}д очікує",
+	"waitingSinceWeeks": "{{weeks}}т очікує"
 }

@@ -7,7 +7,7 @@ import { cn } from '@/utils/cn'
 import { formatDuration } from '@/utils/duration'
 import { isTaskImportant } from '@/utils/tasks'
 
-type DisplayMeta = 'area' | 'duration' | 'project' | 'context' | 'due_date'
+type DisplayMeta = 'area' | 'duration' | 'project' | 'context' | 'due_date' | 'waiting_since' | 'notes'
 
 type TaskListItemProps = {
 	taskId: string
@@ -82,6 +82,41 @@ export function TaskListItem({
 
 				<div className="flex items-center gap-1.5 shrink-0">
 					{displayMeta?.map((metaKey) => {
+						if (metaKey === 'waiting_since') {
+							if (!task.waitingSince) return null
+							const days = Math.floor(
+								(Date.now() - new Date(task.waitingSince).getTime()) / 86_400_000,
+							)
+							const color =
+								days >= 14
+									? 'var(--mantine-color-orange-6)'
+									: days >= 7
+										? 'var(--mantine-color-yellow-6)'
+										: 'var(--mantine-color-dimmed)'
+							const label =
+								days === 0
+									? t('waitingSinceToday')
+									: days >= 14
+										? t('waitingSinceWeeks', { weeks: Math.floor(days / 7) })
+										: t('waitingSince', { days })
+							return (
+								<span key={metaKey} className="text-xs" style={{ color }}>
+									{label}
+								</span>
+							)
+						}
+
+						if (metaKey === 'notes') {
+							if (!task.notes) return null
+							return (
+								<Tooltip key={metaKey} label={task.notes} openDelay={600} withinPortal>
+									<span className="text-xs text-(--mantine-color-dimmed) max-w-[150px] truncate block">
+										{task.notes}
+									</span>
+								</Tooltip>
+							)
+						}
+
 						const label = getMetaLabel(metaKey)
 						if (!label) return null
 

@@ -260,6 +260,36 @@ export const MOCK_TASKS: Task[] = [
 		updatedAt: d(3),
 	},
 
+	{
+		id: 'task-wf-1',
+		title: 'Accountant to send Q4 tax summary',
+		status: 'waiting_for',
+		area: 'finances',
+		waitingSince: d(17),
+		notes: 'Requested via email on Feb 25',
+		createdAt: d(18),
+		updatedAt: d(17),
+	},
+	{
+		id: 'task-wf-2',
+		title: 'Legal review of contractor agreement',
+		status: 'waiting_for',
+		area: 'work',
+		waitingSince: d(9),
+		notes: 'Shared draft with Maria',
+		createdAt: d(10),
+		updatedAt: d(9),
+	},
+	{
+		id: 'task-wf-3',
+		title: 'Internet provider callback re: plan upgrade',
+		status: 'waiting_for',
+		area: 'personal',
+		waitingSince: d(2),
+		createdAt: d(3),
+		updatedAt: d(2),
+	},
+
 	// ── Someday ───────────────────────────────────────────────────────────────
 	{
 		id: 'task-20',
