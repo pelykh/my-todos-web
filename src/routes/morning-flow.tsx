@@ -17,6 +17,7 @@ import { toast } from 'sonner'
 import { ShortcutButton } from '@/components/ShortcutButton'
 import { TaskListItem } from '@/components/TaskListItem'
 import {
+	goToMorningFlowStep,
 	markMorningFlowCompleted,
 	resetMorningFlowStepper,
 	useMorningFlowActions,
@@ -71,16 +72,16 @@ function MorningFlow() {
 						<GoodMorningStep onNext={goNextStep} />
 					)}
 					{currentStep === 'notion' && (
-						<NotionStep onNext={goNextStep} />
+						<NotionStep onNext={isWeekend() ? () => goToMorningFlowStep('waiting_for') : goNextStep} />
 					)}
 					{currentStep === 'mail' && (
-						<MailStep onNext={isWeekend() ? finish : goNextStep} onBack={goPreviousStep} />
+						<MailStep onNext={goNextStep} onBack={goPreviousStep} />
 					)}
 					{currentStep === 'messengers' && (
 						<MessengersStep onNext={goNextStep} onBack={goPreviousStep} />
 					)}
 					{currentStep === 'waiting_for' && (
-						<WaitingForStep onDone={finish} onBack={goPreviousStep} />
+						<WaitingForStep onDone={finish} onBack={isWeekend() ? () => goToMorningFlowStep('notion') : goPreviousStep} />
 					)}
 				</Stack>
 			</Container>
@@ -152,7 +153,7 @@ function MailStep({ onNext, onBack }: { onNext: () => void; onBack: () => void }
 			</Text>
 			<Group gap="sm">
 				<ShortcutButton shortcut="1" onClick={onNext} variant="filled" color="blue" w={120}>
-					{isWeekend() ? t('morningFlow.done') : t('morningFlow.next')}
+					{t('morningFlow.next')}
         </ShortcutButton>
         <ShortcutButton shortcut="2" onClick={onBack} variant="light" color="gray" w={120}>
 					{t('morningFlow.back')}
