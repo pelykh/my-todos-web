@@ -20,7 +20,8 @@ type Props = {
 export function WhatsNextModal({ projectId, opened, onClose }: Props) {
 	const { t } = useTranslation()
 	const [view, setView] = useState<View>({ type: 'list' })
-  const backlogTasks = useFilteredTasks({ projectId, status: 'backlog' })
+	const project = useTaskById(projectId)
+	const backlogTasks = useFilteredTasks({ projectId, status: 'backlog' })
 
 	const { addTask, editTask } = useTaskActions()
 
@@ -55,7 +56,7 @@ export function WhatsNextModal({ projectId, opened, onClose }: Props) {
 			{view.type === 'list' ? (
 				<Stack gap="md">
 					<Text size="sm" c="dimmed">
-						{t('projectNoNextAction')}
+						{t('projectNoNextAction', { name: project?.title ?? '' })}
 					</Text>
 					{backlogTasks.length > 0 ? (
 						<div>

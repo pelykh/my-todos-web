@@ -5,22 +5,23 @@ import { useContext, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 
-import { OverflowMenu } from '@/components/OverflowMenu'
-import { SettingsModal } from '@/components/SettingsModal'
-import { TimerToolbar } from '@/components/TimerToolbar'
-import { WhatsNextModal } from '@/components/WhatsNextModal'
 import { BadgeSelect } from '@/components/BadgeSelect'
-import { StatusBadge } from '@/components/StatusBadge'
 import { DueDatePicker } from '@/components/DueDatePicker'
 import { MarkdownField } from '@/components/MarkdownField'
+import { OverflowMenu } from '@/components/OverflowMenu'
 import { ScheduledDatePicker } from '@/components/ScheduledDatePicker'
+import { SettingsModal } from '@/components/SettingsModal'
+import { StatusBadge } from '@/components/StatusBadge'
+import { TimerToolbar } from '@/components/TimerToolbar'
+import { WhatsNextModal } from '@/components/WhatsNextModal'
 import { useTimerState } from '@/store'
-import { CmdContext } from './__root'
 import { useFilteredTasks, useTaskActions, useTaskWithProject } from '@/store/taskStore'
 import { ADD_XP_VALUES, MINUS_XP_VALUES, useXpActions } from '@/store/xp'
 import { useTheme } from '@/theme'
 import type { Area, Context } from '@/types'
 import { AREAS } from '@/types'
+
+import { CmdContext } from './__root'
 
 export const Route = createFileRoute('/task/$taskId')({
 	validateSearch: (search: Record<string, unknown>) => ({
@@ -65,6 +66,10 @@ function TaskPage() {
 		if (task) setTitleValue(task.title)
 	}, [task])
 
+	function handleBack() {
+		navigate({ to: (return_to ?? '/') as never })
+	}
+
 	useEffect(() => {
 		function handleKey(e: KeyboardEvent) {
 			if (e.key === 'Escape') handleBack()
@@ -72,10 +77,6 @@ function TaskPage() {
 		window.addEventListener('keydown', handleKey)
 		return () => window.removeEventListener('keydown', handleKey)
 	}, [])
-
-	function handleBack() {
-		navigate({ to: (return_to ?? '/') as never })
-	}
 
 	function handleTitleBlur() {
 		if (task && titleValue.trim() && titleValue.trim() !== task.title) {

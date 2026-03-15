@@ -28,8 +28,8 @@ import { toast } from 'sonner'
 import { BadgeSelect } from '@/components/BadgeSelect'
 import { DueDatePicker } from '@/components/DueDatePicker'
 import { MarkdownField } from '@/components/MarkdownField'
-import { ScheduledDatePicker } from '@/components/ScheduledDatePicker'
 import { OverflowMenu } from '@/components/OverflowMenu'
+import { ScheduledDatePicker } from '@/components/ScheduledDatePicker'
 import { SettingsModal } from '@/components/SettingsModal'
 import { SimpleTaskModal } from '@/components/SimpleTaskModal'
 import { TaskListItem } from '@/components/TaskListItem'
@@ -42,6 +42,7 @@ import { ADD_XP_VALUES, MINUS_XP_VALUES, useXpActions } from '@/store/xp'
 import { useTheme } from '@/theme'
 import type { Area, Context, Task } from '@/types'
 import { AREAS } from '@/types'
+
 import { CmdContext } from './__root'
 
 export const Route = createFileRoute('/project/$projectId')({
