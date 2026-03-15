@@ -27,6 +27,7 @@ function App() {
 	const [settingsOpen, setSettingsOpen] = useState(false)
 
 	const filters = useFilters()
+	const hasActiveFilters = !!(filters.context || filters.maxEstimatedMinutes)
 	const groups = useGroupedFilteredTasks({
 		filters: {
 			...filters,
@@ -90,6 +91,35 @@ function App() {
 							</Stack>
 						)
 					})}
+
+					{Object.values(groups).every((tasks) => tasks.length === 0) && (
+						<div className="flex flex-col items-center gap-3 py-16">
+							<svg
+								width="96"
+								height="96"
+								viewBox="0 0 96 96"
+								fill="none"
+								style={{ color: 'var(--mantine-color-dimmed)', opacity: 0.4 }}
+							>
+								<circle cx="48" cy="48" r="32" stroke="currentColor" strokeWidth="2" />
+								<path
+									d="M34 48 L44 58 L62 38"
+									stroke="currentColor"
+									strokeWidth="2.5"
+									strokeLinecap="round"
+									strokeLinejoin="round"
+								/>
+								<circle cx="16" cy="20" r="2.5" fill="currentColor" />
+								<circle cx="80" cy="28" r="2" fill="currentColor" />
+								<circle cx="12" cy="64" r="2" fill="currentColor" />
+								<circle cx="84" cy="60" r="2.5" fill="currentColor" />
+								<circle cx="48" cy="8" r="2" fill="currentColor" />
+							</svg>
+							<Text c="dimmed" size="sm" ta="center">
+								{hasActiveFilters ? t('noTasksFiltered') : t('noTasksEmpty')}
+							</Text>
+						</div>
+					)}
 				</Stack>
 			</Container>
 

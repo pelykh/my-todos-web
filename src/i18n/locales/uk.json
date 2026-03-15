@@ -3,6 +3,8 @@
 	"addPlaceholder": "Додати нове завдання...",
 	"addButton": "Додати",
 	"noTasks": "Завдань не знайдено.",
+	"noTasksEmpty": "Поки що все виконано!",
+	"noTasksFiltered": "Немає завдань, що відповідають фільтрам.",
 	"project": "Проєкт",
 	"minutesSuffix": "хв",
 	"hourSuffix": "год",

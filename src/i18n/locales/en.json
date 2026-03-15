@@ -3,6 +3,8 @@
 	"addPlaceholder": "Add a new task...",
 	"addButton": "Add",
 	"noTasks": "No tasks found.",
+	"noTasksEmpty": "All done for now!",
+	"noTasksFiltered": "No tasks match your filters.",
 	"project": "Project",
 	"minutesSuffix": "m",
 	"hourSuffix": "h",
