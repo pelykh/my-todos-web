@@ -9,6 +9,7 @@ import {
   type UpdateTaskInput,
 } from '@/services'
 import type { Task, TaskFilters } from '@/types'
+import { timerStore } from '@/store/timerStore'
 import { AREAS } from '@/types'
 import { getTaskArea, getTaskProject, isTaskImportant } from '@/utils/tasks'
 
@@ -41,6 +42,10 @@ export function createTaskStore(service: ITaskService) {
 			},
 			editTask(id, input) {
 				const task = service.updateTask(id, input)
+				if (input.status === 'done' && timerStore.getState().focusedTaskId === id) {
+					timerStore.getState().actions.resetTimer()
+					timerStore.getState().actions.setFocusedTaskId(null)
+				}
 				set((s) => ({
 					tasks: s.tasks.map((t) => (t.id === id ? task : t)),
 					pendingSync: upsertPending(s.pendingSync, task),
@@ -49,6 +54,10 @@ export function createTaskStore(service: ITaskService) {
 			},
 			removeTask(id) {
 				service.deleteTask(id)
+				if (timerStore.getState().focusedTaskId === id) {
+					timerStore.getState().actions.resetTimer()
+					timerStore.getState().actions.setFocusedTaskId(null)
+				}
 				set((s) => {
 					const task = s.tasks.find((t) => t.id === id)
 					const deletedEntry = task
