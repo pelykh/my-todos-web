@@ -1,6 +1,5 @@
-import { ActionIcon, Container, Group, Stack, Text, Title } from '@mantine/core'
-import { createFileRoute, Link } from '@tanstack/react-router'
-import { Archive, CheckCircle2, FolderKanban, Hourglass, Search, ShoppingCart } from 'lucide-react'
+import { Container, Group, Stack, Text, Title } from '@mantine/core'
+import { createFileRoute } from '@tanstack/react-router'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -63,66 +62,7 @@ function App() {
 			>
 				<MorningFlowButton />
 				<ProcessInboxButton />
-				<ActionIcon
-					component={Link}
-					to="/shopping-list"
-					variant="default"
-					size="lg"
-					radius="md"
-					aria-label={t('shoppingList')}
-				>
-					<ShoppingCart size={18} />
-				</ActionIcon>
-				<ActionIcon
-					component={Link}
-					to="/waiting-for"
-					variant="default"
-					size="lg"
-					radius="md"
-					aria-label={t('waitingFor')}
-				>
-					<Hourglass size={18} />
-				</ActionIcon>
-				<ActionIcon
-					component={Link}
-					to="/someday"
-					variant="default"
-					size="lg"
-					radius="md"
-					aria-label={t('status.someday')}
-				>
-					<Archive size={18} />
-				</ActionIcon>
-				<ActionIcon
-					component={Link}
-					to="/done"
-					variant="default"
-					size="lg"
-					radius="md"
-					aria-label={t('status.done')}
-				>
-					<CheckCircle2 size={18} />
-				</ActionIcon>
-				<ActionIcon
-					component={Link}
-					to="/projects"
-					variant="default"
-					size="lg"
-					radius="md"
-					aria-label={t('navProjects', { defaultValue: 'Projects' })}
-				>
-					<FolderKanban size={18} />
-				</ActionIcon>
-				<ActionIcon
-					onClick={() => { cmdInputRef.current?.focus(); setCmdOpen(true) }}
-					variant="default"
-					size="lg"
-					radius="md"
-					aria-label={t('cmdPlaceholder')}
-				>
-					<Search size={18} />
-				</ActionIcon>
-				<OverflowMenu onSettings={() => setSettingsOpen(true)} />
+				<OverflowMenu onSettings={() => setSettingsOpen(true)} onSearch={() => { cmdInputRef.current?.focus(); setCmdOpen(true) }} />
 			</Group>
 
 			<Container size="sm" py="xl" pb={120} px={{ base: 'xs', sm: 'md' }}>
