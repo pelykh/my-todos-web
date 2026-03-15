@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next'
 
 import { CommandPalette } from '@/components/CommandPalette'
 import { LoginModal } from '@/components/LoginModal'
+import { MorningFlowButton } from '@/components/MorningFlowButton'
 import { OverflowMenu } from '@/components/OverflowMenu'
 import { ProcessInboxButton } from '@/components/ProcessInboxButton'
 import { RegisterModal } from '@/components/RegisterModal'
@@ -60,6 +61,7 @@ function App() {
 				gap="xs"
 				style={{ position: 'fixed', top: 16, right: 16, zIndex: 200 }}
 			>
+				<MorningFlowButton />
 				<ProcessInboxButton />
 				<ActionIcon
 					component={Link}

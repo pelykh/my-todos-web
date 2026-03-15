@@ -24,6 +24,19 @@ export {
 } from './inboxStepper'
 export type { InboxStepKey, InboxState } from './inboxStepper'
 
+export {
+	morningFlowStepperStore,
+	goToMorningFlowStep,
+	patchMorningFlowState,
+	resetMorningFlowStepper,
+	useMorningFlowCurrentStep,
+	useMorningFlowState,
+	useMorningFlowActions,
+	isMorningFlowCompletedToday,
+	markMorningFlowCompleted,
+} from './morningFlowStepper'
+export type { MorningFlowStepKey, MorningFlowState } from './morningFlowStepper'
+
 
 // ── Filter store hooks ────────────────────────────────────────────────────────
 

@@ -14,6 +14,7 @@ import { Route as SomedayRouteImport } from './routes/someday'
 import { Route as ShoppingListRouteImport } from './routes/shopping-list'
 import { Route as ProjectsRouteImport } from './routes/projects'
 import { Route as ProcessInboxRouteImport } from './routes/process-inbox'
+import { Route as MorningFlowRouteImport } from './routes/morning-flow'
 import { Route as DoneRouteImport } from './routes/done'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TaskTaskIdRouteImport } from './routes/task.$taskId'
@@ -44,6 +45,11 @@ const ProcessInboxRoute = ProcessInboxRouteImport.update({
   path: '/process-inbox',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MorningFlowRoute = MorningFlowRouteImport.update({
+  id: '/morning-flow',
+  path: '/morning-flow',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DoneRoute = DoneRouteImport.update({
   id: '/done',
   path: '/done',
@@ -68,6 +74,7 @@ const ProjectProjectIdRoute = ProjectProjectIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/done': typeof DoneRoute
+  '/morning-flow': typeof MorningFlowRoute
   '/process-inbox': typeof ProcessInboxRoute
   '/projects': typeof ProjectsRoute
   '/shopping-list': typeof ShoppingListRoute
@@ -79,6 +86,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/done': typeof DoneRoute
+  '/morning-flow': typeof MorningFlowRoute
   '/process-inbox': typeof ProcessInboxRoute
   '/projects': typeof ProjectsRoute
   '/shopping-list': typeof ShoppingListRoute
@@ -91,6 +99,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/done': typeof DoneRoute
+  '/morning-flow': typeof MorningFlowRoute
   '/process-inbox': typeof ProcessInboxRoute
   '/projects': typeof ProjectsRoute
   '/shopping-list': typeof ShoppingListRoute
@@ -104,6 +113,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/done'
+    | '/morning-flow'
     | '/process-inbox'
     | '/projects'
     | '/shopping-list'
@@ -115,6 +125,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/done'
+    | '/morning-flow'
     | '/process-inbox'
     | '/projects'
     | '/shopping-list'
@@ -126,6 +137,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/done'
+    | '/morning-flow'
     | '/process-inbox'
     | '/projects'
     | '/shopping-list'
@@ -138,6 +150,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DoneRoute: typeof DoneRoute
+  MorningFlowRoute: typeof MorningFlowRoute
   ProcessInboxRoute: typeof ProcessInboxRoute
   ProjectsRoute: typeof ProjectsRoute
   ShoppingListRoute: typeof ShoppingListRoute
@@ -184,6 +197,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProcessInboxRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/morning-flow': {
+      id: '/morning-flow'
+      path: '/morning-flow'
+      fullPath: '/morning-flow'
+      preLoaderRoute: typeof MorningFlowRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/done': {
       id: '/done'
       path: '/done'
@@ -218,6 +238,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DoneRoute: DoneRoute,
+  MorningFlowRoute: MorningFlowRoute,
   ProcessInboxRoute: ProcessInboxRoute,
   ProjectsRoute: ProjectsRoute,
   ShoppingListRoute: ShoppingListRoute,
