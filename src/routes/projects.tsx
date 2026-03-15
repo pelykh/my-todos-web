@@ -1,18 +1,29 @@
-import { ActionIcon, Container, Group, Stack, Text, Title } from '@mantine/core'
-import { createFileRoute, Link } from '@tanstack/react-router'
-import { ArrowLeft } from 'lucide-react'
+import { Container, Stack, Text, Title } from '@mantine/core'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { PageHeader } from '@/components/PageHeader'
 import { TaskListItem } from '@/components/TaskListItem'
-import { Toolbar } from '@/components/Toolbar'
 import { useFilteredTasks } from '@/store/taskStore'
 import type { Task } from '@/types'
 import { AREAS } from '@/types'
+import { isMobile } from '@/utils'
 
 export const Route = createFileRoute('/projects')({ component: ProjectsPage })
 
 function ProjectsPage() {
 	const { t } = useTranslation()
+	const navigate = useNavigate()
+
+	useEffect(() => {
+		function handleKey(e: KeyboardEvent) {
+			if (e.key === 'Escape') navigate({ to: '/' })
+		}
+		window.addEventListener('keydown', handleKey)
+		return () => window.removeEventListener('keydown', handleKey)
+	}, [])
+
 	const projects = useFilteredTasks({ isProject: true })
 	const active = projects.filter((p) => p.status !== 'done' && p.status !== 'deleted')
 
@@ -27,23 +38,14 @@ function ProjectsPage() {
 
 	return (
 		<>
-			<Group style={{ position: 'fixed', top: 16, left: 16, zIndex: 200 }}>
-				<ActionIcon
-					component={Link}
-					to="/"
-					variant="default"
-					size="lg"
-					radius="md"
-					aria-label={t('back')}
-				>
-					<ArrowLeft size={18} />
-				</ActionIcon>
-			</Group>
-			<Container size="sm" py="xl" pb={120}>
+			<PageHeader title={t('navProjects', { defaultValue: 'Projects' })} />
+			<Container size="sm" py="xl" pt={64} pb="xl">
 				<Stack gap="lg">
-					<Title order={2} ta="center">
-						{t('navProjects', { defaultValue: 'Projects' })}
-					</Title>
+					{!isMobile() && (
+						<Title order={2} ta="center">
+							{t('navProjects', { defaultValue: 'Projects' })}
+						</Title>
+					)}
 					{Object.entries(grouped).map(([area, areaProjects]) => {
 						if (areaProjects.length === 0) return null
 						return (

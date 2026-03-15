@@ -7,9 +7,10 @@ import {
 	Stack,
 	Text,
 } from '@mantine/core'
-import { createFileRoute, useNavigate, useRouter } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import {
 	Archive,
+	ArrowLeft,
 	CheckCircle2,
 	ChevronsDown,
 	ChevronsUp,
@@ -19,17 +20,17 @@ import {
 	Plus,
 	RotateCcw,
 	Trash2,
-	X,
 } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 
 import { BadgeSelect } from '@/components/BadgeSelect'
-import { CommandPalette } from '@/components/CommandPalette'
 import { DueDatePicker } from '@/components/DueDatePicker'
 import { MarkdownField } from '@/components/MarkdownField'
 import { ScheduledDatePicker } from '@/components/ScheduledDatePicker'
+import { OverflowMenu } from '@/components/OverflowMenu'
+import { SettingsModal } from '@/components/SettingsModal'
 import { SimpleTaskModal } from '@/components/SimpleTaskModal'
 import { TaskListItem } from '@/components/TaskListItem'
 import {
@@ -41,8 +42,12 @@ import { ADD_XP_VALUES, MINUS_XP_VALUES, useXpActions } from '@/store/xp'
 import { useTheme } from '@/theme'
 import type { Area, Context, Task } from '@/types'
 import { AREAS } from '@/types'
+import { CmdContext } from './__root'
 
 export const Route = createFileRoute('/project/$projectId')({
+	validateSearch: (search: Record<string, unknown>) => ({
+		return_to: typeof search.return_to === 'string' ? search.return_to : undefined,
+	}),
 	component: ProjectPage,
 })
 
@@ -52,9 +57,11 @@ const MAX_NEXT_ACTIONS = 3
 // A task row used in the backlog list
 function BacklogRow({
 	task,
+	projectId,
 	onPromote,
 }: {
 	task: Task
+	projectId: string
 	onPromote: (id: string) => void
 }) {
 	const { t } = useTranslation()
@@ -65,7 +72,7 @@ function BacklogRow({
 					<TaskListItem
 						taskId={task.id}
 						displayMeta={['duration']}
-						href={`/task/${task.id}`}
+						href={`/task/${task.id}?return_to=/project/${projectId}`}
 					/>
 				</div>
 				<ActionIcon
@@ -90,8 +97,9 @@ function BacklogRow({
 // A task row used in the next actions list
 function NextActionRow({
 	task,
+	projectId,
 	onDemote,
-}: { task: Task; onDemote: (id: string) => void }) {
+}: { task: Task; projectId: string; onDemote: (id: string) => void }) {
 	const { t } = useTranslation()
 	return (
 		<div className="group/row">
@@ -100,7 +108,7 @@ function NextActionRow({
 					<TaskListItem
 						taskId={task.id}
 						displayMeta={['duration']}
-						href={`/task/${task.id}`}
+						href={`/task/${task.id}?return_to=/project/${projectId}`}
 					/>
 				</div>
 				<ActionIcon
@@ -124,11 +132,13 @@ function NextActionRow({
 
 function ProjectPage() {
 	const { projectId } = Route.useParams()
+	const { return_to } = Route.useSearch()
 	const navigate = useNavigate()
-	const router = useRouter()
 	const { t } = useTranslation()
 	const { colorScheme } = useTheme()
 	const isDark = colorScheme === 'dark'
+	const { openCmd } = useContext(CmdContext)
+	const [settingsOpen, setSettingsOpen] = useState(false)
 
 	const [project] = useTaskWithProject(projectId)
 	const childTasks = useFilteredTasks({ projectId })
@@ -138,7 +148,6 @@ function ProjectPage() {
 	const [titleValue, setTitleValue] = useState('')
 	const [addTaskOpen, setAddTaskOpen] = useState(false)
 	const [completeModalOpen, setCompleteModalOpen] = useState(false)
-	const [cmdOpen, setCmdOpen] = useState(false)
 	const titleRef = useRef<HTMLInputElement>(null)
 
 	useEffect(() => {
@@ -147,25 +156,17 @@ function ProjectPage() {
 		}
 	}, [project])
 
+	function handleBack() {
+		navigate({ to: (return_to ?? '/') as never })
+	}
+
 	useEffect(() => {
 		function handleKey(e: KeyboardEvent) {
-			if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-				e.preventDefault()
-				setCmdOpen((o) => !o)
-			}
-			if (e.key === 'Escape') setCmdOpen(false)
+			if (e.key === 'Escape') handleBack()
 		}
 		window.addEventListener('keydown', handleKey)
 		return () => window.removeEventListener('keydown', handleKey)
 	}, [])
-
-	function handleBack() {
-		if (window.history.length > 1) {
-			router.history.back()
-		} else {
-			navigate({ to: '/' })
-		}
-	}
 
 	function handleTitleBlur() {
 		if (project && titleValue.trim() && titleValue.trim() !== project.title) {
@@ -292,6 +293,12 @@ function ProjectPage() {
 
 	return (
 		<>
+			<div style={{ position: 'fixed', top: 16, right: 16, zIndex: 200 }} className="flex items-center gap-2">
+				<ActionIcon onClick={handleBack} variant="default" size="lg" radius="md" aria-label={t('back')}>
+					<ArrowLeft size={18} />
+				</ActionIcon>
+				<OverflowMenu onSettings={() => setSettingsOpen(true)} onSearch={openCmd} />
+			</div>
 			<div className="flex justify-center min-h-screen">
 			<div className="w-full flex flex-col pb-20" style={{ maxWidth: 640, paddingTop: '10%' }}>
 				{/* Header */}
@@ -381,16 +388,6 @@ function ProjectPage() {
 								</Menu.Dropdown>
 							</Menu>
 
-							<ActionIcon
-								onClick={handleBack}
-								variant="subtle"
-								color="gray"
-								size="lg"
-								radius="md"
-								aria-label={t('focusModalClose')}
-							>
-								<X size={18} />
-							</ActionIcon>
 						</div>
 					</div>
 
@@ -430,13 +427,14 @@ function ProjectPage() {
 									color: 'var(--mantine-color-yellow-7)',
 								}}
 							>
-								{t('projectNoNextAction')}
+								{t('projectNoNextAction', { name: project.title })}
 							</div>
 						)}
 						{nextActions.map((task) => (
 							<NextActionRow
 								key={task.id}
 								task={task}
+								projectId={projectId}
 								onDemote={(id) => editTask(id, { status: 'backlog' })}
 							/>
 						))}
@@ -497,6 +495,7 @@ function ProjectPage() {
 							<BacklogRow
 								key={task.id}
 								task={task}
+								projectId={projectId}
 								onPromote={(id) => editTask(id, { status: 'next_action' })}
 							/>
 						))
@@ -517,7 +516,7 @@ function ProjectPage() {
 									<TaskListItem
 										taskId={task.id}
 										displayMeta={['duration']}
-										href={`/task/${task.id}`}
+										href={`/task/${task.id}?return_to=/project/${projectId}`}
 									/>
 								</div>
 							))}
@@ -557,7 +556,7 @@ function ProjectPage() {
 				</Group>
 			</Modal>
 
-			<CommandPalette open={cmdOpen} onClose={() => setCmdOpen(false)} />
+		<SettingsModal opened={settingsOpen} onClose={() => setSettingsOpen(false)} onLoginRequest={() => {}} />
 		</>
 	)
 }

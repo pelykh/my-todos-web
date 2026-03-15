@@ -13,20 +13,18 @@ import {
 	IconGripHorizontal,
 	IconHome,
 } from '@tabler/icons-react'
-import { Star } from 'lucide-react'
-import { useEffect, useRef } from 'react'
+import { RotateCcw } from 'lucide-react'
+import { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { useHaptic } from '@/hooks/useHaptic'
 import type { DurationStep } from '@/store'
 import { DURATION_STEPS, useFilterActions, useFilters } from '@/store'
-import { useFilteredTasks } from '@/store/taskStore'
 import { useTheme } from '@/theme'
 import type { Context } from '@/types'
 
 import { XpBar } from './XpBar'
 
-const today = new Date().toISOString().slice(0, 10)
 
 const CONTEXTS: { value: Context; key: string; Icon: React.FC<{ size?: number }> }[] = [
 	{ value: 'deep_work', key: 'context.deep_work', Icon: IconBrain },
@@ -61,26 +59,11 @@ export function Toolbar() {
 	const { colorScheme } = useTheme()
 	const { t } = useTranslation()
 	const haptic = useHaptic()
-	const { context, isImportant: todayOnly, maxEstimatedMinutes } = useFilters()
+	const { context, maxEstimatedMinutes } = useFilters()
 	const maxMinutes = maxEstimatedMinutes as DurationStep
-	const { setContext, setMaxMinutes, activateToday, clearAll, toggleToday } =
-		useFilterActions()
+	const { setContext, setMaxMinutes, clearAll } = useFilterActions()
 
-	const allTasks = useFilteredTasks()
-	const todayTasks = allTasks.filter(
-		(t) =>
-			t.scheduledDate?.slice(0, 10) === today ||
-			t.dueDate?.slice(0, 10) === today,
-	)
-	const hasTodayTasks = todayTasks.length > 0
-	const allTodayDone =
-		hasTodayTasks && todayTasks.every((t) => t.status === 'done')
-
-	useEffect(() => {
-		if (todayOnly && (!hasTodayTasks || allTodayDone)) {
-			toggleToday()
-		}
-	}, [todayOnly, hasTodayTasks, allTodayDone])
+	const hasActiveFilters = !!(context || maxEstimatedMinutes)
 
 	const sliderIndex = stepToSliderIndex(maxMinutes)
 	const lastHapticSliderIndex = useRef(sliderIndex)
@@ -91,16 +74,6 @@ export function Toolbar() {
 			lastHapticSliderIndex.current = value
 		}
 		setMaxMinutes(sliderIndexToStep(value))
-	}
-
-	function handleStarClick() {
-		if (todayOnly) {
-			haptic('selection')
-			clearAll()
-		} else {
-			haptic('medium')
-			activateToday()
-		}
 	}
 
 	return (
@@ -141,14 +114,14 @@ export function Toolbar() {
 							</Button>
 						))}
 						<Button
-							variant={todayOnly ? 'filled' : 'default'}
-							color="yellow"
-							disabled={!hasTodayTasks || allTodayDone}
-							onClick={handleStarClick}
-							aria-label={t('ariaToday')}
+							variant={'default'}
+							color="blue"
+							disabled={!hasActiveFilters}
+							onClick={() => { haptic('selection'); clearAll() }}
+							aria-label={t('ariaResetFilters')}
 							px={12}
 						>
-							<Star size={14} fill={todayOnly ? 'currentColor' : 'none'} />
+							<RotateCcw size={14} />
 						</Button>
 					</ButtonGroup>
 

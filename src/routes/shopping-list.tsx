@@ -1,17 +1,27 @@
-import { ActionIcon, Container, Group, Stack, Text, Title } from '@mantine/core'
-import { createFileRoute, Link } from '@tanstack/react-router'
-import { ArrowLeft } from 'lucide-react'
+import { Container, Stack, Text, Title } from '@mantine/core'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { PageHeader } from '@/components/PageHeader'
 import { TaskListItem } from '@/components/TaskListItem'
-import { Toolbar } from '@/components/Toolbar'
 import { useFilteredTasks, useTaskActions } from '@/store/taskStore'
+import { isMobile } from '@/utils'
 
 export const Route = createFileRoute('/shopping-list')({ component: ShoppingListPage })
 
 function ShoppingListPage() {
 	const { t } = useTranslation()
+	const navigate = useNavigate()
 	const { editTask } = useTaskActions()
+
+	useEffect(() => {
+		function handleKey(e: KeyboardEvent) {
+			if (e.key === 'Escape') navigate({ to: '/' })
+		}
+		window.addEventListener('keydown', handleKey)
+		return () => window.removeEventListener('keydown', handleKey)
+	}, [])
 	const today = new Date().toISOString().slice(0, 10)
 
 	const backlogItems = useFilteredTasks({ status: 'backlog', tags: ['shopping_list'] })
@@ -20,23 +30,14 @@ function ShoppingListPage() {
 
 	return (
 		<>
-			<Group style={{ position: 'fixed', top: 16, left: 16, zIndex: 200 }}>
-				<ActionIcon
-					component={Link}
-					to="/"
-					variant="default"
-					size="lg"
-					radius="md"
-					aria-label={t('back')}
-				>
-					<ArrowLeft size={18} />
-				</ActionIcon>
-			</Group>
-			<Container size="sm" py="xl" pb={120}>
+			<PageHeader title={t('shoppingList')} />
+			<Container size="sm" py="xl" pt={64} pb="xl">
 				<Stack gap="lg">
-					<Title order={2} ta="center">
-						{t('shoppingList')}
-					</Title>
+					{!isMobile() && (
+						<Title order={2} ta="center">
+							{t('shoppingList')}
+						</Title>
+					)}
 
 					<Stack gap={0}>
 						<Text
@@ -100,7 +101,6 @@ function ShoppingListPage() {
 					)}
 				</Stack>
 			</Container>
-			<Toolbar />
 		</>
 	)
 }

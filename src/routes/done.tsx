@@ -1,16 +1,27 @@
-import { ActionIcon, Container, Group, Stack, Text, Title } from '@mantine/core'
-import { createFileRoute, Link } from '@tanstack/react-router'
-import { ArrowLeft } from 'lucide-react'
+import { Container, Stack, Text, Title } from '@mantine/core'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { PageHeader } from '@/components/PageHeader'
 import { TaskListItem } from '@/components/TaskListItem'
 import { Toolbar } from '@/components/Toolbar'
 import { useGroupedFilteredTasks } from '@/store/taskStore'
+import { isMobile } from '@/utils'
 
 export const Route = createFileRoute('/done')({ component: DonePage })
 
 function DonePage() {
 	const { t } = useTranslation()
+	const navigate = useNavigate()
+
+	useEffect(() => {
+		function handleKey(e: KeyboardEvent) {
+			if (e.key === 'Escape') navigate({ to: '/' })
+		}
+		window.addEventListener('keydown', handleKey)
+		return () => window.removeEventListener('keydown', handleKey)
+	}, [])
 	const groups = useGroupedFilteredTasks({
 		filters: { status: 'done' },
 		groupBy: 'area',
@@ -20,23 +31,14 @@ function DonePage() {
 
 	return (
 		<>
-			<Group style={{ position: 'fixed', top: 16, left: 16, zIndex: 200 }}>
-				<ActionIcon
-					component={Link}
-					to="/"
-					variant="default"
-					size="lg"
-					radius="md"
-					aria-label={t('back')}
-				>
-					<ArrowLeft size={18} />
-				</ActionIcon>
-			</Group>
-			<Container size="sm" py="xl" pb={120}>
+			<PageHeader title={t('status.done')} />
+			<Container size="sm" py="xl" pt={64} pb={120}>
 				<Stack gap="lg">
-					<Title order={2} ta="center">
-						{t('status.done')}
-					</Title>
+					{!isMobile() && (
+						<Title order={2} ta="center">
+							{t('status.done')}
+						</Title>
+					)}
 					{Object.entries(groups).map(([area, tasks]) => {
 						if (tasks.length === 0) return null
 						return (

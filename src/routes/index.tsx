@@ -1,9 +1,8 @@
 import { Container, Group, Stack, Text, Title } from '@mantine/core'
 import { createFileRoute } from '@tanstack/react-router'
-import { useEffect, useRef, useState } from 'react'
+import { useContext, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { CommandPalette } from '@/components/CommandPalette'
 import { LoginModal } from '@/components/LoginModal'
 import { MorningFlowButton } from '@/components/MorningFlowButton'
 import { OverflowMenu } from '@/components/OverflowMenu'
@@ -16,12 +15,13 @@ import { useFilters } from '@/store'
 import { useGroupedFilteredTasks } from '@/store/taskStore'
 import { isMobile } from '@/utils'
 
+import { CmdContext } from './__root'
+
 export const Route = createFileRoute('/')({ component: App })
 
 function App() {
 	const { t } = useTranslation()
-	const [cmdOpen, setCmdOpen] = useState(false)
-	const cmdInputRef = useRef<HTMLInputElement>(null)
+	const { openCmd } = useContext(CmdContext)
 	const [loginOpen, setLoginOpen] = useState(false)
 	const [registerOpen, setRegisterOpen] = useState(false)
 	const [settingsOpen, setSettingsOpen] = useState(false)
@@ -39,37 +39,23 @@ function App() {
 		sort: { sortBy: 'duration', sortOrder: 'desc' },
 	})
 
-	useEffect(() => {
-		function handleKey(e: KeyboardEvent) {
-			if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-				e.preventDefault()
-				setCmdOpen((o) => {
-					if (!o) cmdInputRef.current?.focus()
-					return !o
-				})
-			}
-			if (e.key === 'Escape') setCmdOpen(false)
-		}
-		window.addEventListener('keydown', handleKey)
-		return () => window.removeEventListener('keydown', handleKey)
-	}, [])
-
 	return (
 		<>
 			<Group
 				gap="xs"
 				style={{ position: 'fixed', top: 16, right: 16, zIndex: 200 }}
 			>
-				<MorningFlowButton />
+				{!isMobile() && <MorningFlowButton />}
 				<ProcessInboxButton />
-				<OverflowMenu onSettings={() => setSettingsOpen(true)} onSearch={() => { cmdInputRef.current?.focus(); setCmdOpen(true) }} />
+				<OverflowMenu onSettings={() => setSettingsOpen(true)} onSearch={openCmd} />
 			</Group>
 
 			<Container size="sm" py="xl" pb={120} px={{ base: 'xs', sm: 'md' }}>
-				<Stack gap="lg">
-					<Title order={2} ta="center">
-						{t('pageTitle')}
-					</Title>
+        <Stack gap="lg">
+          {!isMobile() && <Title order={2} ta="center">
+            {t('pageTitle')}
+          </Title>}
+
 					{Object.entries(groups).map(([area, tasks]) => {
 						if (tasks.length === 0) return null
 						return (
@@ -108,8 +94,6 @@ function App() {
 			</Container>
 
 			<Toolbar />
-
-			<CommandPalette ref={cmdInputRef} open={cmdOpen} onClose={() => setCmdOpen(false)} />
 
 			<LoginModal
 				opened={loginOpen}

@@ -5,11 +5,15 @@ import { useMediaQuery } from '@mantine/hooks'
 import { TanStackDevtools } from '@tanstack/react-devtools'
 import { createRootRoute, Outlet } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
+import { createContext, useEffect, useRef, useState } from 'react'
 import { Toaster } from 'sonner'
 
+import { CommandPalette } from '@/components/CommandPalette'
 import { MiniTimer } from '@/components/MiniTimer'
 import { useSyncEffect } from '@/hooks/useSyncEffect'
 import { ThemeProvider, useTheme } from '@/theme'
+
+export const CmdContext = createContext({ openCmd: () => {} })
 
 export const Route = createRootRoute({
 	component: RootComponent,
@@ -28,9 +32,34 @@ function ThemedApp() {
 	const isMobile = useMediaQuery('(max-width: 768px)')
 	useSyncEffect()
 
+	const [cmdOpen, setCmdOpen] = useState(false)
+	const cmdInputRef = useRef<HTMLInputElement>(null)
+
+	useEffect(() => {
+		function handleKey(e: KeyboardEvent) {
+			if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+				e.preventDefault()
+				setCmdOpen((o) => {
+					if (!o) cmdInputRef.current?.focus()
+					return !o
+				})
+			}
+			if (e.key === 'Escape') setCmdOpen(false)
+		}
+		window.addEventListener('keydown', handleKey)
+		return () => window.removeEventListener('keydown', handleKey)
+	}, [])
+
+	function openCmd() {
+		setCmdOpen(true)
+		cmdInputRef.current?.focus()
+	}
+
 	return (
+		<CmdContext.Provider value={{ openCmd }}>
 		<MantineProvider forceColorScheme={colorScheme}>
 			<Outlet />
+			<CommandPalette ref={cmdInputRef} open={cmdOpen} onClose={() => setCmdOpen(false)} />
 			<div style={{ position: 'fixed', bottom: 24, right: 24, zIndex: 100 }}>
 				<MiniTimer />
 			</div>
@@ -70,5 +99,6 @@ function ThemedApp() {
 				]}
 			/>
 		</MantineProvider>
+		</CmdContext.Provider>
 	)
 }

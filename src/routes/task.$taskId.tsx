@@ -1,10 +1,12 @@
 import { ActionIcon, Button, Menu } from '@mantine/core'
-import { createFileRoute, Link, useNavigate, useRouter } from '@tanstack/react-router'
-import { Archive, CheckCircle2, Ellipsis, FolderKanban, RotateCcw, Trash2, X } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
+import { Archive, ArrowLeft, CheckCircle2, Ellipsis, FolderKanban, RotateCcw, Trash2 } from 'lucide-react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 
+import { OverflowMenu } from '@/components/OverflowMenu'
+import { SettingsModal } from '@/components/SettingsModal'
 import { TimerToolbar } from '@/components/TimerToolbar'
 import { WhatsNextModal } from '@/components/WhatsNextModal'
 import { BadgeSelect } from '@/components/BadgeSelect'
@@ -13,13 +15,19 @@ import { DueDatePicker } from '@/components/DueDatePicker'
 import { MarkdownField } from '@/components/MarkdownField'
 import { ScheduledDatePicker } from '@/components/ScheduledDatePicker'
 import { useTimerState } from '@/store'
+import { CmdContext } from './__root'
 import { useFilteredTasks, useTaskActions, useTaskWithProject } from '@/store/taskStore'
 import { ADD_XP_VALUES, MINUS_XP_VALUES, useXpActions } from '@/store/xp'
 import { useTheme } from '@/theme'
 import type { Area, Context } from '@/types'
 import { AREAS } from '@/types'
 
-export const Route = createFileRoute('/task/$taskId')({ component: TaskPage })
+export const Route = createFileRoute('/task/$taskId')({
+	validateSearch: (search: Record<string, unknown>) => ({
+		return_to: typeof search.return_to === 'string' ? search.return_to : undefined,
+	}),
+	component: TaskPage,
+})
 
 const CONTEXTS: Context[] = ['deep_work', 'admin', 'home', 'agenda']
 const DURATION_OPTIONS = [
@@ -33,11 +41,13 @@ const DURATION_OPTIONS = [
 
 function TaskPage() {
 	const { taskId } = Route.useParams()
+	const { return_to } = Route.useSearch()
 	const { t } = useTranslation()
 	const { colorScheme } = useTheme()
 	const isDark = colorScheme === 'dark'
 	const navigate = useNavigate()
-	const router = useRouter()
+	const { openCmd } = useContext(CmdContext)
+	const [settingsOpen, setSettingsOpen] = useState(false)
 
 	const { focusedTaskId } = useTimerState()
 	const [task, project] = useTaskWithProject(taskId)
@@ -64,11 +74,7 @@ function TaskPage() {
 	}, [])
 
 	function handleBack() {
-		if (window.history.length > 1) {
-			router.history.back()
-		} else {
-			navigate({ to: '/' })
-		}
+		navigate({ to: (return_to ?? '/') as never })
 	}
 
 	function handleTitleBlur() {
@@ -189,6 +195,12 @@ function TaskPage() {
 
 	return (
 		<>
+		<div style={{ position: 'fixed', top: 16, right: 16, zIndex: 200 }} className="flex items-center gap-2">
+			<ActionIcon onClick={handleBack} variant="default" size="lg" radius="md" aria-label={t('back')}>
+				<ArrowLeft size={18} />
+			</ActionIcon>
+			<OverflowMenu onSettings={() => setSettingsOpen(true)} onSearch={openCmd} />
+		</div>
 		<div className="flex justify-center min-h-screen" style={{ backgroundColor: 'var(--mantine-color-body)' }}>
 			<div
 				className="w-full flex flex-col"
@@ -273,16 +285,6 @@ function TaskPage() {
 									</Menu.Item>
 								</Menu.Dropdown>
 							</Menu>
-							<ActionIcon
-								onClick={handleBack}
-								variant="subtle"
-								color="gray"
-								size="lg"
-								radius="md"
-								aria-label={t('focusModalClose')}
-							>
-								<X size={18} />
-							</ActionIcon>
 						</div>
 					</div>
 
@@ -350,6 +352,7 @@ function TaskPage() {
 										navigate({
 											to: '/project/$projectId',
 											params: { projectId: project.id },
+											search: { return_to: `/task/${taskId}` },
 										})
 									}
 									variant="subtle"
@@ -401,6 +404,7 @@ function TaskPage() {
 				}}
 			/>
 		)}
+		<SettingsModal opened={settingsOpen} onClose={() => setSettingsOpen(false)} onLoginRequest={() => {}} />
 		</>
 	)
 }
