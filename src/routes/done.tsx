@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next'
 import { PageHeader } from '@/components/PageHeader'
 import { TaskListItem } from '@/components/TaskListItem'
 import { Toolbar } from '@/components/Toolbar'
+import { useFilters } from '@/store'
 import { useGroupedFilteredTasks } from '@/store/taskStore'
 import { isMobile } from '@/utils'
 
@@ -22,8 +23,9 @@ function DonePage() {
 		window.addEventListener('keydown', handleKey)
 		return () => window.removeEventListener('keydown', handleKey)
 	}, [])
+	const filters = useFilters()
 	const groups = useGroupedFilteredTasks({
-		filters: { status: 'done' },
+		filters: { ...filters, status: 'done' },
 		groupBy: 'area',
 	})
 
