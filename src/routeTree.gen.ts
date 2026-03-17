@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as WeeklyReviewRouteImport } from './routes/weekly-review'
 import { Route as WaitingForRouteImport } from './routes/waiting-for'
 import { Route as SomedayRouteImport } from './routes/someday'
 import { Route as ShoppingListRouteImport } from './routes/shopping-list'
@@ -20,6 +21,11 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as TaskTaskIdRouteImport } from './routes/task.$taskId'
 import { Route as ProjectProjectIdRouteImport } from './routes/project.$projectId'
 
+const WeeklyReviewRoute = WeeklyReviewRouteImport.update({
+  id: '/weekly-review',
+  path: '/weekly-review',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const WaitingForRoute = WaitingForRouteImport.update({
   id: '/waiting-for',
   path: '/waiting-for',
@@ -80,6 +86,7 @@ export interface FileRoutesByFullPath {
   '/shopping-list': typeof ShoppingListRoute
   '/someday': typeof SomedayRoute
   '/waiting-for': typeof WaitingForRoute
+  '/weekly-review': typeof WeeklyReviewRoute
   '/project/$projectId': typeof ProjectProjectIdRoute
   '/task/$taskId': typeof TaskTaskIdRoute
 }
@@ -92,6 +99,7 @@ export interface FileRoutesByTo {
   '/shopping-list': typeof ShoppingListRoute
   '/someday': typeof SomedayRoute
   '/waiting-for': typeof WaitingForRoute
+  '/weekly-review': typeof WeeklyReviewRoute
   '/project/$projectId': typeof ProjectProjectIdRoute
   '/task/$taskId': typeof TaskTaskIdRoute
 }
@@ -105,6 +113,7 @@ export interface FileRoutesById {
   '/shopping-list': typeof ShoppingListRoute
   '/someday': typeof SomedayRoute
   '/waiting-for': typeof WaitingForRoute
+  '/weekly-review': typeof WeeklyReviewRoute
   '/project/$projectId': typeof ProjectProjectIdRoute
   '/task/$taskId': typeof TaskTaskIdRoute
 }
@@ -119,6 +128,7 @@ export interface FileRouteTypes {
     | '/shopping-list'
     | '/someday'
     | '/waiting-for'
+    | '/weekly-review'
     | '/project/$projectId'
     | '/task/$taskId'
   fileRoutesByTo: FileRoutesByTo
@@ -131,6 +141,7 @@ export interface FileRouteTypes {
     | '/shopping-list'
     | '/someday'
     | '/waiting-for'
+    | '/weekly-review'
     | '/project/$projectId'
     | '/task/$taskId'
   id:
@@ -143,6 +154,7 @@ export interface FileRouteTypes {
     | '/shopping-list'
     | '/someday'
     | '/waiting-for'
+    | '/weekly-review'
     | '/project/$projectId'
     | '/task/$taskId'
   fileRoutesById: FileRoutesById
@@ -156,12 +168,20 @@ export interface RootRouteChildren {
   ShoppingListRoute: typeof ShoppingListRoute
   SomedayRoute: typeof SomedayRoute
   WaitingForRoute: typeof WaitingForRoute
+  WeeklyReviewRoute: typeof WeeklyReviewRoute
   ProjectProjectIdRoute: typeof ProjectProjectIdRoute
   TaskTaskIdRoute: typeof TaskTaskIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/weekly-review': {
+      id: '/weekly-review'
+      path: '/weekly-review'
+      fullPath: '/weekly-review'
+      preLoaderRoute: typeof WeeklyReviewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/waiting-for': {
       id: '/waiting-for'
       path: '/waiting-for'
@@ -244,6 +264,7 @@ const rootRouteChildren: RootRouteChildren = {
   ShoppingListRoute: ShoppingListRoute,
   SomedayRoute: SomedayRoute,
   WaitingForRoute: WaitingForRoute,
+  WeeklyReviewRoute: WeeklyReviewRoute,
   ProjectProjectIdRoute: ProjectProjectIdRoute,
   TaskTaskIdRoute: TaskTaskIdRoute,
 }

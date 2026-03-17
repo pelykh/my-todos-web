@@ -3,14 +3,15 @@ import { useEffect, useRef, useState } from 'react'
 
 type Props = {
 	seconds: number
+	initialSeconds?: number
 }
 
-export function CountdownTimer({ seconds: total }: Props) {
-	const [remaining, setRemaining] = useState(total)
+export function CountdownTimer({ seconds: total, initialSeconds }: Props) {
+	const [remaining, setRemaining] = useState(initialSeconds ?? total)
 	const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
 	useEffect(() => {
-		setRemaining(total)
+		setRemaining(initialSeconds ?? total)
 		intervalRef.current = setInterval(() => {
 			setRemaining((r) => {
 				if (r <= 1) {

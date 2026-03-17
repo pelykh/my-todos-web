@@ -8,7 +8,7 @@ import {
 	Text,
 	Title,
 } from '@mantine/core'
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { ArrowLeft, CheckCircle2 } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -24,17 +24,20 @@ import { IsProjectStep } from '@/components/inbox-steps/IsProjectStep'
 import { NewProjectStep } from '@/components/inbox-steps/NewProjectStep'
 import { NotActionStep } from '@/components/inbox-steps/NotActionStep'
 import { ReferenceStep } from '@/components/inbox-steps/ReferenceStep'
-import { ShoppingListStep } from '@/components/inbox-steps/ShoppingListStep'
 import { SelectProjectStep } from '@/components/inbox-steps/SelectProjectStep'
+import { ShoppingListStep } from '@/components/inbox-steps/ShoppingListStep'
 import { resetInboxStepper, useInboxCurrentStep, useInboxState } from '@/store/inboxStepper'
 import { useFilteredTasks, useTaskById } from '@/store/taskStore'
 
 export const Route = createFileRoute('/process-inbox')({
+	validateSearch: (search) => ({ returnTo: (search.returnTo as string) ?? '/' }),
 	component: ProcessInbox,
 })
 
 function ProcessInbox() {
 	const { t } = useTranslation()
+	const { returnTo } = Route.useSearch()
+	const navigate = useNavigate()
 	const inboxTasks = useFilteredTasks({ status: 'inbox' })
 	const projects = useFilteredTasks({ isProject: true })
 
@@ -61,7 +64,7 @@ function ProcessInbox() {
 					<Title order={2} ta="center">
 						{t('processInboxEmpty')}
 					</Title>
-					<Button component={Link} to="/" variant="light">
+					<Button onClick={() => navigate({ to: returnTo as '/' })} variant="light">
 						{t('processInboxBack')}
 					</Button>
 				</Stack>
@@ -73,8 +76,7 @@ function ProcessInbox() {
 		<>
 			<Group style={{ position: 'fixed', top: 16, left: 16, zIndex: 200 }}>
 				<ActionIcon
-					component={Link}
-					to="/"
+					onClick={() => navigate({ to: returnTo as '/' })}
 					variant="default"
 					size="lg"
 					radius="md"

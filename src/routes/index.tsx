@@ -11,6 +11,7 @@ import { RegisterModal } from '@/components/RegisterModal'
 import { SettingsModal } from '@/components/SettingsModal'
 import { TaskListItem } from '@/components/TaskListItem'
 import { Toolbar } from '@/components/Toolbar'
+import { WeeklyReviewButton } from '@/components/WeeklyReviewButton'
 import { useFilters } from '@/store'
 import { useGroupedFilteredTasks } from '@/store/taskStore'
 import { isMobile } from '@/utils'
@@ -47,6 +48,7 @@ function App() {
 				style={{ position: 'fixed', top: 16, right: 16, zIndex: 200 }}
 			>
 				{!isMobile() && <MorningFlowButton />}
+				{!isMobile() && <WeeklyReviewButton />}
 				<ProcessInboxButton />
 				<OverflowMenu onSettings={() => setSettingsOpen(true)} onSearch={openCmd} />
 			</Group>
