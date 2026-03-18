@@ -64,7 +64,7 @@ export function TimerToolbar({ task }: { task: Task }) {
 	return (
 		<div
 			className="overflow-hidden rounded-md border"
-			style={{ borderColor: 'var(--mantine-color-default-border)' }}
+			style={{ borderColor: 'var(--mantine-color-default-border)', backgroundColor: 'var(--mantine-color-body)' }}
 		>
 			{/* Top row */}
 			<div className="flex items-stretch">
