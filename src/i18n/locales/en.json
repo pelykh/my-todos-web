@@ -207,5 +207,9 @@
 	"weeklyReview.someday.title": "Someday",
 	"weeklyReview.someday.subtitle": "Is it time to pull anything in and start working on it?",
 	"weeklyReview.crazyIdeas.title": "Crazy Ideas",
-	"weeklyReview.crazyIdeas.subtitle": "15 minutes of creativity and interesting ideas"
+	"weeklyReview.crazyIdeas.subtitle": "15 minutes of creativity and interesting ideas",
+	"templates": "Templates",
+	"templatesEmpty": "No templates yet",
+	"templateMarkAsTemplate": "Mark as template",
+	"templateConvertToNextAction": "Convert to next action"
 }

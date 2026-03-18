@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WeeklyReviewRouteImport } from './routes/weekly-review'
 import { Route as WaitingForRouteImport } from './routes/waiting-for'
+import { Route as TemplatesRouteImport } from './routes/templates'
 import { Route as SomedayRouteImport } from './routes/someday'
 import { Route as ShoppingListRouteImport } from './routes/shopping-list'
 import { Route as ProjectsRouteImport } from './routes/projects'
@@ -18,6 +19,7 @@ import { Route as ProcessInboxRouteImport } from './routes/process-inbox'
 import { Route as MorningFlowRouteImport } from './routes/morning-flow'
 import { Route as DoneRouteImport } from './routes/done'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as TemplateTaskIdRouteImport } from './routes/template.$taskId'
 import { Route as TaskTaskIdRouteImport } from './routes/task.$taskId'
 import { Route as ProjectProjectIdRouteImport } from './routes/project.$projectId'
 
@@ -29,6 +31,11 @@ const WeeklyReviewRoute = WeeklyReviewRouteImport.update({
 const WaitingForRoute = WaitingForRouteImport.update({
   id: '/waiting-for',
   path: '/waiting-for',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TemplatesRoute = TemplatesRouteImport.update({
+  id: '/templates',
+  path: '/templates',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SomedayRoute = SomedayRouteImport.update({
@@ -66,6 +73,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TemplateTaskIdRoute = TemplateTaskIdRouteImport.update({
+  id: '/template/$taskId',
+  path: '/template/$taskId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TaskTaskIdRoute = TaskTaskIdRouteImport.update({
   id: '/task/$taskId',
   path: '/task/$taskId',
@@ -85,10 +97,12 @@ export interface FileRoutesByFullPath {
   '/projects': typeof ProjectsRoute
   '/shopping-list': typeof ShoppingListRoute
   '/someday': typeof SomedayRoute
+  '/templates': typeof TemplatesRoute
   '/waiting-for': typeof WaitingForRoute
   '/weekly-review': typeof WeeklyReviewRoute
   '/project/$projectId': typeof ProjectProjectIdRoute
   '/task/$taskId': typeof TaskTaskIdRoute
+  '/template/$taskId': typeof TemplateTaskIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -98,10 +112,12 @@ export interface FileRoutesByTo {
   '/projects': typeof ProjectsRoute
   '/shopping-list': typeof ShoppingListRoute
   '/someday': typeof SomedayRoute
+  '/templates': typeof TemplatesRoute
   '/waiting-for': typeof WaitingForRoute
   '/weekly-review': typeof WeeklyReviewRoute
   '/project/$projectId': typeof ProjectProjectIdRoute
   '/task/$taskId': typeof TaskTaskIdRoute
+  '/template/$taskId': typeof TemplateTaskIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -112,10 +128,12 @@ export interface FileRoutesById {
   '/projects': typeof ProjectsRoute
   '/shopping-list': typeof ShoppingListRoute
   '/someday': typeof SomedayRoute
+  '/templates': typeof TemplatesRoute
   '/waiting-for': typeof WaitingForRoute
   '/weekly-review': typeof WeeklyReviewRoute
   '/project/$projectId': typeof ProjectProjectIdRoute
   '/task/$taskId': typeof TaskTaskIdRoute
+  '/template/$taskId': typeof TemplateTaskIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -127,10 +145,12 @@ export interface FileRouteTypes {
     | '/projects'
     | '/shopping-list'
     | '/someday'
+    | '/templates'
     | '/waiting-for'
     | '/weekly-review'
     | '/project/$projectId'
     | '/task/$taskId'
+    | '/template/$taskId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -140,10 +160,12 @@ export interface FileRouteTypes {
     | '/projects'
     | '/shopping-list'
     | '/someday'
+    | '/templates'
     | '/waiting-for'
     | '/weekly-review'
     | '/project/$projectId'
     | '/task/$taskId'
+    | '/template/$taskId'
   id:
     | '__root__'
     | '/'
@@ -153,10 +175,12 @@ export interface FileRouteTypes {
     | '/projects'
     | '/shopping-list'
     | '/someday'
+    | '/templates'
     | '/waiting-for'
     | '/weekly-review'
     | '/project/$projectId'
     | '/task/$taskId'
+    | '/template/$taskId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -167,10 +191,12 @@ export interface RootRouteChildren {
   ProjectsRoute: typeof ProjectsRoute
   ShoppingListRoute: typeof ShoppingListRoute
   SomedayRoute: typeof SomedayRoute
+  TemplatesRoute: typeof TemplatesRoute
   WaitingForRoute: typeof WaitingForRoute
   WeeklyReviewRoute: typeof WeeklyReviewRoute
   ProjectProjectIdRoute: typeof ProjectProjectIdRoute
   TaskTaskIdRoute: typeof TaskTaskIdRoute
+  TemplateTaskIdRoute: typeof TemplateTaskIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -187,6 +213,13 @@ declare module '@tanstack/react-router' {
       path: '/waiting-for'
       fullPath: '/waiting-for'
       preLoaderRoute: typeof WaitingForRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/templates': {
+      id: '/templates'
+      path: '/templates'
+      fullPath: '/templates'
+      preLoaderRoute: typeof TemplatesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/someday': {
@@ -238,6 +271,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/template/$taskId': {
+      id: '/template/$taskId'
+      path: '/template/$taskId'
+      fullPath: '/template/$taskId'
+      preLoaderRoute: typeof TemplateTaskIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/task/$taskId': {
       id: '/task/$taskId'
       path: '/task/$taskId'
@@ -263,10 +303,12 @@ const rootRouteChildren: RootRouteChildren = {
   ProjectsRoute: ProjectsRoute,
   ShoppingListRoute: ShoppingListRoute,
   SomedayRoute: SomedayRoute,
+  TemplatesRoute: TemplatesRoute,
   WaitingForRoute: WaitingForRoute,
   WeeklyReviewRoute: WeeklyReviewRoute,
   ProjectProjectIdRoute: ProjectProjectIdRoute,
   TaskTaskIdRoute: TaskTaskIdRoute,
+  TemplateTaskIdRoute: TemplateTaskIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -5,6 +5,7 @@ import {
   CheckCircle2,
   FolderKanban,
   Hourglass,
+  LayoutTemplate,
   MoreHorizontal,
   Search,
   Settings,
@@ -42,6 +43,9 @@ export function OverflowMenu({ onSettings, onSearch }: OverflowMenuProps) {
         </Menu.Item>
         <Menu.Item component={Link} to="/someday" leftSection={<Archive size={16} />}>
           {t('status.someday')}
+        </Menu.Item>
+        <Menu.Item component={Link} to="/templates" leftSection={<LayoutTemplate size={16} />}>
+          {t('templates')}
         </Menu.Item>
         <Menu.Item component={Link} to="/done" leftSection={<CheckCircle2 size={16} />}>
           {t('status.done')}

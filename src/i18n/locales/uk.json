@@ -207,5 +207,9 @@
 	"weeklyReview.someday.title": "Колись",
 	"weeklyReview.someday.subtitle": "Чи варто вірватися в щось і почати робити",
 	"weeklyReview.crazyIdeas.title": "Божевільні ідеї",
-	"weeklyReview.crazyIdeas.subtitle": "15хв креативу і цікавих ідей"
+	"weeklyReview.crazyIdeas.subtitle": "15хв креативу і цікавих ідей",
+	"templates": "Шаблон",
+	"templatesEmpty": "Немає шаблонів",
+	"templateMarkAsTemplate": "Позначити як шаблон",
+	"templateConvertToNextAction": "Перетворити на наступну дію"
 }

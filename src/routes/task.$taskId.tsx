@@ -1,6 +1,6 @@
 import { ActionIcon, Button, Menu } from '@mantine/core'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
-import { Archive, ArrowLeft, CheckCircle2, Ellipsis, FolderKanban, RotateCcw, Trash2 } from 'lucide-react'
+import { Archive, ArrowLeft, CheckCircle2, Ellipsis, FolderKanban, LayoutTemplate, RotateCcw, Trash2 } from 'lucide-react'
 import { useContext, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
@@ -151,6 +151,13 @@ function TaskPage() {
 		navigate({ to: '/project/$projectId', params: { projectId: task.id } })
 	}
 
+	function handleMarkAsTemplate() {
+		if (!task) return
+		const tags = [...(task.tags ?? []).filter((t) => t !== 'template'), 'template']
+		editTask(task.id, { tags, status: 'backlog' })
+		navigate({ to: '/template/$taskId', params: { taskId: task.id } })
+	}
+
 	function handleContextChange(value: string) {
 		if (!task) return
 		editTask(task.id, { context: value as Context })
@@ -259,6 +266,14 @@ function TaskPage() {
 											onClick={handlePromoteToProject}
 										>
 											{t('focusModalPromoteToProject')}
+										</Menu.Item>
+									)}
+									{!task.tags?.includes('template') && (
+										<Menu.Item
+											leftSection={<LayoutTemplate size={14} />}
+											onClick={handleMarkAsTemplate}
+										>
+											{t('templateMarkAsTemplate')}
 										</Menu.Item>
 									)}
 									{task.status === 'someday' ? (
