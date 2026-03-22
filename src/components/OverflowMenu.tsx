@@ -2,6 +2,7 @@ import { ActionIcon, Menu, SegmentedControl, Stack, Text } from '@mantine/core'
 import { Link } from '@tanstack/react-router'
 import {
   Archive,
+  Bug,
   CheckCircle2,
   FolderKanban,
   Hourglass,
@@ -11,7 +12,11 @@ import {
   Settings,
   ShoppingCart,
 } from 'lucide-react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+
+import { resetMorningFlowCompleted } from '@/store/morningFlowStepper'
+import { isWeeklyReviewCompletedThisWeek, resetWeeklyReviewCompleted } from '@/store/weeklyReviewStepper'
 
 interface OverflowMenuProps {
   onSettings: () => void
@@ -26,6 +31,7 @@ const LANGS = [
 export function OverflowMenu({ onSettings, onSearch }: OverflowMenuProps) {
   const { i18n, t } = useTranslation()
   const current = LANGS.some((l) => l.value === i18n.language) ? i18n.language : 'en'
+  const [weeklyFlagSet, setWeeklyFlagSet] = useState(isWeeklyReviewCompletedThisWeek)
 
   return (
     <Menu shadow="md" width={200} position="bottom-end">
@@ -76,6 +82,19 @@ export function OverflowMenu({ onSettings, onSearch }: OverflowMenuProps) {
         <Menu.Item leftSection={<Settings size={16} />} onClick={onSettings}>
           Settings
         </Menu.Item>
+        {import.meta.env.DEV && (
+          <>
+            <Menu.Divider />
+            <Menu.Item leftSection={<Bug size={16} />} color="orange" onClick={resetMorningFlowCompleted}>
+              Reset daily flag
+            </Menu.Item>
+            {weeklyFlagSet && (
+              <Menu.Item leftSection={<Bug size={16} />} color="orange" onClick={() => { resetWeeklyReviewCompleted(); setWeeklyFlagSet(false) }}>
+                Reset weekly flag
+              </Menu.Item>
+            )}
+          </>
+        )}
       </Menu.Dropdown>
     </Menu>
   )

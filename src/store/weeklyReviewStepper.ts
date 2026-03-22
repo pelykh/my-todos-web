@@ -12,6 +12,7 @@ export type WeeklyReviewStepKey =
 	| 'browsers'
 	| 'local_files'
 	| 'expenses'
+	| 'habits'
 	| 'photos'
 	| 'brain_dump'
 	| 'last_week'
@@ -39,6 +40,7 @@ const WEEKLY_REVIEW_STEPS: { key: WeeklyReviewStepKey }[] = [
 	{ key: 'browsers' },
 	{ key: 'local_files' },
 	{ key: 'expenses' },
+	{ key: 'habits' },
 	{ key: 'photos' },
 	{ key: 'brain_dump' },
 	{ key: 'last_week' },
@@ -127,4 +129,8 @@ export function isWeeklyReviewCompletedThisWeek(): boolean {
 export function markWeeklyReviewCompleted(): void {
 	localStorage.setItem(WEEKLY_REVIEW_LS_KEY, new Date().toISOString())
 	localStorage.removeItem(CRAZY_IDEAS_TIMER_KEY)
+}
+
+export function resetWeeklyReviewCompleted(): void {
+	localStorage.removeItem(WEEKLY_REVIEW_LS_KEY)
 }

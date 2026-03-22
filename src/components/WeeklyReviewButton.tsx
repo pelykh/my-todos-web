@@ -9,7 +9,7 @@ export function WeeklyReviewButton() {
 
 	const now = new Date()
 	const isFridayAfterNoon = now.getDay() === 5 && now.getHours() >= 12
-	if (!isFridayAfterNoon || isWeeklyReviewCompletedThisWeek()) return null
+	if ((!import.meta.env.DEV && !isFridayAfterNoon) || isWeeklyReviewCompletedThisWeek()) return null
 
 	return (
 		<Button

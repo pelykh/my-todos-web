@@ -81,3 +81,7 @@ export function isMorningFlowCompletedToday(): boolean {
 export function markMorningFlowCompleted(): void {
 	localStorage.setItem(MORNING_FLOW_LS_KEY, new Date().toISOString())
 }
+
+export function resetMorningFlowCompleted(): void {
+	localStorage.removeItem(MORNING_FLOW_LS_KEY)
+}

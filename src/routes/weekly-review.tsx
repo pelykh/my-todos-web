@@ -36,6 +36,7 @@ const RETURN_TO = '/weekly-review'
 const TWO_WEEKS_AGO = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000)
 const NOTION_QUICK_NOTES_URL =
 	'https://www.notion.so/19ef0fc49d77809e9969cb7cdaa3e6e4?v=1a1f0fc49d7780ad82f5000cbac6716b'
+const HABITS_URL = 'https://claude.ai/public/artifacts/971cf97c-ebaa-4224-82ff-b7646081aadc'
 
 function WeeklyReview() {
 	const { t } = useTranslation()
@@ -113,6 +114,9 @@ function WeeklyReview() {
 							onNext={goNextStep}
 							onBack={goPreviousStep}
 						/>
+					)}
+					{currentStep === 'habits' && (
+						<HabitsStep onNext={goNextStep} onBack={goPreviousStep} />
 					)}
 					{currentStep === 'photos' && (
 						<StandardStep
@@ -223,6 +227,35 @@ function QuickNotesStep({ onNext, onBack }: { onNext: () => void; onBack: () => 
 			<Loader size="md" />
 			<Text size="lg" fw={500} ta="center">
 				{t('weeklyReview.quickNotes.opened')}
+			</Text>
+			<Group gap="sm">
+				<ShortcutButton shortcut="1" onClick={onNext} variant="light" color="gray" w={200}>
+					{t('weeklyReview.next')}
+				</ShortcutButton>
+				<ShortcutButton shortcut="2" onClick={onBack} variant="light" color="gray" w={200}>
+					{t('weeklyReview.back')}
+				</ShortcutButton>
+			</Group>
+		</Stack>
+	)
+}
+
+// ── Habits step ───────────────────────────────────────────────────────────────
+
+function HabitsStep({ onNext, onBack }: { onNext: () => void; onBack: () => void }) {
+	const { t } = useTranslation()
+
+	useEffect(() => {
+		window.open(HABITS_URL, '_blank')
+		const timer = setTimeout(onNext, 3000)
+		return () => clearTimeout(timer)
+	}, [onNext])
+
+	return (
+		<Stack gap="md" align="center">
+			<Loader size="md" />
+			<Text size="lg" fw={500} ta="center">
+				{t('weeklyReview.habits.opened')}
 			</Text>
 			<Group gap="sm">
 				<ShortcutButton shortcut="1" onClick={onNext} variant="light" color="gray" w={200}>

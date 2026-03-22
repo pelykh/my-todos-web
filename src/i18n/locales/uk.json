@@ -184,6 +184,8 @@
 	"weeklyReview.localFiles.subtitle": "Чекнути робочий стіл і завантаження на обох ноутах, розкласти файли, додати в інбокс якщо треба",
 	"weeklyReview.expenses.title": "Звірити витрати",
 	"weeklyReview.expenses.subtitle": "Чи витрати відповідають в екпсенсес і застосунках, можливо якійсь дії треба",
+	"weeklyReview.habits.title": "Звички",
+	"weeklyReview.habits.opened": "Звички відкрито у новій вкладці",
 	"weeklyReview.photos.title": "Фотографії",
 	"weeklyReview.photos.subtitle": "Видалити скріни, додати дії, або почистити фотографії",
 	"weeklyReview.brainDump.title": "Спорожнити голову",
