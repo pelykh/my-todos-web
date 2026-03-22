@@ -8,6 +8,7 @@ import { createStepperStore } from './stepper'
 export type WeeklyReviewStepKey =
 	| 'process_inbox'
 	| 'physical_inbox'
+	| 'quick_notes'
 	| 'browsers'
 	| 'local_files'
 	| 'expenses'
@@ -34,6 +35,7 @@ const INITIAL_STATE: WeeklyReviewState = {}
 const WEEKLY_REVIEW_STEPS: { key: WeeklyReviewStepKey }[] = [
 	{ key: 'process_inbox' },
 	{ key: 'physical_inbox' },
+	{ key: 'quick_notes' },
 	{ key: 'browsers' },
 	{ key: 'local_files' },
 	{ key: 'expenses' },
