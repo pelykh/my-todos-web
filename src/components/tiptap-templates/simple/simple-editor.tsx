@@ -1,5 +1,6 @@
 "use client"
 
+import "@/components/tiptap-ui/link-copy-button/link-copy-button.scss"
 import "@/components/tiptap-node/blockquote-node/blockquote-node.scss"
 import "@/components/tiptap-node/code-block-node/code-block-node.scss"
 import "@/components/tiptap-node/horizontal-rule-node/horizontal-rule-node.scss"
@@ -24,6 +25,8 @@ import { EditorContent, EditorContext, useEditor } from "@tiptap/react"
 // --- Tiptap Core Extensions ---
 import { StarterKit } from "@tiptap/starter-kit"
 import { useEffect, useRef, useState } from "react"
+import { useTranslation } from "react-i18next"
+import { toast } from "sonner"
 import { Markdown } from "tiptap-markdown"
 
 // --- Icons ---
@@ -31,6 +34,7 @@ import { ArrowLeftIcon } from "@/components/tiptap-icons/arrow-left-icon"
 import { HighlighterIcon } from "@/components/tiptap-icons/highlighter-icon"
 import { LinkIcon } from "@/components/tiptap-icons/link-icon"
 import { HorizontalRule } from "@/components/tiptap-node/horizontal-rule-node/horizontal-rule-node-extension"
+import { LinkCopyButton } from "@/components/tiptap-ui/link-copy-button/link-copy-button-extension"
 // --- Tiptap Node ---
 import { ImageUploadNode } from "@/components/tiptap-node/image-upload-node/image-upload-node-extension"
 import { BlockquoteButton } from "@/components/tiptap-ui/blockquote-button"
@@ -186,6 +190,7 @@ const MobileToolbarContent = ({
 )
 
 export function SimpleEditor({ value, onChange, editable = true }: SimpleEditorProps) {
+  const { t } = useTranslation()
   const { colorScheme } = useTheme()
   const isDark = colorScheme === "dark"
   const isMobile = useIsBreakpoint()
@@ -233,6 +238,11 @@ export function SimpleEditor({ value, onChange, editable = true }: SimpleEditorP
         onError: (error) => console.error("Upload failed:", error),
       }),
       Markdown,
+      LinkCopyButton.configure({
+        onCopy: (href: string) => {
+          toast(t("linkCopied"), { description: href })
+        },
+      }),
     ],
     content: value,
     onBlur: ({ editor: e }) => {

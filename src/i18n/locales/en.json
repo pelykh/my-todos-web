@@ -215,5 +215,6 @@
 	"templates": "Templates",
 	"templatesEmpty": "No templates yet",
 	"templateMarkAsTemplate": "Mark as template",
-	"templateConvertToNextAction": "Convert to next action"
+	"templateConvertToNextAction": "Convert to next action",
+	"linkCopied": "Link copied"
 }

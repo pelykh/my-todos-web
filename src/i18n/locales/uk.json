@@ -215,5 +215,6 @@
 	"templates": "Шаблон",
 	"templatesEmpty": "Немає шаблонів",
 	"templateMarkAsTemplate": "Позначити як шаблон",
-	"templateConvertToNextAction": "Перетворити на наступну дію"
+	"templateConvertToNextAction": "Перетворити на наступну дію",
+	"linkCopied": "Посилання скопійовано"
 }
