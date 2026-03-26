@@ -1,3 +1,4 @@
+import confetti from 'canvas-confetti'
 import { useEffect } from 'react'
 import { createStore, useStore } from 'zustand'
 import { persist } from 'zustand/middleware'
@@ -98,17 +99,26 @@ export function useXpLevelProgress(): { progress: number; level: number } {
 	useEffect(() => {
 		if (currentXp === nextXp) return
 		const { actions } = xpStore.getState()
+		const isLevelUp = getXpLevel(nextXp) > getXpLevel(currentXp)
 		const startTimer = setTimeout(() => {
 			actions.commitCurrentXp(nextXp)
 		}, 100)
 		const endTimer = setTimeout(() => {
 			actions.setCurrentXp(nextXp)
+			if (isLevelUp) {
+				confetti({
+					particleCount: 300,
+          spread: 100,
+          startVelocity: 60,
+					origin: { y: 0.9, },
+				})
+			}
 		}, 100 + ANIMATION_DURATION)
 		return () => {
 			clearTimeout(startTimer)
 			clearTimeout(endTimer)
 		}
-	}, [currentXp, nextXp])
+	}, [nextXp])
 
 	return {
 		progress: getXpLevelProgress(currentXp),
