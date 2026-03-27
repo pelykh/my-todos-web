@@ -39,7 +39,7 @@ function ProcessInbox() {
 	const { returnTo } = Route.useSearch()
 	const navigate = useNavigate()
 	const inboxTasks = useFilteredTasks({ status: 'inbox' })
-	const projects = useFilteredTasks({ isProject: true })
+  const projects = useFilteredTasks({ isProject: true, excludeStatuses: ['done'] }, { sortBy: 'updatedAt', sortOrder: 'desc'})
 
 	const [processedCount, setProcessedCount] = useState(0)
 	const [total] = useState(() => inboxTasks.length)
