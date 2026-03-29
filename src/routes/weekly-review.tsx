@@ -36,7 +36,7 @@ const RETURN_TO = '/weekly-review'
 const TWO_WEEKS_AGO = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000)
 const NOTION_QUICK_NOTES_URL =
 	'https://www.notion.so/19ef0fc49d77809e9969cb7cdaa3e6e4?v=1a1f0fc49d7780ad82f5000cbac6716b'
-const HABITS_URL = 'https://claude.ai/public/artifacts/971cf97c-ebaa-4224-82ff-b7646081aadc'
+const HABITS_URL = 'http://localhost:4001'
 
 function WeeklyReview() {
 	const { t } = useTranslation()
