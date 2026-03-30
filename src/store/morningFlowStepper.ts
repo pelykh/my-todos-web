@@ -11,6 +11,7 @@ export type MorningFlowStepKey =
 	| 'mail'
 	| 'messengers'
 	| 'waiting_for'
+	| 'work_daily_notion'
 
 export type MorningFlowState = {}
 
@@ -24,6 +25,7 @@ const MORNING_FLOW_STEPS: { key: MorningFlowStepKey }[] = [
 	{ key: 'mail' },
 	{ key: 'messengers' },
 	{ key: 'waiting_for' },
+	{ key: 'work_daily_notion' },
 ]
 
 export const morningFlowStepperStore = createStepperStore<MorningFlowState>(

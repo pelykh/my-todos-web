@@ -163,6 +163,8 @@
 	"morningFlow.back": "Назад",
 	"morningFlow.skip": "Пропустити",
 	"morningFlow.done": "Готово",
+	"morningFlow.workDailyNotion": "Створити сторінку Notion про щоденне на роботі",
+	"morningFlow.workDailyNotionSubtitle": "Заповни сторінку щоденника роботи на",
 	"morningFlow.completedToast": "Ти готовий до бою сьогодні! 🚀",
 	"weeklyReview": "Тижневий огляд",
 	"weeklyReview.next": "Далі",

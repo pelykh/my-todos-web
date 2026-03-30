@@ -163,6 +163,8 @@
 	"morningFlow.back": "Back",
 	"morningFlow.skip": "Skip",
 	"morningFlow.done": "Done",
+	"morningFlow.workDailyNotion": "Create Notion page about daily on work",
+	"morningFlow.workDailyNotionSubtitle": "Fill in the daily work page on",
 	"morningFlow.completedToast": "You're ready to rock today! 🚀",
 	"weeklyReview": "Weekly Review",
 	"weeklyReview.next": "Next",

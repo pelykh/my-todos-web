@@ -1,5 +1,6 @@
 import {
 	ActionIcon,
+	Anchor,
 	Container,
 	Group,
 	List,
@@ -81,7 +82,10 @@ function MorningFlow() {
 						<MessengersStep onNext={goNextStep} onBack={goPreviousStep} />
 					)}
 					{currentStep === 'waiting_for' && (
-						<WaitingForStep onDone={finish} onBack={isWeekend() ? () => goToMorningFlowStep('notion') : goPreviousStep} />
+						<WaitingForStep onDone={isWeekend() ? finish : goNextStep} onBack={isWeekend() ? () => goToMorningFlowStep('notion') : goPreviousStep} />
+					)}
+					{currentStep === 'work_daily_notion' && (
+						<WorkDailyNotionStep onDone={finish} onBack={goPreviousStep} />
 					)}
 				</Stack>
 			</Container>
@@ -180,6 +184,35 @@ function MessengersStep({ onNext, onBack }: { onNext: () => void; onBack: () => 
 					{t('morningFlow.next')}
         </ShortcutButton>
         <ShortcutButton shortcut="2" onClick={onBack} variant="light" color="gray" w={120}>
+					{t('morningFlow.back')}
+				</ShortcutButton>
+			</Group>
+		</Stack>
+	)
+}
+
+const WORK_DAILY_NOTION_URL = 'https://www.notion.so/Appfire-31ff0fc49d7780b98dffcb29e508b02f'
+
+// ── Step 6: Work Daily Notion ─────────────────────────────────────────────────
+
+function WorkDailyNotionStep({ onDone, onBack }: { onDone: () => void; onBack: () => void }) {
+	const { t } = useTranslation()
+	return (
+		<Stack gap="md" align="center">
+			<Title order={2} ta="center">
+				{t('morningFlow.workDailyNotion')}
+			</Title>
+			<Text c="dimmed" ta="center">
+				{t('morningFlow.workDailyNotionSubtitle')}{' '}
+				<Anchor href={WORK_DAILY_NOTION_URL} target="_blank" rel="noreferrer">
+					Notion
+				</Anchor>
+			</Text>
+			<Group gap="sm">
+				<ShortcutButton shortcut="1" onClick={onDone} variant="filled" color="green" w={120}>
+					{t('morningFlow.done')}
+				</ShortcutButton>
+				<ShortcutButton shortcut="2" onClick={onBack} variant="light" color="gray" w={120}>
 					{t('morningFlow.back')}
 				</ShortcutButton>
 			</Group>
