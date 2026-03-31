@@ -5,6 +5,7 @@ import {
 	Group,
 	Slider,
 	Stack,
+	Tooltip,
 } from '@mantine/core'
 import {
 	IconBrain,
@@ -100,18 +101,36 @@ export function Toolbar() {
           {/* Row 1: context buttons + today star */}
 					<ButtonGroup className="[&_button]:rounded-bl-none! [&_button]:rounded-br-none! flex sm:inline-flex">
 						{CONTEXTS.map(({ value, key, Icon }) => (
-							<Button
+							<Tooltip
 								key={value}
-								variant={context === value ? 'filled' : 'default'}
-								color='blue'
-								onClick={() => { haptic('selection'); setContext(context === value ? null : value) }}
-								aria-label={t(key)}
-								className="flex-1 sm:flex-none"
-							px={{ base: 10, sm: undefined }}
+								label={
+									<div>
+										<div>{t(`contextTooltip.${value}`)}</div>
+										<ul className="mt-1 mb-0 pl-4 list-disc">
+											{t(`contextTooltip.${value}_examples`).split('|').map((ex) => (
+												<li key={ex}>{ex}</li>
+											))}
+										</ul>
+									</div>
+								}
+								openDelay={600}
+								withinPortal
+								multiline
+								maw={360}
+								position="top"
 							>
-								<Box component="span" visibleFrom="sm">{t(key)}</Box>
-								<Box component="span" hiddenFrom="sm"><Icon size={16} /></Box>
-							</Button>
+								<Button
+									variant={context === value ? 'filled' : 'default'}
+									color='blue'
+									onClick={() => { haptic('selection'); setContext(context === value ? null : value) }}
+									aria-label={t(key)}
+									className="flex-1 sm:flex-none"
+								px={{ base: 10, sm: undefined }}
+								>
+									<Box component="span" visibleFrom="sm">{t(key)}</Box>
+									<Box component="span" hiddenFrom="sm"><Icon size={16} /></Box>
+								</Button>
+							</Tooltip>
 						))}
 						<Button
 							variant={'default'}
