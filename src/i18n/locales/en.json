@@ -192,6 +192,8 @@
 	"weeklyReview.photos.subtitle": "Delete screenshots, add actions, or clean up photos",
 	"weeklyReview.brainDump.title": "Empty Your Head",
 	"weeklyReview.brainDump.subtitle": "Capture everything on your mind — anything that keeps you thinking",
+	"weeklyReview.pointsWeeklyNotion.title": "Points weekly Notion",
+	"weeklyReview.pointsWeeklyNotion.opened": "Points weekly Notion opened in a new tab",
 	"weeklyReview.lastWeek.title": "Last Week",
 	"weeklyReview.lastWeek.subtitle": "Review calendar for last week — did you complete everything?",
 	"weeklyReview.nextWeek.title": "Next Week",

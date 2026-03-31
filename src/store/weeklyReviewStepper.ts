@@ -15,6 +15,7 @@ export type WeeklyReviewStepKey =
 	| 'habits'
 	| 'photos'
 	| 'brain_dump'
+	| 'points_weekly_notion'
 	| 'last_week'
 	| 'next_week'
 	| 'waiting_for'
@@ -43,6 +44,7 @@ const WEEKLY_REVIEW_STEPS: { key: WeeklyReviewStepKey }[] = [
 	{ key: 'habits' },
 	{ key: 'photos' },
 	{ key: 'brain_dump' },
+	{ key: 'points_weekly_notion' },
 	{ key: 'last_week' },
 	{ key: 'next_week' },
 	{ key: 'waiting_for' },

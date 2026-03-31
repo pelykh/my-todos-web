@@ -192,6 +192,8 @@
 	"weeklyReview.photos.subtitle": "Видалити скріни, додати дії, або почистити фотографії",
 	"weeklyReview.brainDump.title": "Спорожнити голову",
 	"weeklyReview.brainDump.subtitle": "Все що приходить на думку, заважає не думати — сюди",
+	"weeklyReview.pointsWeeklyNotion.title": "Очки за тиждень в Notion",
+	"weeklyReview.pointsWeeklyNotion.opened": "Очки за тиждень в Notion відкрито у новій вкладці",
 	"weeklyReview.lastWeek.title": "Минулий тиждень",
 	"weeklyReview.lastWeek.subtitle": "Чекнути календар за минулий тиждень і чи все зробив",
 	"weeklyReview.nextWeek.title": "Наступний тиждень",

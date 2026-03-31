@@ -37,6 +37,8 @@ const TWO_WEEKS_AGO = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000)
 const NOTION_QUICK_NOTES_URL =
 	'https://www.notion.so/19ef0fc49d77809e9969cb7cdaa3e6e4?v=1a1f0fc49d7780ad82f5000cbac6716b'
 const HABITS_URL = 'http://localhost:4001'
+const POINTS_WEEKLY_NOTION_URL =
+	'https://www.notion.so/334f0fc49d77808d8554fecf5e9f2c63?v=1a2f0fc49d77800d84e0000c4cc49cc1'
 
 function WeeklyReview() {
 	const { t } = useTranslation()
@@ -134,6 +136,9 @@ function WeeklyReview() {
 							onBack={goPreviousStep}
 						/>
 					)}
+					{currentStep === 'points_weekly_notion' && (
+						<PointsWeeklyNotionStep onNext={goNextStep} onBack={goPreviousStep} />
+					)}
 					{currentStep === 'last_week' && (
 						<StandardStep
 							titleKey="weeklyReview.lastWeek.title"
@@ -227,6 +232,35 @@ function QuickNotesStep({ onNext, onBack }: { onNext: () => void; onBack: () => 
 			<Loader size="md" />
 			<Text size="lg" fw={500} ta="center">
 				{t('weeklyReview.quickNotes.opened')}
+			</Text>
+			<Group gap="sm">
+				<ShortcutButton shortcut="1" onClick={onNext} variant="light" color="gray" w={200}>
+					{t('weeklyReview.next')}
+				</ShortcutButton>
+				<ShortcutButton shortcut="2" onClick={onBack} variant="light" color="gray" w={200}>
+					{t('weeklyReview.back')}
+				</ShortcutButton>
+			</Group>
+		</Stack>
+	)
+}
+
+// ── Appfire Notion step ───────────────────────────────────────────────────────
+
+function PointsWeeklyNotionStep({ onNext, onBack }: { onNext: () => void; onBack: () => void }) {
+	const { t } = useTranslation()
+
+	useEffect(() => {
+		window.open(POINTS_WEEKLY_NOTION_URL, '_blank')
+		const timer = setTimeout(onNext, 3000)
+		return () => clearTimeout(timer)
+	}, [onNext])
+
+	return (
+		<Stack gap="md" align="center">
+			<Loader size="md" />
+			<Text size="lg" fw={500} ta="center">
+				{t('weeklyReview.pointsWeeklyNotion.opened')}
 			</Text>
 			<Group gap="sm">
 				<ShortcutButton shortcut="1" onClick={onNext} variant="light" color="gray" w={200}>
