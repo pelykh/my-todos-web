@@ -1,5 +1,6 @@
 import { Button, Divider, Group, Modal, SegmentedControl, Stack, Text, TextInput } from '@mantine/core'
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { pushAllSync } from '@/services/SyncService'
 import { useAuthStore } from '@/store/authStore'
@@ -17,11 +18,15 @@ interface SettingsModalProps {
 }
 
 export function SettingsModal({ opened, onClose, onLoginRequest }: SettingsModalProps) {
+  const { t } = useTranslation()
   const { apiUrl, setApiUrl } = useAuthStore()
   const [value, setValue] = useState(apiUrl)
   const { isSyncing } = useSyncStore()
-  const { hapticMode, setHapticMode } = useSettingsStore()
+  const { hapticMode, setHapticMode, notificationsEnabled, setNotificationsEnabled } = useSettingsStore()
   const { colorSchemeMode, setColorSchemeMode } = useTheme()
+  const [notifPermission, setNotifPermission] = useState<NotificationPermission>(
+    typeof Notification !== 'undefined' ? Notification.permission : 'denied',
+  )
 
   const hapticOptions = [
     { label: 'Sound', value: 'sound' },
@@ -35,6 +40,12 @@ export function SettingsModal({ opened, onClose, onLoginRequest }: SettingsModal
 
   function handleSave() {
     setApiUrl(value.trim() || 'http://localhost:8000')
+  }
+
+  async function handleEnableNotifications() {
+    const permission = await Notification.requestPermission()
+    setNotifPermission(permission)
+    setNotificationsEnabled(permission === 'granted')
   }
 
   return (
@@ -77,6 +88,29 @@ export function SettingsModal({ opened, onClose, onLoginRequest }: SettingsModal
             size="sm"
           />
         </Stack>
+
+        {typeof Notification !== 'undefined' && (
+          <>
+            <Divider />
+            <Stack gap="xs">
+              <Text size="sm" fw={500}>{t('settings.notifications')}</Text>
+              {notifPermission === 'granted' && notificationsEnabled ? (
+                <Group>
+                  <Text size="sm" c="green">{t('settings.notificationsEnabled')}</Text>
+                  <Button variant="default" size="xs" onClick={() => setNotificationsEnabled(false)}>
+                    Disable
+                  </Button>
+                </Group>
+              ) : notifPermission === 'denied' ? (
+                <Text size="sm" c="dimmed">{t('settings.notificationsBlocked')}</Text>
+              ) : (
+                <Button variant="default" size="sm" onClick={() => void handleEnableNotifications()}>
+                  {t('settings.notificationsEnable')}
+                </Button>
+              )}
+            </Stack>
+          </>
+        )}
 
         <Divider />
 

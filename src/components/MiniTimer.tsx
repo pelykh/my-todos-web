@@ -1,4 +1,5 @@
 import { Tooltip } from '@mantine/core'
+import { useDocumentVisibility } from '@mantine/hooks'
 import { IconMaximize } from '@tabler/icons-react'
 import { useNavigate, useRouterState } from '@tanstack/react-router'
 import { useEffect, useRef } from 'react'
@@ -6,6 +7,7 @@ import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 
 import { useTimerActions, useTimerState } from '@/store'
+import { useSettingsStore } from '@/store/settingsStore'
 import { useTaskById } from '@/store/taskStore'
 import { useTheme } from '@/theme'
 
@@ -54,6 +56,8 @@ export function MiniTimer() {
 	const task = useTaskById(focusedTaskId)
 	const { colorScheme } = useTheme()
 	const isDark = colorScheme === 'dark'
+	const documentVisibility = useDocumentVisibility()
+	const { notificationsEnabled } = useSettingsStore()
 
 	// Save originals once on mount
 	const originalTitle = useRef(document.title)
@@ -87,19 +91,28 @@ export function MiniTimer() {
 			hasShownToast.current = true
 			actions.resetTimer()
 			actions.setFocusedTaskId(null)
-			toast.success(t('timer.toastDone'), {
-				description: task.title,
-				action: {
-					label: t('timer.toastOpenTask'),
-					onClick: () =>
-						navigate({ to: '/task/$taskId', params: { taskId: task.id } }),
-				},
-			})
+			if (
+				documentVisibility === 'hidden' &&
+				notificationsEnabled &&
+				typeof Notification !== 'undefined' &&
+				Notification.permission === 'granted'
+			) {
+				new Notification(t('timer.toastDone'), { body: task.title })
+			} else {
+				toast.success(t('timer.toastDone'), {
+					description: task.title,
+					action: {
+						label: t('timer.toastOpenTask'),
+						onClick: () =>
+							navigate({ to: '/task/$taskId', params: { taskId: task.id } }),
+					},
+				})
+			}
 		}
 		if (!isExpired) {
 			hasShownToast.current = false
 		}
-	}, [isExpired, focusedTaskId, task])
+	}, [isExpired, focusedTaskId, task, documentVisibility, notificationsEnabled])
 
 	// Hide when no active task or already on the focused task's page
 	if (!focusedTaskId || !task) return null
