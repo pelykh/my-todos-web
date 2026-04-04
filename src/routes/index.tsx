@@ -1,4 +1,5 @@
-import { Container, Group, Stack, Text, Title } from '@mantine/core'
+import { Collapse, Container, Group, Stack, Text, Title } from '@mantine/core'
+import { IconChevronRight } from '@tabler/icons-react'
 import { createFileRoute } from '@tanstack/react-router'
 import { useContext, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -14,11 +15,73 @@ import { Toolbar } from '@/components/Toolbar'
 import { WeeklyReviewButton } from '@/components/WeeklyReviewButton'
 import { useFilters } from '@/store'
 import { useGroupedFilteredTasks } from '@/store/taskStore'
+import type { Task } from '@/types'
 import { isMobile } from '@/utils'
+import { cn } from '@/utils/cn'
 
 import { CmdContext } from './__root'
 
 export const Route = createFileRoute('/')({ component: App })
+
+const DEFAULT_COLLAPSED_ON_WEEKEND = ['work']
+
+interface TaskGroupProps {
+	area: string
+	tasks: Task[]
+	defaultCollapsed?: boolean
+}
+
+function TaskGroup({ area, tasks, defaultCollapsed = false }: TaskGroupProps) {
+	const { t } = useTranslation()
+	const [collapsed, setCollapsed] = useState(defaultCollapsed)
+	const isImportant = area === 'important'
+
+	return (
+		<Stack gap={0}>
+			<Group
+				justify="space-between"
+				onClick={() => !isImportant && setCollapsed((c) => !c)}
+				className={!isImportant ? 'group/header' : undefined}
+				style={{
+					padding: '0 8px',
+					marginBottom: collapsed ? 0 : 2,
+				}}
+			>
+				<Text
+					size="xs"
+					fw={600}
+					tt="uppercase"
+					className={
+            cn('cursor-pointer text-(--mantine-color-dimmed)! hover:text-(--mantine-color-placeholder)! transition-colors!',
+              isImportant && 'cursor-default text-(--mantine-color-orange-6)! hover:text-(--mantine-color-orange-6)! duration-150')
+					}
+					style={{ letterSpacing: '0.05em' }}
+				>
+					{isImportant
+						? t('groupImportant')
+						: t(`area.${area}`, { defaultValue: area })}
+				</Text>
+				{collapsed && !isImportant && (
+					<IconChevronRight
+						size={14}
+						className="cursor-pointer text-(--mantine-color-dimmed)! hover:text-(--mantine-color-text)! transition-colors! duration-150"
+					/>
+				)}
+			</Group>
+			<Collapse in={!collapsed}>
+				{tasks.map((task) => (
+					<TaskListItem
+						key={task.id}
+						taskId={task.id}
+						status={isImportant ? 'important' : undefined}
+						displayMeta={isMobile() ? [] : ['project', 'due_date', 'duration']}
+						href={`/task/${task.id}`}
+					/>
+				))}
+			</Collapse>
+		</Stack>
+	)
+}
 
 function App() {
 	const { t } = useTranslation()
@@ -41,6 +104,15 @@ function App() {
 		sort: { sortBy: 'duration', sortOrder: 'desc' },
 	})
 
+	const isWeekend = [0, 6].includes(new Date().getDay())
+	const sortedEntries = Object.entries(groups)
+		.filter(([, tasks]) => tasks.length > 0)
+		.sort(([aA], [aB]) => {
+			const aDefault = isWeekend && DEFAULT_COLLAPSED_ON_WEEKEND.includes(aA) ? 1 : 0
+			const bDefault = isWeekend && DEFAULT_COLLAPSED_ON_WEEKEND.includes(aB) ? 1 : 0
+			return aDefault - bDefault
+		})
+
 	return (
 		<>
 			<Group
@@ -54,45 +126,21 @@ function App() {
 			</Group>
 
 			<Container size="sm" py="xl" pb={120} px={{ base: 'xs', sm: 'md' }}>
-        <Stack gap="lg">
-          {!isMobile() && <Title order={2} ta="center">
-            {t('pageTitle')}
-          </Title>}
+				<Stack gap="lg">
+					{!isMobile() && (
+						<Title order={2} ta="center">
+							{t('pageTitle')}
+						</Title>
+					)}
 
-					{Object.entries(groups).map(([area, tasks]) => {
-						if (tasks.length === 0) return null
-						return (
-							<Stack key={area} gap={0}>
-								<Text
-									size="xs"
-									fw={600}
-									tt="uppercase"
-									style={{
-										letterSpacing: '0.05em',
-										padding: '0 8px',
-										marginBottom: 2,
-										color:
-											area === 'important'
-												? 'var(--mantine-color-orange-6)'
-												: 'var(--mantine-color-dimmed)',
-									}}
-								>
-									{area === 'important'
-										? t('groupImportant')
-										: t(`area.${area}`, { defaultValue: area })}
-								</Text>
-								{tasks.map((task) => (
-									<TaskListItem
-										key={task.id}
-										taskId={task.id}
-										status={area === 'important' ? 'important' : undefined}
-										displayMeta={isMobile() ? [] : ['project', 'due_date', 'duration', ]}
-										href={`/task/${task.id}`}
-									/>
-								))}
-							</Stack>
-						)
-					})}
+					{sortedEntries.map(([area, tasks]) => (
+						<TaskGroup
+							key={area}
+							area={area}
+							tasks={tasks}
+							defaultCollapsed={isWeekend && DEFAULT_COLLAPSED_ON_WEEKEND.includes(area)}
+						/>
+					))}
 
 					{Object.values(groups).every((tasks) => tasks.length === 0) && (
 						<div className="flex flex-col items-center gap-3 py-16">
