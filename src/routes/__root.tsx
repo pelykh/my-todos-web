@@ -5,7 +5,7 @@ import { useMediaQuery } from '@mantine/hooks'
 import { TanStackDevtools } from '@tanstack/react-devtools'
 import { createRootRoute, Outlet, useNavigate } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
-import { createContext, useRef, useState } from 'react'
+import { createContext, useEffect, useRef, useState } from 'react'
 import { useHotkeys } from 'react-hotkeys-hook'
 import { Toaster } from 'sonner'
 
@@ -34,6 +34,7 @@ function ThemedApp() {
 	useSyncEffect()
 
 	const [cmdOpen, setCmdOpen] = useState(false)
+	const [cmdSeed, setCmdSeed] = useState('')
 	const cmdInputRef = useRef<HTMLInputElement>(null)
 	const navigate = useNavigate()
 
@@ -41,6 +42,24 @@ function ThemedApp() {
 		setCmdOpen(true)
 		cmdInputRef.current?.focus()
 	}
+
+	useEffect(() => {
+		function handleKeyDown(e: KeyboardEvent) {
+			if (cmdOpen) return
+			if (e.key.length !== 1) return
+			if (e.ctrlKey || e.metaKey || e.altKey) return
+			const active = document.activeElement
+			if (
+				active instanceof HTMLInputElement ||
+				active instanceof HTMLTextAreaElement ||
+				(active as HTMLElement)?.isContentEditable
+			) return
+			setCmdSeed(e.key)
+			setCmdOpen(true)
+		}
+		window.addEventListener('keydown', handleKeyDown)
+		return () => window.removeEventListener('keydown', handleKeyDown)
+	}, [cmdOpen])
 
 	useHotkeys('mod+k', () => { setCmdOpen((o) => { if (!o) cmdInputRef.current?.focus(); return !o }) }, { preventDefault: true, enableOnFormTags: true })
 	useHotkeys('ctrl+t', () => navigate({ to: '/morning-flow' }), { preventDefault: true, enableOnFormTags: true })
@@ -52,7 +71,7 @@ function ThemedApp() {
 		<CmdContext.Provider value={{ openCmd }}>
 		<MantineProvider forceColorScheme={colorScheme}>
 			<Outlet />
-			<CommandPalette ref={cmdInputRef} open={cmdOpen} onClose={() => setCmdOpen(false)} />
+			<CommandPalette ref={cmdInputRef} open={cmdOpen} initialSearch={cmdSeed} onClose={() => { setCmdOpen(false); setCmdSeed('') }} />
 			<div style={{ position: 'fixed', bottom: 24, right: 24, zIndex: 100 }}>
 				<MiniTimer />
 			</div>

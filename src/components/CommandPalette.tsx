@@ -12,10 +12,11 @@ import { isMobile } from '@/utils'
 interface CommandPaletteProps {
 	open: boolean
 	onClose: () => void
+	initialSearch?: string
 }
 
 export const CommandPalette = forwardRef<HTMLInputElement, CommandPaletteProps>(
-	function CommandPalette({ open, onClose }, inputRef) {
+	function CommandPalette({ open, onClose, initialSearch }, inputRef) {
 		const { t } = useTranslation()
 		const { colorScheme } = useTheme()
 		const allTasks = useFilteredTasks(
@@ -29,6 +30,7 @@ export const CommandPalette = forwardRef<HTMLInputElement, CommandPaletteProps>(
 
 		useEffect(() => {
 			if (open) {
+				if (initialSearch) setSearch(initialSearch)
 				if (!mobile) setTimeout(() => inputRef.current?.focus(), 0)
 			} else {
 				setSearch('')
@@ -110,6 +112,11 @@ export const CommandPalette = forwardRef<HTMLInputElement, CommandPaletteProps>(
 								onValueChange={setSearch}
 								placeholder={t('cmdPlaceholder')}
 								style={{ ...inputStyle, paddingRight: mobile ? 52 : undefined }}
+								onKeyDown={(e) => {
+									if (e.key === 'Escape' || (e.key === 'Backspace' && search === '')) {
+										onClose()
+									}
+								}}
 							/>
 							{mobile && open && (
 								<button
