@@ -414,9 +414,13 @@ function TaskPage() {
 			<WhatsNextModal
 				projectId={task.projectId}
 				opened={whatsNextOpen}
-				onClose={() => {
+				onClose={(nextTask) => {
 					setWhatsNextOpen(false)
-					handleBack()
+					if (nextTask) {
+						navigate({ to: '/task/$taskId', params: { taskId: nextTask.id } })
+					} else {
+						handleBack()
+					}
 				}}
 			/>
 		)}

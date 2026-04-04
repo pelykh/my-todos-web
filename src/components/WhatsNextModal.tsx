@@ -14,7 +14,7 @@ type View = { type: 'list' } | { type: 'form'; taskId: string }
 type Props = {
 	projectId: string
 	opened: boolean
-	onClose: () => void
+	onClose: (nextTask?: Task) => void
 }
 
 export function WhatsNextModal({ projectId, opened, onClose }: Props) {
@@ -39,9 +39,9 @@ export function WhatsNextModal({ projectId, opened, onClose }: Props) {
 		handleClose()
 	}
 
-	function handleClose() {
+	function handleClose(nextTask?: Task) {
 		setView({ type: 'list' })
-		onClose()
+		onClose(nextTask)
 	}
 
 	return (
@@ -87,7 +87,7 @@ export function WhatsNextModal({ projectId, opened, onClose }: Props) {
 				<FormViewOuter
 					taskId={view.taskId}
 					onBack={() => setView({ type: 'list' })}
-					onClose={onClose}
+					onClose={(nextTask) => handleClose(nextTask)}
 				/>
 			)}
 		</Modal>
@@ -101,7 +101,7 @@ function FormViewOuter({
 }: {
 	taskId: string
 	onBack: () => void
-	onClose: () => void
+	onClose: (nextTask: Task) => void
 }) {
 	const task = useTaskById(taskId)
 	if (!task) return null
@@ -115,7 +115,7 @@ function FormViewContent({
 }: {
 	task: Task
 	onBack: () => void
-	onClose: () => void
+	onClose: (nextTask: Task) => void
 }) {
 	const { t } = useTranslation()
 	const { editTask } = useTaskActions()
@@ -125,7 +125,7 @@ function FormViewContent({
 		fields: ['title', 'context', 'duration'],
 		onSubmit: () => {
 			editTask(task.id, { status: 'next_action' })
-			onClose()
+			onClose(task)
 		},
 	})
 
