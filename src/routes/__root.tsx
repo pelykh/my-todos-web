@@ -1,6 +1,11 @@
 import '../styles.css'
 
 import { MantineProvider } from '@mantine/core'
+import { scan } from 'react-scan'
+
+if (typeof window !== 'undefined') {
+	scan({ enabled: import.meta.env.DEV })
+}
 import { useMediaQuery } from '@mantine/hooks'
 import { TanStackDevtools } from '@tanstack/react-devtools'
 import { createRootRoute, Outlet, useNavigate } from '@tanstack/react-router'
