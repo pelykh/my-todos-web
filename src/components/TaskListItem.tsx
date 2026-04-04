@@ -1,5 +1,6 @@
 import { Tooltip } from '@mantine/core'
 import { Link } from '@tanstack/react-router'
+import { Flag } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
 import { useTaskWithProject } from '@/store/taskStore'
@@ -82,6 +83,27 @@ export function TaskListItem({
 
 				<div className="flex items-center gap-1.5 shrink-0">
 					{displayMeta?.map((metaKey) => {
+						if (metaKey === 'due_date') {
+							if (!task.dueDate) return null
+							const today = new Date()
+							today.setHours(0, 0, 0, 0)
+							const due = new Date(task.dueDate)
+							due.setHours(0, 0, 0, 0)
+							const days = Math.round((due.getTime() - today.getTime()) / 86_400_000)
+							const label =
+								days === 0
+									? t('dueDateToday')
+									: days > 0
+										? t('dueDateDays', { days })
+										: t('dueDateOverdue')
+							return (
+								<span key={metaKey} className="flex items-center gap-0.5 text-xs text-gray-400">
+									<Flag size={11} />
+									{label}
+								</span>
+							)
+						}
+
 						if (metaKey === 'waiting_since') {
 							if (!task.waitingSince) return null
 							const days = Math.floor(

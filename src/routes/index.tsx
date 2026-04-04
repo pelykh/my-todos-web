@@ -86,7 +86,7 @@ function App() {
 										key={task.id}
 										taskId={task.id}
 										status={area === 'important' ? 'important' : undefined}
-										displayMeta={isMobile() ? [] : ['project', 'duration']}
+										displayMeta={isMobile() ? [] : ['project', 'due_date', 'duration', ]}
 										href={`/task/${task.id}`}
 									/>
 								))}
