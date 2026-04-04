@@ -7,9 +7,10 @@ import {
 	Stack,
 	Text,
 	Title,
+	Tooltip,
 } from '@mantine/core'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, SkipForward } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
@@ -64,17 +65,30 @@ function WeeklyReview() {
 	return (
 		<>
 			<Group style={{ position: 'fixed', top: 16, left: 16, zIndex: 200 }}>
-				<ActionIcon
-					component={Link}
-					to="/"
-					variant="default"
-					size="lg"
-					radius="md"
-					aria-label={t('weeklyReview.back')}
-					onClick={() => resetWeeklyReviewStepper()}
-				>
-					<ArrowLeft size={18} />
-				</ActionIcon>
+				<Tooltip label={t('weeklyReview.back')}>
+					<ActionIcon
+						component={Link}
+						to="/"
+						variant="default"
+						size="lg"
+						radius="md"
+						aria-label={t('weeklyReview.back')}
+						onClick={() => resetWeeklyReviewStepper()}
+					>
+						<ArrowLeft size={18} />
+					</ActionIcon>
+				</Tooltip>
+				<Tooltip label={t('weeklyReview.skip')}>
+					<ActionIcon
+						variant="default"
+						size="lg"
+						radius="md"
+						aria-label={t('weeklyReview.skip')}
+						onClick={finish}
+					>
+						<SkipForward size={18} />
+					</ActionIcon>
+				</Tooltip>
 			</Group>
 
 			<Container size="sm" py="xl">

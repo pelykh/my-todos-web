@@ -187,6 +187,7 @@
 	"weeklyReview": "Weekly Review",
 	"weeklyReview.next": "Next",
 	"weeklyReview.back": "Back",
+	"weeklyReview.skip": "Skip",
 	"weeklyReview.finish": "Finish",
 	"weeklyReview.addTask": "Add",
 	"weeklyReview.taskPlaceholder": "Enter task name",

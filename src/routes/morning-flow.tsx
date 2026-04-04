@@ -8,9 +8,10 @@ import {
 	Stack,
 	Text,
 	Title,
+	Tooltip,
 } from '@mantine/core'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, SkipForward } from 'lucide-react'
 import { useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
@@ -54,17 +55,30 @@ function MorningFlow() {
 	return (
 		<>
 			<Group style={{ position: 'fixed', top: 16, left: 16, zIndex: 200 }}>
-				<ActionIcon
-					component={Link}
-					to="/"
-					variant="default"
-					size="lg"
-					radius="md"
-					aria-label={t('back')}
-					onClick={() => resetMorningFlowStepper()}
-				>
-					<ArrowLeft size={18} />
-				</ActionIcon>
+				<Tooltip label={t('back')}>
+					<ActionIcon
+						component={Link}
+						to="/"
+						variant="default"
+						size="lg"
+						radius="md"
+						aria-label={t('back')}
+						onClick={() => resetMorningFlowStepper()}
+					>
+						<ArrowLeft size={18} />
+					</ActionIcon>
+				</Tooltip>
+				<Tooltip label={t('morningFlow.skip')}>
+					<ActionIcon
+						variant="default"
+						size="lg"
+						radius="md"
+						aria-label={t('morningFlow.skip')}
+						onClick={finish}
+					>
+						<SkipForward size={18} />
+					</ActionIcon>
+				</Tooltip>
 			</Group>
 
 			<Container size="sm" py="xl">
