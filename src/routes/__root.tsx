@@ -52,6 +52,7 @@ function ThemedApp() {
 		function handleKeyDown(e: KeyboardEvent) {
 			if (cmdOpen) return
 			if (e.key.length !== 1) return
+			if (/\d/.test(e.key)) return
 			if (e.ctrlKey || e.metaKey || e.altKey) return
 			const active = document.activeElement
 			if (
