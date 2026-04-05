@@ -474,7 +474,7 @@ function ProjectsStaleStep({ onNext, onBack }: { onNext: () => void; onBack: () 
 	const allProjects = useFilteredTasks({ isProject: true })
 	const allTasks = useFilteredTasks({ excludeStatuses: ['deleted'] })
 
-	const filtered = allProjects.filter((p) => {
+	const staleProjects = allProjects.filter((p) => {
 		if (['done', 'deleted'].includes(p.status)) return false
 		const projectTasks = allTasks.filter((t) => t.projectId === p.id)
 		const latestUpdate = Math.max(
@@ -483,6 +483,16 @@ function ProjectsStaleStep({ onNext, onBack }: { onNext: () => void; onBack: () 
 		)
 		return latestUpdate < TWO_WEEKS_AGO.getTime()
 	})
+
+	const staleTasks = allTasks.filter((task) => {
+		if (task.isProject) return false
+		if (['done', 'deleted', 'inbox'].includes(task.status)) return false
+		return new Date(task.updatedAt).getTime() < TWO_WEEKS_AGO.getTime()
+	})
+
+	const filtered = [...staleProjects, ...staleTasks].sort(
+		(a, b) => new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime(),
+	)
 
 	return (
 		<Stack gap="md">
@@ -493,12 +503,16 @@ function ProjectsStaleStep({ onNext, onBack }: { onNext: () => void; onBack: () 
 				{t('weeklyReview.projectsStale.subtitle')}
 			</Text>
 			<Stack gap={0}>
-				{filtered.map((project) => (
+				{filtered.map((item) => (
 					<TaskListItem
-						key={project.id}
-						taskId={project.id}
+						key={item.id}
+						taskId={item.id}
 						displayMeta={['area']}
-						href={`/project/${project.id}?return_to=${RETURN_TO}`}
+						href={
+							item.isProject
+								? `/project/${item.id}?return_to=${RETURN_TO}`
+								: `/task/${item.id}?return_to=${RETURN_TO}`
+						}
 					/>
 				))}
 				{filtered.length === 0 && (
