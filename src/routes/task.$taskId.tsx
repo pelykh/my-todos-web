@@ -89,7 +89,7 @@ function TaskPage() {
 	}
 
 	function handleNotesChange(value: string) {
-		if (!task) return
+    if (!task) return
 		editTask(task.id, { notes: value })
 	}
 

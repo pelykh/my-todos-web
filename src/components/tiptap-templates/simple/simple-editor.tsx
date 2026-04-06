@@ -34,7 +34,6 @@ import { ArrowLeftIcon } from "@/components/tiptap-icons/arrow-left-icon"
 import { HighlighterIcon } from "@/components/tiptap-icons/highlighter-icon"
 import { LinkIcon } from "@/components/tiptap-icons/link-icon"
 import { HorizontalRule } from "@/components/tiptap-node/horizontal-rule-node/horizontal-rule-node-extension"
-import { LinkCopyButton } from "@/components/tiptap-ui/link-copy-button/link-copy-button-extension"
 // --- Tiptap Node ---
 import { ImageUploadNode } from "@/components/tiptap-node/image-upload-node/image-upload-node-extension"
 import { BlockquoteButton } from "@/components/tiptap-ui/blockquote-button"
@@ -47,6 +46,7 @@ import {
 // --- Tiptap UI ---
 import { HeadingDropdownMenu } from "@/components/tiptap-ui/heading-dropdown-menu"
 import { ImageUploadButton } from "@/components/tiptap-ui/image-upload-button"
+import { LinkCopyButton } from "@/components/tiptap-ui/link-copy-button/link-copy-button-extension"
 import {
   LinkButton,
   LinkContent,
@@ -199,6 +199,7 @@ export function SimpleEditor({ value, onChange, editable = true }: SimpleEditorP
     "main"
   )
   const toolbarRef = useRef<HTMLDivElement>(null)
+  const latestMarkdownRef = useRef<string>(value)
 
   const editor = useEditor({
     immediatelyRender: false,
@@ -248,6 +249,13 @@ export function SimpleEditor({ value, onChange, editable = true }: SimpleEditorP
     onBlur: ({ editor: e }) => {
       onChange(e.storage.markdown.getMarkdown())
     },
+    onUpdate: ({ editor: e }) => {
+      latestMarkdownRef.current = e.storage.markdown.getMarkdown()
+    },
+    onDestroy: () => {
+      if (latestMarkdownRef.current === value) return
+      onChange(latestMarkdownRef.current)
+    }
   })
 
   const rect = useCursorVisibility({
