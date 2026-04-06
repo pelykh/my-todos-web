@@ -1,7 +1,7 @@
 import { Collapse, Container, Group, Stack, Text, Title } from '@mantine/core'
 import { IconChevronRight } from '@tabler/icons-react'
 import { createFileRoute } from '@tanstack/react-router'
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { LoginModal } from '@/components/LoginModal'
@@ -14,6 +14,7 @@ import { TaskListItem } from '@/components/TaskListItem'
 import { Toolbar } from '@/components/Toolbar'
 import { WeeklyReviewButton } from '@/components/WeeklyReviewButton'
 import { useFilters } from '@/store'
+import { useAuthStore } from '@/store/authStore'
 import { useGroupedFilteredTasks } from '@/store/taskStore'
 import type { Task } from '@/types'
 import { isMobile } from '@/utils'
@@ -89,6 +90,11 @@ function App() {
 	const [loginOpen, setLoginOpen] = useState(false)
 	const [registerOpen, setRegisterOpen] = useState(false)
 	const [settingsOpen, setSettingsOpen] = useState(false)
+	const sessionExpired = useAuthStore((s) => s.sessionExpired)
+
+	useEffect(() => {
+		if (sessionExpired) setLoginOpen(true)
+	}, [sessionExpired])
 
 	const filters = useFilters()
 	const hasActiveFilters = !!(filters.context || filters.maxEstimatedMinutes)

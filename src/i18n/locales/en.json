@@ -239,5 +239,6 @@
 	"templatesEmpty": "No templates yet",
 	"templateMarkAsTemplate": "Mark as template",
 	"templateConvertToNextAction": "Convert to next action",
-	"linkCopied": "Link copied"
+	"linkCopied": "Link copied",
+	"auth.sessionExpired": "Session expired. Please sign in again."
 }

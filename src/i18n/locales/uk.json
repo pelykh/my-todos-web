@@ -239,5 +239,6 @@
 	"templatesEmpty": "Немає шаблонів",
 	"templateMarkAsTemplate": "Позначити як шаблон",
 	"templateConvertToNextAction": "Перетворити на наступну дію",
-	"linkCopied": "Посилання скопійовано"
+	"linkCopied": "Посилання скопійовано",
+	"auth.sessionExpired": "Сесія завершилась. Будь ласка, увійдіть знову."
 }

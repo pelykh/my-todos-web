@@ -1,11 +1,13 @@
 import { fetchEventSource } from '@microsoft/fetch-event-source'
+import i18n from '@/i18n'
+import { toast } from 'sonner'
 
 import { useAuthStore } from '@/store/authStore'
 import { useSyncStore } from '@/store/syncStore'
 import { taskStore } from '@/store/taskStore'
 import type { Task } from '@/types'
 
-import { ApiClient } from './ApiClient'
+import { ApiClient, UnauthorizedError } from './ApiClient'
 import { STORAGE_KEY } from './LocalStorageTaskService'
 
 function loadLocalTasks(): Task[] {
@@ -38,7 +40,12 @@ async function runPush(tasks: Task[]): Promise<void> {
     setLastSyncVersion(serverVersion)
     setSyncedAt(new Date().toISOString())
   } catch (e) {
-    setError(e instanceof Error ? e.message : 'Sync failed')
+    if (e instanceof UnauthorizedError) {
+      useAuthStore.getState().handleUnauthorized()
+      toast.error(i18n.t('auth.sessionExpired'))
+    } else {
+      setError(e instanceof Error ? e.message : 'Sync failed')
+    }
   } finally {
     setSyncing(false)
   }
@@ -80,7 +87,12 @@ export async function pullSync(): Promise<void> {
     )
     if (maxVersion > lastSyncVersion) setLastSyncVersion(maxVersion)
   } catch (e) {
-    setError(e instanceof Error ? e.message : 'Pull failed')
+    if (e instanceof UnauthorizedError) {
+      useAuthStore.getState().handleUnauthorized()
+      toast.error(i18n.t('auth.sessionExpired'))
+    } else {
+      setError(e instanceof Error ? e.message : 'Pull failed')
+    }
   }
 }
 

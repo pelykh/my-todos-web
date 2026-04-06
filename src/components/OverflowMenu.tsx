@@ -15,6 +15,7 @@ import {
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { useAuthStore } from '@/store/authStore'
 import { resetMorningFlowCompleted } from '@/store/morningFlowStepper'
 import { isWeeklyReviewCompletedThisWeek, resetWeeklyReviewCompleted } from '@/store/weeklyReviewStepper'
 
@@ -93,6 +94,9 @@ export function OverflowMenu({ onSettings, onSearch }: OverflowMenuProps) {
                 Reset weekly flag
               </Menu.Item>
             )}
+            <Menu.Item leftSection={<Bug size={16} />} color="orange" onClick={() => useAuthStore.setState({ tokenExpiresAt: new Date(0).toISOString() })}>
+              Simulate expired token
+            </Menu.Item>
           </>
         )}
       </Menu.Dropdown>
