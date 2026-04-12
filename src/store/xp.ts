@@ -106,11 +106,12 @@ export function useXpLevelProgress(): { progress: number; level: number } {
 		const endTimer = setTimeout(() => {
 			actions.setCurrentXp(nextXp)
 			if (isLevelUp) {
+				const newLevel = getXpLevel(nextXp)
 				confetti({
-					particleCount: 300,
-          spread: 100,
-          startVelocity: 60,
-					origin: { y: 0.9, },
+					particleCount: Math.min(100 + newLevel * 30, 600),
+					spread: Math.min(60 + newLevel * 5, 160),
+					startVelocity: Math.min(40 + newLevel * 3, 80),
+					origin: { y: 0.9 },
 				})
 			}
 		}, 100 + ANIMATION_DURATION)
