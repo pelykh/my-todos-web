@@ -1,6 +1,6 @@
 import { ActionIcon, Button, Menu } from '@mantine/core'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
-import { Archive, ArrowLeft, CheckCircle2, Ellipsis, FolderKanban, LayoutTemplate, RotateCcw, Trash2 } from 'lucide-react'
+import { Archive, ArrowLeft, CheckCircle2, Clock, Ellipsis, FolderKanban, LayoutTemplate, RotateCcw, Trash2 } from 'lucide-react'
 import { useContext, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
@@ -10,6 +10,7 @@ import { DueDatePicker } from '@/components/DueDatePicker'
 import { MarkdownField } from '@/components/MarkdownField'
 import { OverflowMenu } from '@/components/OverflowMenu'
 import { ScheduledDatePicker } from '@/components/ScheduledDatePicker'
+import { WaitingSincePicker } from '@/components/WaitingSincePicker'
 import { SettingsModal } from '@/components/SettingsModal'
 import { StatusBadge } from '@/components/StatusBadge'
 import { TimerToolbar } from '@/components/TimerToolbar'
@@ -183,6 +184,25 @@ function TaskPage() {
 		editTask(task.id, { dueDate: value ?? undefined })
 	}
 
+	function handleMoveToWaitingFor() {
+		if (!task) return
+		const today = new Date()
+		const yyyy = today.getFullYear()
+		const mm = String(today.getMonth() + 1).padStart(2, '0')
+		const dd = String(today.getDate()).padStart(2, '0')
+		editTask(task.id, { status: 'waiting_for', waitingSince: `${yyyy}-${mm}-${dd}` })
+	}
+
+	function handleRestoreFromWaitingFor() {
+		if (!task) return
+		editTask(task.id, { status: task.projectId ? 'backlog' : 'next_action', waitingSince: undefined })
+	}
+
+	function handleWaitingSinceChange(value: string | null) {
+		if (!task) return
+		editTask(task.id, { waitingSince: value ?? undefined })
+	}
+
 	if (!task) {
 		return (
 			<div className="flex items-center justify-center h-screen">
@@ -276,6 +296,21 @@ function TaskPage() {
 											{t('templateMarkAsTemplate')}
 										</Menu.Item>
 									)}
+									{task.status === 'waiting_for' ? (
+										<Menu.Item
+											leftSection={<Clock size={14} />}
+											onClick={handleRestoreFromWaitingFor}
+										>
+											{task.projectId ? t('taskMoveToBacklog') : t('taskMoveToNextAction')}
+										</Menu.Item>
+									) : (
+										<Menu.Item
+											leftSection={<Clock size={14} />}
+											onClick={handleMoveToWaitingFor}
+										>
+											{t('taskMoveToWaitingFor')}
+										</Menu.Item>
+									)}
 									{task.status === 'someday' ? (
 										<Menu.Item
 											leftSection={<Archive size={14} />}
@@ -342,6 +377,12 @@ function TaskPage() {
 							value={task.dueDate ?? null}
 							onChange={handleDueDateChange}
 						/>
+						{task.status === 'waiting_for' && (
+							<WaitingSincePicker
+								value={task.waitingSince ?? null}
+								onChange={handleWaitingSinceChange}
+							/>
+						)}
 					</div>
 				</div>
 

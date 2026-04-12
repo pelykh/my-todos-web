@@ -127,6 +127,8 @@
 	"fieldTitle": "Назва",
 	"fieldNotes": "Нотатки",
 	"taskRestore": "Відновити",
+	"taskMoveToWaitingFor": "Перемістити до очікування",
+	"waitingSinceLabel": "Очікую з",
 	"taskMoveToSomeday": "Перемістити до «Колись»",
 	"taskMoveToNextAction": "Перемістити до наступних дій",
 	"taskMoveToBacklog": "Перемістити до беклогу",

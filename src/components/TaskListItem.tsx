@@ -130,10 +130,11 @@ export function TaskListItem({
 
 						if (metaKey === 'notes') {
 							if (!task.notes) return null
+							const firstLine = task.notes.split('\n')[0]
 							return (
 								<Tooltip key={metaKey} label={task.notes} openDelay={600} withinPortal>
 									<span className="text-xs text-(--mantine-color-dimmed) max-w-[150px] truncate block">
-										{task.notes}
+										{firstLine}
 									</span>
 								</Tooltip>
 							)

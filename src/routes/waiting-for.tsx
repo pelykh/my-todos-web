@@ -50,7 +50,7 @@ function WaitingForPage() {
 								key={task.id}
 								taskId={task.id}
 								displayMeta={['notes', 'waiting_since']}
-								href={`/task/${task.id}`}
+								href={`/task/${task.id}?return_to=/waiting-for`}
 							/>
 						))}
 

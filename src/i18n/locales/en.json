@@ -127,6 +127,8 @@
 	"fieldTitle": "Title",
 	"fieldNotes": "Notes",
 	"taskRestore": "Restore",
+	"taskMoveToWaitingFor": "Move to waiting for",
+	"waitingSinceLabel": "Waiting since",
 	"taskMoveToSomeday": "Move to someday",
 	"taskMoveToNextAction": "Move to next action",
 	"taskMoveToBacklog": "Move to backlog",
