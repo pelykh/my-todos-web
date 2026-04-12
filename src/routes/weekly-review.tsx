@@ -486,7 +486,7 @@ function ProjectsStaleStep({ onNext, onBack }: { onNext: () => void; onBack: () 
 
 	const staleTasks = allTasks.filter((task) => {
 		if (task.isProject) return false
-		if (['done', 'deleted', 'inbox'].includes(task.status)) return false
+		if (!['next_action'].includes(task.status)) return false
 		return new Date(task.updatedAt).getTime() < TWO_WEEKS_AGO.getTime()
 	})
 
