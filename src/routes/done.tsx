@@ -26,7 +26,11 @@ function DonePage() {
 	const filters = useFilters()
 	const groups = useGroupedFilteredTasks({
 		filters: { ...filters, status: 'done' },
-		groupBy: 'area',
+    groupBy: 'area',
+    sort: {
+      sortBy: 'updatedAt',
+      sortOrder: 'desc'
+    }
 	})
 
 	const totalCount = Object.values(groups).reduce((sum, tasks) => sum + tasks.length, 0)
@@ -63,7 +67,7 @@ function DonePage() {
 										<TaskListItem
 											taskId={task.id}
 											displayMeta={['project', 'duration']}
-											href={task.isProject ? `/project/${task.id}` : `/task/${task.id}`}
+											href={task.isProject ? `/project/${task.id}?return_to=/done` : `/task/${task.id}?return_to=/done`}
 										/>
 									</div>
 								))}

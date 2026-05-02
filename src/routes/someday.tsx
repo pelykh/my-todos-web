@@ -23,10 +23,15 @@ function SomedayPage() {
 	}, [])
 	const groups = useGroupedFilteredTasks({
 		filters: { status: 'someday' },
-		groupBy: 'area',
+    groupBy: 'area',
+    sort: {
+      sortBy: 'createdAt',
+      sortOrder: 'desc'
+    }
 	})
 
-	const totalCount = Object.values(groups).reduce((sum, tasks) => sum + tasks.length, 0)
+  const totalCount = Object.values(groups).reduce((sum, tasks) => sum + tasks.length, 0)
+
 
 	return (
 		<>
@@ -60,7 +65,7 @@ function SomedayPage() {
 										key={task.id}
 										taskId={task.id}
 										displayMeta={['project', 'duration']}
-										href={task.isProject ? `/project/${task.id}` : `/task/${task.id}`}
+										href={task.isProject ? `/project/${task.id}?return_to=/someday` : `/task/${task.id}?return_to=/someday`}
 									/>
 								))}
 							</Stack>
