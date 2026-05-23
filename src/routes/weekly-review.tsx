@@ -475,7 +475,7 @@ function ProjectsStaleStep({ onNext, onBack }: { onNext: () => void; onBack: () 
 	const allTasks = useFilteredTasks({ excludeStatuses: ['deleted'] })
 
 	const staleProjects = allProjects.filter((p) => {
-		if (['done', 'deleted'].includes(p.status)) return false
+		if (['done', 'deleted', 'someday'].includes(p.status)) return false
 		const projectTasks = allTasks.filter((t) => t.projectId === p.id)
 		const latestUpdate = Math.max(
 			new Date(p.updatedAt).getTime(),
@@ -485,7 +485,8 @@ function ProjectsStaleStep({ onNext, onBack }: { onNext: () => void; onBack: () 
 	})
 
 	const staleTasks = allTasks.filter((task) => {
-		if (task.isProject) return false
+    if (task.isProject) return false
+		if(task.scheduledDate !== undefined) return false
 		if (!['next_action'].includes(task.status)) return false
 		return new Date(task.updatedAt).getTime() < TWO_WEEKS_AGO.getTime()
 	})
